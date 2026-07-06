@@ -51,6 +51,10 @@ reales, exporta desde Figma y sobreescribe el archivo con el mismo nombre:
 El vídeo de la sección 2 se activa poniendo la URL (YouTube/Vimeo embed) en el
 atributo `data-video-url` del `div.video` en `index.html`.
 
+El fondo del hero es un vídeo MP4: añade el archivo en `assets/video/hero.mp4`
+(recomendado 1920×1080, H.264, sin audio, &lt;10 MB). Mientras no exista, se
+muestra el poster `assets/img/hero.jpg` automáticamente.
+
 ## Créditos
 
 - Fuentes: [Playfair Display](https://fonts.google.com/specimen/Playfair+Display) y

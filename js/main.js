@@ -167,6 +167,20 @@
   }
 
   /* ------------------------------------------------------------------
+   * Vídeo de fondo del hero: oculto si no carga, pausado si el usuario
+   * prefiere movimiento reducido (queda el poster estático)
+   * ------------------------------------------------------------------ */
+  const heroVideo = document.querySelector('.hero__video');
+  if (heroVideo) {
+    if (prefersReducedMotion) {
+      heroVideo.autoplay = false;
+      heroVideo.pause();
+    }
+    const heroSource = heroVideo.querySelector('source');
+    heroSource.addEventListener('error', () => heroVideo.classList.add('is-hidden'));
+  }
+
+  /* ------------------------------------------------------------------
    * Volver arriba
    * ------------------------------------------------------------------ */
   document.getElementById('back-to-top').addEventListener('click', () => {
