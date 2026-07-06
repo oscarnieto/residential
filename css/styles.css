@@ -499,6 +499,7 @@ footer[id] {
 /* El vídeo se solapa con la sección siguiente, como en el diseño */
 .video {
   position: relative;
+  z-index: 3; /* flota por encima del fondo de la sección Servicios */
   margin-top: clamp(2.5rem, 6vw, 3.75rem);
   margin-bottom: clamp(-14rem, -18vw, -6rem);
   aspect-ratio: 1270 / 585;
@@ -704,9 +705,9 @@ footer[id] {
 }
 
 .map__world {
+  display: block;
   width: 100%;
-  min-height: 280px;
-  object-fit: cover;
+  height: auto;
 }
 
 .map__pins {
@@ -720,10 +721,17 @@ footer[id] {
   top: var(--y);
   width: clamp(20px, 2.2vw, 30px);
   translate: -50% -100%;
+}
+
+.map__pin-btn {
+  display: block;
+  width: 100%;
+  padding: 0;
   cursor: pointer;
 }
 
-.map__pin svg {
+.map__pin-btn svg {
+  display: block;
   width: 100%;
   height: auto;
   filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
@@ -732,16 +740,15 @@ footer[id] {
   transition: transform 0.3s var(--ease);
 }
 
-.map.is-visible .map__pin svg {
+.map.is-visible .map__pin-btn svg {
   animation-play-state: running;
 }
 
-.map__pin:nth-child(1) svg { animation-delay: 0.1s; }
-.map__pin:nth-child(2) svg { animation-delay: 0.25s; }
-.map__pin:nth-child(3) svg { animation-delay: 0.4s; }
-.map__pin:nth-child(4) svg { animation-delay: 0.55s; }
-.map__pin:nth-child(5) svg { animation-delay: 0.7s; }
-.map__pin:nth-child(6) svg { animation-delay: 0.85s; }
+.map__pin:nth-child(1) .map__pin-btn svg { animation-delay: 0.1s; }
+.map__pin:nth-child(2) .map__pin-btn svg { animation-delay: 0.25s; }
+.map__pin:nth-child(3) .map__pin-btn svg { animation-delay: 0.4s; }
+.map__pin:nth-child(4) .map__pin-btn svg { animation-delay: 0.55s; }
+.map__pin:nth-child(5) .map__pin-btn svg { animation-delay: 0.7s; }
 
 @keyframes pin-drop {
   from {
@@ -754,51 +761,32 @@ footer[id] {
   }
 }
 
-.map__pin:hover svg {
-  transform: scale(1.15);
+.map__pin:hover .map__pin-btn svg,
+.map__pin:focus-within .map__pin-btn svg {
+  transform: scale(1.18);
 }
 
-.map__tooltip {
+/* Tarjeta que aparece al pasar el cursor / enfocar cualquier pin */
+.map__card {
   position: absolute;
   bottom: calc(100% + 8px);
   left: 50%;
-  translate: -50% 0;
-  padding: 0.4rem 0.7rem;
-  font-size: 0.75rem;
-  white-space: nowrap;
-  color: var(--white);
-  background-color: rgba(37, 39, 58, 0.92);
-  border: 1px solid rgba(158, 160, 178, 0.4);
-  border-radius: 4px;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  pointer-events: none;
-}
-
-.map__pin:hover .map__tooltip,
-.map__pin:focus-within .map__tooltip {
-  opacity: 1;
-  visibility: visible;
-}
-
-/* Tarjeta destacada de España (visible por defecto, como en el diseño) */
-.map__card {
-  position: absolute;
-  bottom: calc(100% + 6px);
-  left: 50%;
-  translate: -50% 0;
+  translate: -50% 6px;
+  z-index: 2;
   display: grid;
   justify-items: center;
   gap: 0.1rem;
-  min-width: 84px;
+  min-width: 92px;
   padding: 0.55rem 0.9rem 0.65rem;
   text-align: center;
-  background-color: rgba(110, 111, 130, 0.55);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-  border-radius: 4px;
-  transition: transform 0.3s var(--ease), background-color 0.3s ease;
+  background-color: rgba(110, 111, 130, 0.6);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border-radius: 5px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, translate 0.3s var(--ease);
+  pointer-events: none;
 }
 
 .map__card::after {
@@ -808,24 +796,26 @@ footer[id] {
   left: 50%;
   translate: -50% 0;
   border: 7px solid transparent;
-  border-top-color: rgba(110, 111, 130, 0.55);
+  border-top-color: rgba(110, 111, 130, 0.6);
 }
 
-.map__pin--spain:hover .map__card {
-  transform: translateY(-4px);
-  background-color: rgba(110, 111, 130, 0.75);
+.map__pin:hover .map__card,
+.map__pin:focus-within .map__card {
+  opacity: 1;
+  visibility: visible;
+  translate: -50% 0;
 }
 
 .map__card-region,
 .map__card-label {
   font-size: 0.75rem;
-  line-height: 1.1;
+  line-height: 1.15;
   color: var(--white);
 }
 
 .map__card-number {
   font-family: var(--font-sans);
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 500;
   line-height: 1;
   color: var(--yellow);

@@ -46,7 +46,14 @@ reales, exporta desde Figma y sobreescribe el archivo con el mismo nombre:
 | `assets/img/video-poster.jpg`  | `section-1 > video`            | 1440×700        |
 | `assets/img/lifestyle.jpg`     | `section-3 > img`              | 1152×758        |
 | `assets/img/aerial.jpg`        | `section-4 > bg-section4`      | 1920×900        |
+| `assets/img/img-map.png`       | `section-3 > map > img-map`    | 1440×~860 (PNG con transparencia) |
 | `assets/img/savills-logo.svg`  | `savills-logo` (logo real)     | vectorial       |
+
+El mapa (`img-map.png`) es un mapa de puntos recreado con la misma estética y
+curvatura del diseño; los pins (`.map__pin`) se posicionan en porcentaje sobre
+él y muestran país + nº de oficinas al pasar el cursor. Si reemplazas el PNG por
+el export real de Figma, revisa las coordenadas `--x`/`--y` de cada pin en
+`index.html` por si necesitan un pequeño reajuste.
 
 El vídeo de la sección 2 se activa poniendo la URL (YouTube/Vimeo embed) en el
 atributo `data-video-url` del `div.video` en `index.html`.

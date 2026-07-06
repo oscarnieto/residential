@@ -53,7 +53,7 @@
     <section class="hero" id="inicio">
       <div class="hero__bg" role="img" aria-label="Villa residencial de lujo con piscina"></div>
       <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="assets/img/hero.jpg" aria-hidden="true" tabindex="-1">
-        <source src="assets/video/hero.mp4" type="video/mp4">
+        <source src="assets/img/hero.mp4" type="video/mp4">
       </video>
       <div class="hero__overlay"></div>
       <h1 class="hero__title">
@@ -168,35 +168,57 @@
       </div>
 
       <div class="map reveal">
-        <img class="map__world" src="assets/img/world-map.svg" alt="" aria-hidden="true">
+        <img class="map__world" src="assets/img/img-map.png" alt="" aria-hidden="true">
         <ul class="map__pins" aria-label="Presencia internacional de Savills">
-          <li class="map__pin" style="--x: 13%; --y: 76%;" data-region="América">
-            <svg viewBox="0 0 24 30" aria-hidden="true"><path d="M12 0C5.9 0 1 4.9 1 11c0 8.25 11 19 11 19s11-10.75 11-19C23 4.9 18.1 0 12 0z" fill="#ffdf07"/><circle cx="12" cy="11" r="4" fill="#25273a"/></svg>
-            <span class="map__tooltip">América</span>
+          <li class="map__pin" style="--x: 12.95%; --y: 87.6%;">
+            <button class="map__pin-btn" type="button" aria-label="América: 82 oficinas">
+              <svg viewBox="0 0 24 30" aria-hidden="true"><path d="M12 0C5.9 0 1 4.9 1 11c0 8.25 11 19 11 19s11-10.75 11-19C23 4.9 18.1 0 12 0z" fill="#ffdf07"/><circle cx="12" cy="11" r="4" fill="#25273a"/></svg>
+            </button>
+            <span class="map__card">
+              <span class="map__card-region">América</span>
+              <span class="map__card-number">82</span>
+              <span class="map__card-label">oficinas</span>
+            </span>
           </li>
-          <li class="map__pin" style="--x: 39.7%; --y: 12%;" data-region="Reino Unido">
-            <svg viewBox="0 0 24 30" aria-hidden="true"><path d="M12 0C5.9 0 1 4.9 1 11c0 8.25 11 19 11 19s11-10.75 11-19C23 4.9 18.1 0 12 0z" fill="#ffdf07"/><circle cx="12" cy="11" r="4" fill="#25273a"/></svg>
-            <span class="map__tooltip">Reino Unido</span>
+          <li class="map__pin" style="--x: 39.8%; --y: 16.0%;">
+            <button class="map__pin-btn" type="button" aria-label="Reino Unido: 131 oficinas">
+              <svg viewBox="0 0 24 30" aria-hidden="true"><path d="M12 0C5.9 0 1 4.9 1 11c0 8.25 11 19 11 19s11-10.75 11-19C23 4.9 18.1 0 12 0z" fill="#ffdf07"/><circle cx="12" cy="11" r="4" fill="#25273a"/></svg>
+            </button>
+            <span class="map__card">
+              <span class="map__card-region">Reino Unido</span>
+              <span class="map__card-number">131</span>
+              <span class="map__card-label">oficinas</span>
+            </span>
           </li>
-          <li class="map__pin map__pin--spain" style="--x: 43.8%; --y: 32%;" data-region="España">
-            <svg viewBox="0 0 24 30" aria-hidden="true"><path d="M12 0C5.9 0 1 4.9 1 11c0 8.25 11 19 11 19s11-10.75 11-19C23 4.9 18.1 0 12 0z" fill="#ffdf07"/><circle cx="12" cy="11" r="4" fill="#25273a"/></svg>
+          <li class="map__pin" style="--x: 43.8%; --y: 36.4%;">
+            <button class="map__pin-btn" type="button" aria-label="España: 5 oficinas">
+              <svg viewBox="0 0 24 30" aria-hidden="true"><path d="M12 0C5.9 0 1 4.9 1 11c0 8.25 11 19 11 19s11-10.75 11-19C23 4.9 18.1 0 12 0z" fill="#ffdf07"/><circle cx="12" cy="11" r="4" fill="#25273a"/></svg>
+            </button>
             <span class="map__card">
               <span class="map__card-region">España</span>
               <span class="map__card-number">5</span>
               <span class="map__card-label">oficinas</span>
             </span>
           </li>
-          <li class="map__pin" style="--x: 54%; --y: 25%;" data-region="Europa">
-            <svg viewBox="0 0 24 30" aria-hidden="true"><path d="M12 0C5.9 0 1 4.9 1 11c0 8.25 11 19 11 19s11-10.75 11-19C23 4.9 18.1 0 12 0z" fill="#ffdf07"/><circle cx="12" cy="11" r="4" fill="#25273a"/></svg>
-            <span class="map__tooltip">Europa</span>
+          <li class="map__pin" style="--x: 52.9%; --y: 29.0%;">
+            <button class="map__pin-btn" type="button" aria-label="Europa: 129 oficinas">
+              <svg viewBox="0 0 24 30" aria-hidden="true"><path d="M12 0C5.9 0 1 4.9 1 11c0 8.25 11 19 11 19s11-10.75 11-19C23 4.9 18.1 0 12 0z" fill="#ffdf07"/><circle cx="12" cy="11" r="4" fill="#25273a"/></svg>
+            </button>
+            <span class="map__card">
+              <span class="map__card-region">Europa</span>
+              <span class="map__card-number">129</span>
+              <span class="map__card-label">oficinas</span>
+            </span>
           </li>
-          <li class="map__pin" style="--x: 57%; --y: 58%;" data-region="África y Oriente Medio">
-            <svg viewBox="0 0 24 30" aria-hidden="true"><path d="M12 0C5.9 0 1 4.9 1 11c0 8.25 11 19 11 19s11-10.75 11-19C23 4.9 18.1 0 12 0z" fill="#ffdf07"/><circle cx="12" cy="11" r="4" fill="#25273a"/></svg>
-            <span class="map__tooltip">África y Oriente Medio</span>
-          </li>
-          <li class="map__pin" style="--x: 79%; --y: 44%;" data-region="Asia-Pacífico">
-            <svg viewBox="0 0 24 30" aria-hidden="true"><path d="M12 0C5.9 0 1 4.9 1 11c0 8.25 11 19 11 19s11-10.75 11-19C23 4.9 18.1 0 12 0z" fill="#ffdf07"/><circle cx="12" cy="11" r="4" fill="#25273a"/></svg>
-            <span class="map__tooltip">Asia-Pacífico</span>
+          <li class="map__pin" style="--x: 77.9%; --y: 50.9%;">
+            <button class="map__pin-btn" type="button" aria-label="Asia-Pacífico: 75 oficinas">
+              <svg viewBox="0 0 24 30" aria-hidden="true"><path d="M12 0C5.9 0 1 4.9 1 11c0 8.25 11 19 11 19s11-10.75 11-19C23 4.9 18.1 0 12 0z" fill="#ffdf07"/><circle cx="12" cy="11" r="4" fill="#25273a"/></svg>
+            </button>
+            <span class="map__card">
+              <span class="map__card-region">Asia-Pacífico</span>
+              <span class="map__card-number">75</span>
+              <span class="map__card-label">oficinas</span>
+            </span>
           </li>
         </ul>
       </div>
