@@ -281,8 +281,8 @@
         const travelled = Math.min(Math.max(-top, 0), maxTravel);
         track.style.transform = `translate3d(${-travelled}px, 0, 0)`;
         gallery.classList.toggle('is-end', travelled >= maxTravel - 2);
+        focus(); // en móvil el foco lo da la animación de scroll (CSS)
       }
-      focus();
       ticking = false;
     };
 

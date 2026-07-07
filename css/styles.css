@@ -2127,6 +2127,7 @@ footer[id] {
 }
 
 /* --- Móvil / sin JS: carrusel de swipe nativo --- */
+/* Móvil: carrusel de swipe igual que los proyectos de Red Internacional */
 @media (max-width: 767px) {
   .track-gallery {
     height: auto !important;
@@ -2135,17 +2136,20 @@ footer[id] {
   .track-gallery__sticky {
     position: static;
     height: auto;
-    padding-block: 3rem 2rem;
+    overflow: visible;
+    padding-block: 2.5rem 2rem;
   }
 
   .track-gallery__track {
-    --track-card: 80vw;
+    width: 100%;
+    gap: 1rem;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    scroll-padding-inline: 10vw;
-    padding-block: 2.5rem 0.5rem;
+    scroll-padding-inline: var(--gutter);
+    padding: 0.5rem var(--gutter) 1.5rem;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
+    transform: none !important; /* anula el translate del pin de escritorio */
   }
 
   .track-gallery__track::-webkit-scrollbar {
@@ -2153,14 +2157,36 @@ footer[id] {
   }
 
   .track-product {
+    flex: 0 0 78%;
     scroll-snap-align: center;
+    scale: 1; /* anula el --s del JS; el foco lo da la animación de scroll */
+    opacity: 1;
+    transition: none;
   }
 
-  .track-gallery__hint {
-    position: static;
-    translate: none;
-    margin-top: 1.5rem;
-    text-align: center;
+  /* La tarjeta centrada crece, las laterales se atenúan (scroll-timeline) */
+  @supports (animation-timeline: view(inline)) {
+    .track-product {
+      opacity: 0.45;
+      transform: scale(0.9);
+      animation: track-product-focus linear both;
+      animation-timeline: view(inline);
+      animation-range: cover;
+    }
+  }
+}
+
+@keyframes track-product-focus {
+  0%   { opacity: 0.45; transform: scale(0.9); }
+  50%  { opacity: 1;    transform: scale(1); }
+  100% { opacity: 0.45; transform: scale(0.9); }
+}
+
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+  .track-product {
+    opacity: 1;
+    transform: none;
+    animation: none;
   }
 }
 
