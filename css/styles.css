@@ -1642,10 +1642,12 @@ footer[id] {
   overflow: visible;
 }
 
+/* Secuencia (≈2s): primero se despliega la línea (0–0.7s), luego los
+   puntos aparecen uno a uno en sentido horario (0.7–2s) */
 .circle__track {
   stroke-dasharray: 290;
   stroke-dashoffset: 290;
-  transition: stroke-dashoffset 1.6s var(--ease);
+  transition: stroke-dashoffset 0.7s var(--ease);
 }
 
 .circle.is-visible .circle__track {
@@ -1666,9 +1668,30 @@ footer[id] {
   translate: -50% -50%;
   border-radius: 50%;
   background-color: var(--navy);
+  opacity: 0;
   cursor: pointer;
-  transition: background-color 0.35s var(--ease), transform 0.35s var(--ease),
+  /* La escala de hover/activo usa la propiedad `scale` para no chocar
+     con el `transform` de la animación de entrada */
+  transition: background-color 0.35s var(--ease), scale 0.35s var(--ease),
     box-shadow 0.35s var(--ease);
+}
+
+.circle.is-visible .circle__dot {
+  animation: circle-dot-in 0.3s var(--ease) both;
+}
+
+.circle.is-visible .circle__dot:nth-child(1) { animation-delay: 0.70s; }
+.circle.is-visible .circle__dot:nth-child(2) { animation-delay: 0.84s; }
+.circle.is-visible .circle__dot:nth-child(3) { animation-delay: 0.99s; }
+.circle.is-visible .circle__dot:nth-child(4) { animation-delay: 1.13s; }
+.circle.is-visible .circle__dot:nth-child(5) { animation-delay: 1.27s; }
+.circle.is-visible .circle__dot:nth-child(6) { animation-delay: 1.41s; }
+.circle.is-visible .circle__dot:nth-child(7) { animation-delay: 1.56s; }
+.circle.is-visible .circle__dot:nth-child(8) { animation-delay: 1.70s; }
+
+@keyframes circle-dot-in {
+  from { opacity: 0; transform: scale(0.2); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
 .circle__dot::after {
@@ -1680,13 +1703,25 @@ footer[id] {
 }
 
 .circle__dot:hover {
-  transform: scale(1.12);
+  scale: 1.12;
 }
 
 .circle__dot.is-active {
   background-color: var(--yellow);
-  transform: scale(1.15);
+  scale: 1.15;
   box-shadow: 0 0 0 4px rgba(255, 223, 7, 0.16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .circle__dot {
+    opacity: 1;
+    animation: none !important;
+  }
+
+  .circle__track {
+    transition: none;
+    stroke-dashoffset: 0;
+  }
 }
 
 /* Contenido central */
@@ -1759,11 +1794,11 @@ footer[id] {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.9s var(--ease);
+  transition: transform 1.2s var(--ease);
 }
 
 .serv-card:hover .serv-card__img {
-  transform: scale(1.06);
+  transform: scale(1.07);
 }
 
 .serv-card::after {
@@ -1771,7 +1806,7 @@ footer[id] {
   position: absolute;
   inset: 0;
   background-color: rgba(37, 39, 58, 0.28);
-  transition: background-color 0.4s ease;
+  transition: background-color 0.7s var(--ease);
 }
 
 .serv-card:hover::after {
@@ -1788,7 +1823,7 @@ footer[id] {
   width: 22px;
   height: 22px;
   color: var(--white);
-  transition: transform 0.4s var(--ease);
+  transition: transform 0.7s var(--ease);
 }
 
 .serv-card:hover .serv-card__more {
@@ -1839,8 +1874,8 @@ footer[id] {
   margin-top: 0;
   transform: translateY(8px);
   overflow: hidden;
-  transition: opacity 0.4s var(--ease), max-height 0.5s var(--ease),
-    transform 0.45s var(--ease), margin-top 0.45s var(--ease);
+  transition: opacity 0.75s var(--ease), max-height 0.85s var(--ease),
+    transform 0.75s var(--ease), margin-top 0.75s var(--ease);
 }
 
 .serv-card:hover .serv-card__desc,
