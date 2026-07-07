@@ -1577,3 +1577,265 @@ footer[id] {
     animation: none;
   }
 }
+
+/* ==========================================================================
+   Página · Servicios
+   ========================================================================== */
+
+/* Hero (usa .hero base; fondo propio) */
+.hero--servicios .hero__bg {
+  background-image: url('../assets/img/serv-hero.jpg');
+  animation: none;
+}
+
+.hero--servicios .hero__overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(37, 39, 58, 0.28) 0%,
+    rgba(37, 39, 58, 0.12) 45%,
+    rgba(37, 39, 58, 0.32) 100%
+  );
+}
+
+/* Sección 1 · Proceso */
+.serv-process {
+  background-color: var(--cream-light);
+  padding-block: clamp(4rem, 9vw, 7rem);
+  text-align: center;
+}
+
+.serv-process__title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--fs-h2);
+  font-weight: 400;
+  line-height: 1.06;
+  color: var(--navy);
+}
+
+.serv-process__intro {
+  max-width: 840px;
+  margin: 1.75rem auto 0;
+}
+
+.serv-process__intro p {
+  line-height: 1.4;
+}
+
+.serv-process__intro p + p {
+  margin-top: 1rem;
+}
+
+/* Círculo interactivo */
+.circle {
+  position: relative;
+  width: min(560px, 88vw);
+  aspect-ratio: 1;
+  margin: clamp(2.5rem, 6vw, 4.5rem) auto 0;
+}
+
+.circle__ring {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.circle__track {
+  stroke-dasharray: 290;
+  stroke-dashoffset: 290;
+  transition: stroke-dashoffset 1.6s var(--ease);
+}
+
+.circle.is-visible .circle__track {
+  stroke-dashoffset: 0;
+}
+
+.circle__dots {
+  position: absolute;
+  inset: 0;
+}
+
+.circle__dot {
+  position: absolute;
+  left: calc(50% + sin(var(--a)) * 46%);
+  top: calc(50% - cos(var(--a)) * 46%);
+  width: clamp(26px, 5.5vw, 36px);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background-color: var(--navy);
+  cursor: pointer;
+  transition: background-color 0.35s var(--ease), transform 0.35s var(--ease),
+    box-shadow 0.35s var(--ease);
+}
+
+.circle__dot::after {
+  /* área de click más generosa */
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: 50%;
+}
+
+.circle__dot:hover {
+  transform: scale(1.18);
+}
+
+.circle__dot.is-active {
+  background-color: var(--yellow);
+  transform: scale(1.22);
+  box-shadow: 0 0 0 6px rgba(255, 223, 7, 0.18);
+}
+
+/* Contenido central */
+.circle__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 clamp(2.5rem, 12%, 5.5rem);
+  pointer-events: none; /* deja pasar los clics a los puntos */
+  transition: opacity 0.25s ease, transform 0.25s var(--ease);
+}
+
+.circle__center.is-changing {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.circle__num {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 8vw, 5.3125rem);
+  line-height: 1.1;
+  color: var(--navy);
+}
+
+.circle__step-title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(1.4rem, 3.4vw, 2rem);
+  line-height: 1.06;
+  color: var(--ink);
+  margin: 0.5rem 0 0.85rem;
+}
+
+.circle__step-desc {
+  font-size: clamp(0.9rem, 1.6vw, 1.125rem);
+  line-height: 1.25;
+  color: var(--ink);
+}
+
+.circle__step-desc strong {
+  font-weight: 600;
+}
+
+/* Sección 2 · Tipologías */
+.serv-types {
+  background-color: var(--cream-dark);
+  padding-block: clamp(4rem, 9vw, 7rem);
+}
+
+.serv-types__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1rem, 2.2vw, 1.5rem);
+  margin-top: clamp(3rem, 7vw, 5.5rem);
+}
+
+.serv-card {
+  position: relative;
+  aspect-ratio: 299 / 388;
+  overflow: hidden;
+}
+
+.serv-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s var(--ease);
+}
+
+.serv-card:hover .serv-card__img {
+  transform: scale(1.06);
+}
+
+.serv-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-color: rgba(37, 39, 58, 0.28);
+  transition: background-color 0.4s ease;
+}
+
+.serv-card:hover::after {
+  background-color: rgba(37, 39, 58, 0.42);
+}
+
+.serv-card__more {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  color: var(--white);
+  transition: transform 0.4s var(--ease);
+}
+
+.serv-card:hover .serv-card__more {
+  transform: rotate(90deg);
+}
+
+.serv-card__more svg {
+  width: 100%;
+  height: 100%;
+}
+
+.serv-card__body {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  text-align: center;
+}
+
+.serv-card__title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  line-height: 1.06;
+  color: var(--white);
+}
+
+.serv-card__rule {
+  width: 42px;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.85);
+}
+
+@media (max-width: 900px) {
+  .serv-types__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .serv-types__grid {
+    grid-template-columns: 1fr;
+    max-width: 340px;
+    margin-inline: auto;
+  }
+}

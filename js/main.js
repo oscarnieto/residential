@@ -161,6 +161,69 @@
   }
 
   /* ------------------------------------------------------------------
+   * Círculo de proceso interactivo (página Servicios)
+   * ------------------------------------------------------------------ */
+  const circle = document.querySelector('.circle');
+  const circleData = document.getElementById('circle-data');
+  if (circle && circleData) {
+    let steps = [];
+    try {
+      steps = JSON.parse(circleData.textContent);
+    } catch (_) {
+      steps = [];
+    }
+
+    const dots = [...circle.querySelectorAll('.circle__dot')];
+    const numEl = circle.querySelector('.circle__num');
+    const titleEl = circle.querySelector('.circle__step-title');
+    const descEl = circle.querySelector('.circle__step-desc');
+    const center = circle.querySelector('.circle__center');
+
+    dots.forEach((dot, i) => {
+      const step = steps[i];
+      if (step) dot.setAttribute('aria-label', `Paso ${i + 1}: ${step.title}`);
+    });
+
+    const showStep = (index) => {
+      const step = steps[index];
+      if (!step) return;
+
+      dots.forEach((d, i) => {
+        const active = i === index;
+        d.classList.toggle('is-active', active);
+        d.setAttribute('aria-pressed', String(active));
+      });
+
+      // Transición suave del contenido central
+      center.classList.add('is-changing');
+      window.setTimeout(() => {
+        numEl.textContent = String(index + 1).padStart(2, '0');
+        titleEl.textContent = step.title;
+        descEl.innerHTML = `<strong>${step.strong}</strong> ${step.rest}`;
+        center.classList.remove('is-changing');
+      }, prefersReducedMotion ? 0 : 200);
+    };
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => showStep(Number(dot.dataset.index)));
+    });
+
+    // Navegación con flechas del teclado entre pasos
+    circle.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      const current = dots.findIndex((d) => d.classList.contains('is-active'));
+      const next =
+        e.key === 'ArrowRight'
+          ? (current + 1) % dots.length
+          : (current - 1 + dots.length) % dots.length;
+      dots[next].focus();
+      showStep(next);
+    });
+
+    showStep(0);
+  }
+
+  /* ------------------------------------------------------------------
    * Volver arriba
    * ------------------------------------------------------------------ */
   document.getElementById('back-to-top').addEventListener('click', () => {
