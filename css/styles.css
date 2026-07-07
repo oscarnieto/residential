@@ -2038,16 +2038,17 @@ footer[id] {
 .track-product__city {
   position: absolute;
   left: 50%;
-  top: 0;
-  translate: -50% -58%;
+  top: clamp(0.9rem, 4%, 2rem);
+  translate: -50% 0;
   z-index: 2;
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: clamp(2.2rem, 5vw, 4.5rem);
+  font-size: var(--fs-h2);
   line-height: 1;
-  color: var(--navy);
+  color: var(--white);
   white-space: nowrap;
   pointer-events: none;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
 }
 
 .track-product__media {
