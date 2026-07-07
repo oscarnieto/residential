@@ -2023,7 +2023,7 @@ footer[id] {
   /* huecos laterales para que el primer y último producto centren */
   padding-inline: max(var(--gutter), calc(50vw - var(--track-card) / 2));
   will-change: transform;
-  --track-card: min(640px, 62vw);
+  --track-card: min(880px, 72vw);
 }
 
 .track-product {

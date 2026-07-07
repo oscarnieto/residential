@@ -268,8 +268,8 @@
         const center = r.left + r.width / 2;
         const d = Math.min(1, Math.abs(center - mid) / (window.innerWidth * 0.5));
         const eased = d * d;
-        const scale = 1 - eased * 0.32; // centro 1.0 → extremos ~0.68
-        const opacity = 1 - eased * 0.55;
+        const scale = 1.08 - eased * 0.5; // centro 1.08 (protagonista) → extremos ~0.58
+        const opacity = 1 - eased * 0.6;
         p.style.setProperty('--s', scale.toFixed(3));
         p.style.setProperty('--o', opacity.toFixed(3));
       });
