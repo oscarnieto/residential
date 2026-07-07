@@ -770,29 +770,27 @@ footer[id] {
 .map__radar {
   position: absolute;
   left: 50%;
-  bottom: 2px;
-  width: 0;
-  height: 0;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  translate: -50% 50%;
   pointer-events: none;
 }
 
-/* Se anima el tamaño (no scale) para que el trazo quede siempre fino */
 .map__radar::before,
 .map__radar::after {
   content: '';
   position: absolute;
-  left: 0;
-  top: 0;
-  translate: -50% -50%;
+  inset: 0;
   border-radius: 50%;
-  border: 1px solid var(--yellow);
+  border: 2px solid var(--yellow);
   opacity: 0;
-  animation: map-radar 2.8s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+  animation: map-radar 2.6s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
   animation-play-state: paused;
 }
 
 .map__radar::after {
-  animation-delay: 1.4s;
+  animation-delay: 1.3s;
 }
 
 .map.is-visible .map__radar::before,
@@ -802,16 +800,14 @@ footer[id] {
 
 @keyframes map-radar {
   0% {
-    width: 8px;
-    height: 8px;
-    opacity: 0.4;
+    transform: scale(0.45);
+    opacity: 0.85;
   }
   70% {
-    opacity: 0.07;
+    opacity: 0.12;
   }
   100% {
-    width: 92px;
-    height: 92px;
+    transform: scale(6);
     opacity: 0;
   }
 }
