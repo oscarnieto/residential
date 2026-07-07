@@ -359,7 +359,7 @@ footer[id] {
 .hero__bg {
   position: absolute;
   inset: 0;
-  background-image: url('../assets/img/hero.jpg');
+  background-image: url('../assets/img/hero-poster.jpg');
   background-size: cover;
   background-position: center;
   animation: hero-zoom 16s var(--ease) forwards;
