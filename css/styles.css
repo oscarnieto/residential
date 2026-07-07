@@ -1108,3 +1108,334 @@ footer[id] {
     text-align: center;
   }
 }
+
+/* ==========================================================================
+   Página · Red Internacional
+   ========================================================================== */
+
+/* Hero */
+.ri-hero {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  background-color: var(--navy);
+  overflow: hidden;
+}
+
+.ri-hero__glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60% 55% at 50% 42%, rgba(78, 82, 120, 0.55) 0%, rgba(37, 39, 58, 0) 70%),
+    radial-gradient(40% 40% at 78% 80%, rgba(255, 223, 7, 0.06) 0%, rgba(37, 39, 58, 0) 70%);
+}
+
+.ri-hero__title {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-serif);
+  font-size: var(--fs-h1);
+  font-weight: 400;
+  text-align: center;
+  color: var(--white);
+  padding-inline: 1rem;
+  text-shadow: 0 2px 40px rgba(0, 0, 0, 0.35);
+}
+
+.ri-hero__title-line {
+  display: block;
+  opacity: 0;
+  transform: translateY(40px);
+  animation: hero-title 1.1s var(--ease) forwards;
+}
+
+.ri-hero__title-line:first-child {
+  line-height: 1.22;
+  animation-delay: 0.2s;
+}
+
+.ri-hero__title-line--italic {
+  font-style: italic;
+  line-height: 1;
+  animation-delay: 0.4s;
+}
+
+/* Sección 1 · Expertise 360 */
+.ri-expertise {
+  background-color: var(--navy-light);
+  color: var(--white);
+  padding-block: clamp(4rem, 9vw, 7rem);
+}
+
+.ri-expertise__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(220px, 24vw, 300px);
+  gap: clamp(2.5rem, 7vw, 7rem);
+  align-items: start;
+}
+
+.ri-kicker {
+  font-weight: 600;
+  font-size: clamp(1rem, 0.9rem + 0.6vw, 1.375rem);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 1.75rem;
+}
+
+.ri-expertise__title {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--fs-h2);
+  font-weight: 400;
+  line-height: 1.06;
+  margin-bottom: 2rem;
+}
+
+.ri-expertise__lead {
+  max-width: 620px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ri-expertise__stats {
+  display: grid;
+  gap: 1.75rem;
+}
+
+.ri-stat__number {
+  font-family: var(--font-serif);
+  font-size: var(--fs-h1);
+  line-height: 1.1;
+  color: var(--white);
+}
+
+.ri-stat__label {
+  margin-top: 0.4rem;
+  max-width: 230px;
+  line-height: 1.1;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.ri-stat__divider {
+  display: block;
+  height: 1px;
+  background-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Sección 2 · Equipos especializados */
+.ri-teams {
+  background-color: var(--cream-light);
+  padding-block: clamp(4rem, 9vw, 7rem);
+}
+
+.ri-teams__intro {
+  max-width: 920px;
+  margin: clamp(2rem, 5vw, 3.5rem) auto 0;
+  text-align: center;
+}
+
+.ri-teams__intro p {
+  line-height: 1.4;
+}
+
+.ri-teams__intro p + p {
+  margin-top: 1rem;
+}
+
+.ri-teams__feature {
+  display: grid;
+  grid-template-columns: minmax(0, 546px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2rem, 6vw, 5rem);
+  margin-top: clamp(3rem, 8vw, 6rem);
+}
+
+.ri-teams__img {
+  overflow: hidden;
+  aspect-ratio: 546 / 365;
+}
+
+.ri-teams__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s var(--ease);
+}
+
+.ri-teams__img:hover img {
+  transform: scale(1.05);
+}
+
+.ri-teams__subtitle {
+  font-family: var(--font-serif);
+  font-size: var(--fs-h2);
+  font-weight: 400;
+  line-height: 1.06;
+  color: var(--navy-light);
+  margin-bottom: 1.5rem;
+}
+
+.ri-teams__subtitle em {
+  font-style: italic;
+}
+
+.ri-teams__feature-text p {
+  line-height: 1.4;
+}
+
+/* Tarjetas de métricas */
+.ri-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1rem, 2.2vw, 1.5rem);
+  margin-top: clamp(3.5rem, 8vw, 6.5rem);
+}
+
+.ri-metric {
+  position: relative;
+  aspect-ratio: 299 / 388;
+  overflow: hidden;
+}
+
+.ri-metric__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s var(--ease);
+}
+
+.ri-metric:hover .ri-metric__img {
+  transform: scale(1.06);
+}
+
+.ri-metric::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(45, 46, 69, 0) 40%, rgba(45, 46, 69, 0.8) 78%);
+}
+
+.ri-metric__body {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 1;
+  padding: 1.25rem;
+  color: var(--white);
+}
+
+.ri-metric__number {
+  font-family: var(--font-serif);
+  font-size: clamp(2.75rem, 3.2vw, 3.9rem);
+  line-height: 1.1;
+}
+
+.ri-metric__label {
+  margin-top: 0.35rem;
+  font-size: 1rem;
+  line-height: 1.15;
+}
+
+/* Sección 3 · Proyectos globales */
+.ri-projects {
+  background-color: var(--navy);
+  color: var(--white);
+  padding-block: clamp(4rem, 9vw, 7rem);
+}
+
+.ri-projects__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(1.25rem, 2.5vw, 1.85rem);
+  margin-top: clamp(3rem, 7vw, 5.5rem);
+}
+
+.ri-project {
+  text-align: center;
+}
+
+.ri-project__img {
+  width: 100%;
+  aspect-ratio: 297 / 387;
+  object-fit: cover;
+  transition: transform 0.6s var(--ease);
+}
+
+.ri-project:hover .ri-project__img {
+  transform: translateY(-6px);
+}
+
+.ri-project__caption {
+  margin-top: 1.1rem;
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  line-height: 1.15;
+  color: var(--white);
+}
+
+.ri-project__caption em {
+  font-style: italic;
+}
+
+.ri-project__place {
+  display: block;
+  margin-top: 0.4rem;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+@media (max-width: 1000px) {
+  .ri-expertise__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ri-expertise__stats {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
+  .ri-stat__divider {
+    width: 1px;
+    height: auto;
+    align-self: stretch;
+    justify-self: center;
+    grid-row: span 2;
+    display: none;
+  }
+
+  .ri-teams__feature {
+    grid-template-columns: 1fr;
+  }
+
+  .ri-teams__img {
+    order: -1;
+  }
+
+  .ri-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ri-projects__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 560px) {
+  .ri-expertise__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .ri-metrics,
+  .ri-projects__grid {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+    margin-inline: auto;
+  }
+}
