@@ -766,6 +766,52 @@ footer[id] {
   transform: scale(1.18);
 }
 
+/* Pulso de radar que resalta el pin de España */
+.map__radar {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 16px;
+  height: 16px;
+  translate: -50% 50%;
+  pointer-events: none;
+}
+
+.map__radar::before,
+.map__radar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid var(--yellow);
+  opacity: 0;
+  animation: map-radar 2.6s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+  animation-play-state: paused;
+}
+
+.map__radar::after {
+  animation-delay: 1.3s;
+}
+
+.map.is-visible .map__radar::before,
+.map.is-visible .map__radar::after {
+  animation-play-state: running;
+}
+
+@keyframes map-radar {
+  0% {
+    transform: scale(0.45);
+    opacity: 0.85;
+  }
+  70% {
+    opacity: 0.12;
+  }
+  100% {
+    transform: scale(6);
+    opacity: 0;
+  }
+}
+
 /* Tarjeta que aparece al pasar el cursor / enfocar cualquier pin */
 .map__card {
   position: absolute;
