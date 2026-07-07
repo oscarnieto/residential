@@ -8,7 +8,9 @@
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ------------------------------------------------------------------
-   * Topbar: fondo al hacer scroll + enlace activo según sección visible
+   * Topbar: fondo al hacer scroll
+   * (El enlace activo se marca por página con .is-active en el HTML,
+   *  no según el scroll.)
    * ------------------------------------------------------------------ */
   const topbar = document.getElementById('topbar');
 
@@ -17,28 +19,6 @@
   };
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
-
-  const navLinks = document.querySelectorAll('.topbar__link');
-  const linkFor = (id) =>
-    [...navLinks].find((a) => a.getAttribute('href') === `#${id}`);
-
-  const sectionObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const link = linkFor(entry.target.id);
-        if (!link) return;
-        navLinks.forEach((a) => a.classList.remove('is-active'));
-        link.classList.add('is-active');
-      });
-    },
-    { rootMargin: '-45% 0px -50% 0px' }
-  );
-
-  ['inicio', 'servicios', 'red-internacional', 'savills-espana']
-    .map((id) => document.getElementById(id))
-    .filter(Boolean)
-    .forEach((section) => sectionObserver.observe(section));
 
   /* ------------------------------------------------------------------
    * Menú móvil
