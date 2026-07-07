@@ -2036,19 +2036,14 @@ footer[id] {
 }
 
 .track-product__city {
-  position: absolute;
-  left: 50%;
-  top: clamp(0.9rem, 4%, 2rem);
-  translate: -50% 0;
-  z-index: 2;
+  text-align: center;
   font-family: var(--font-serif);
   font-style: italic;
   font-size: var(--fs-h2);
   line-height: 1;
-  color: var(--white);
+  color: var(--navy);
   white-space: nowrap;
-  pointer-events: none;
-  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+  margin-bottom: clamp(1rem, 2.4vw, 1.75rem);
 }
 
 .track-product__media {
