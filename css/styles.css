@@ -946,7 +946,8 @@ footer[id] {
 .footer__menu a {
   position: relative;
   text-transform: uppercase;
-  font-size: var(--fs-body);
+  font-size: 0.8125rem;
+  letter-spacing: 0.02em;
 }
 
 .footer__menu a::after {
