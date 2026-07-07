@@ -1661,7 +1661,7 @@ footer[id] {
   position: absolute;
   left: calc(50% + sin(var(--a)) * 46%);
   top: calc(50% - cos(var(--a)) * 46%);
-  width: clamp(26px, 5.5vw, 36px);
+  width: clamp(15px, 3vw, 20px);
   aspect-ratio: 1;
   translate: -50% -50%;
   border-radius: 50%;
@@ -1680,13 +1680,13 @@ footer[id] {
 }
 
 .circle__dot:hover {
-  transform: scale(1.18);
+  transform: scale(1.12);
 }
 
 .circle__dot.is-active {
   background-color: var(--yellow);
-  transform: scale(1.22);
-  box-shadow: 0 0 0 6px rgba(255, 223, 7, 0.18);
+  transform: scale(1.15);
+  box-shadow: 0 0 0 4px rgba(255, 223, 7, 0.16);
 }
 
 /* Contenido central */
@@ -1698,7 +1698,7 @@ footer[id] {
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0 clamp(2.5rem, 12%, 5.5rem);
+  padding: 0 clamp(2.5rem, 13%, 6rem);
   pointer-events: none; /* deja pasar los clics a los puntos */
   transition: opacity 0.25s ease, transform 0.25s var(--ease);
 }
@@ -1710,23 +1710,23 @@ footer[id] {
 
 .circle__num {
   font-family: var(--font-serif);
-  font-size: clamp(3rem, 8vw, 5.3125rem);
-  line-height: 1.1;
+  font-size: clamp(2.4rem, 6vw, 3.5rem);
+  line-height: 1;
   color: var(--navy);
 }
 
 .circle__step-title {
   font-family: var(--font-serif);
   font-weight: 400;
-  font-size: clamp(1.4rem, 3.4vw, 2rem);
-  line-height: 1.06;
+  font-size: clamp(1.15rem, 2.6vw, 1.6rem);
+  line-height: 1.08;
   color: var(--ink);
-  margin: 0.5rem 0 0.85rem;
+  margin: 0.55rem 0 0.7rem;
 }
 
 .circle__step-desc {
-  font-size: clamp(0.9rem, 1.6vw, 1.125rem);
-  line-height: 1.25;
+  font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+  line-height: 1.3;
   color: var(--ink);
 }
 
