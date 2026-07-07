@@ -1809,8 +1809,9 @@ footer[id] {
   transition: background-color 0.7s var(--ease);
 }
 
-.serv-card:hover::after {
-  background-color: rgba(37, 39, 58, 0.42);
+.serv-card:hover::after,
+.serv-card:focus-within::after {
+  background-color: rgba(28, 30, 44, 0.66);
 }
 
 .serv-card__more {
