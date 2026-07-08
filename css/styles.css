@@ -1893,27 +1893,35 @@ footer[id] {
   }
 }
 
-/* Móvil: tarjeta a una columna, texto alineado abajo-izquierda y
-   descripción siempre visible (no hay hover en táctil) */
+/* Móvil: carrusel de swipe (como Red Internacional / Track Record), con la
+   descripción alineada abajo-izquierda y siempre visible (no hay hover) */
 @media (max-width: 620px) {
   .serv-types__grid {
-    grid-template-columns: 1fr;
-    gap: 1.25rem;
+    display: flex;
+    grid-template-columns: none;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    /* sangra hasta los bordes de la pantalla */
+    margin-inline: calc(var(--gutter) * -1);
+    padding: 0.5rem var(--gutter) 1.5rem;
+    max-width: none;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .serv-types__grid::-webkit-scrollbar {
+    display: none;
   }
 
   .serv-card {
+    flex: 0 0 78%;
     aspect-ratio: 3 / 4;
+    scroll-snap-align: center;
   }
 
-  .serv-card::after {
-    background: linear-gradient(
-      to top,
-      rgba(30, 32, 46, 0.78) 0%,
-      rgba(30, 32, 46, 0.32) 45%,
-      rgba(30, 32, 46, 0.08) 100%
-    );
-  }
-
+  .serv-card::after,
   .serv-card:hover::after {
     background: linear-gradient(
       to top,
@@ -1935,7 +1943,7 @@ footer[id] {
   }
 
   .serv-card__title {
-    font-size: clamp(2rem, 9vw, 2.75rem);
+    font-size: clamp(1.6rem, 7vw, 2.4rem);
     margin: 0 0 1.1rem;
   }
 
@@ -1950,12 +1958,36 @@ footer[id] {
 
   .serv-card__desc {
     max-width: none;
-    font-size: 1.0625rem;
+    font-size: 1rem;
     opacity: 1;
     max-height: none;
     margin-top: 1.1rem;
     transform: none;
     overflow: visible;
+  }
+
+  /* La tarjeta centrada crece, las laterales se atenúan (scroll-timeline) */
+  @supports (animation-timeline: view(inline)) {
+    .serv-card {
+      opacity: 0.5;
+      animation: serv-card-focus linear both;
+      animation-timeline: view(inline);
+      animation-range: cover;
+    }
+  }
+}
+
+@keyframes serv-card-focus {
+  0%   { opacity: 0.5; transform: scale(0.92); }
+  50%  { opacity: 1;   transform: scale(1); }
+  100% { opacity: 0.5; transform: scale(0.92); }
+}
+
+@media (max-width: 620px) and (prefers-reduced-motion: reduce) {
+  .serv-card {
+    opacity: 1;
+    transform: none;
+    animation: none;
   }
 }
 
