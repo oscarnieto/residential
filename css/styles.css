@@ -2127,6 +2127,26 @@ footer[id] {
 }
 
 /* --- Móvil / sin JS: carrusel de swipe nativo --- */
+/* Variante navy (Track Record Internacional) */
+.track--navy {
+  background-color: var(--navy);
+}
+
+.track--navy .track__title {
+  color: var(--cream-light);
+  font-style: normal;
+}
+
+.track--navy .track__title em {
+  font-style: italic;
+}
+
+.track--navy .track__lead,
+.track--navy .track-product__city,
+.track--navy .track-product__name {
+  color: var(--white);
+}
+
 /* Móvil: carrusel de swipe igual que los proyectos de Red Internacional */
 @media (max-width: 767px) {
   .track-gallery {

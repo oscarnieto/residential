@@ -231,82 +231,82 @@
    *  - Móvil / reduced-motion: carrusel de swipe nativo (lo maneja el CSS)
    *    con el mismo efecto de foco.
    * ------------------------------------------------------------------ */
-  const gallery = document.querySelector('.track-gallery');
-  if (gallery) {
-    const track = gallery.querySelector('.track-gallery__track');
-    const sticky = gallery.querySelector('.track-gallery__sticky');
-    const products = [...gallery.querySelectorAll('.track-product')];
+  const galleries = [...document.querySelectorAll('.track-gallery')];
+  if (galleries.length) {
     const desktopMQ = window.matchMedia('(min-width: 768px)');
-
     const isPinned = () => desktopMQ.matches && !prefersReducedMotion;
-    let maxTravel = 0;
     let ticking = false;
 
-    // distancia entre el centro del primer y del último producto
-    // (con offsetLeft/offsetWidth, que no se ven afectados por el `scale`)
-    const travelDistance = () => {
-      if (products.length < 2) return 0;
-      const c = (el) => el.offsetLeft + el.offsetWidth / 2;
-      return Math.max(0, c(products[products.length - 1]) - c(products[0]));
-    };
+    const setup = (gallery) => {
+      const track = gallery.querySelector('.track-gallery__track');
+      const products = [...gallery.querySelectorAll('.track-product')];
+      let maxTravel = 0;
 
-    const layout = () => {
-      if (isPinned()) {
-        maxTravel = travelDistance();
-        gallery.style.height = window.innerHeight + maxTravel + 'px';
-      } else {
-        gallery.style.height = '';
-        track.style.transform = '';
-      }
-    };
+      // distancia entre el centro del primer y del último producto
+      // (con offsetLeft/offsetWidth, que no se ven afectados por el `scale`)
+      const travelDistance = () => {
+        if (products.length < 2) return 0;
+        const c = (el) => el.offsetLeft + el.offsetWidth / 2;
+        return Math.max(0, c(products[products.length - 1]) - c(products[0]));
+      };
 
-    // Escala/opacidad según la distancia de cada tarjeta al centro de la pantalla
-    const focus = () => {
-      const mid = window.innerWidth / 2;
-      products.forEach((p) => {
-        const r = p.getBoundingClientRect();
-        const center = r.left + r.width / 2;
-        const d = Math.min(1, Math.abs(center - mid) / (window.innerWidth * 0.5));
-        const eased = d * d;
-        const scale = 1.08 - eased * 0.5; // centro 1.08 (protagonista) → extremos ~0.58
-        const opacity = 1 - eased * 0.6;
-        p.style.setProperty('--s', scale.toFixed(3));
-        p.style.setProperty('--o', opacity.toFixed(3));
-      });
-    };
+      const layout = () => {
+        if (isPinned()) {
+          maxTravel = travelDistance();
+          gallery.style.height = window.innerHeight + maxTravel + 'px';
+        } else {
+          gallery.style.height = '';
+          track.style.transform = '';
+        }
+      };
 
-    const onScroll = () => {
-      if (isPinned()) {
+      // Escala/opacidad según la distancia de cada tarjeta al centro
+      const focus = () => {
+        const mid = window.innerWidth / 2;
+        products.forEach((p) => {
+          const r = p.getBoundingClientRect();
+          const center = r.left + r.width / 2;
+          const d = Math.min(1, Math.abs(center - mid) / (window.innerWidth * 0.5));
+          const eased = d * d;
+          const scale = 1.08 - eased * 0.5; // centro 1.08 → extremos ~0.58
+          const opacity = 1 - eased * 0.6;
+          p.style.setProperty('--s', scale.toFixed(3));
+          p.style.setProperty('--o', opacity.toFixed(3));
+        });
+      };
+
+      const onScroll = () => {
+        if (!isPinned()) return; // en móvil el foco lo da la animación CSS
         const top = gallery.getBoundingClientRect().top;
         const travelled = Math.min(Math.max(-top, 0), maxTravel);
         track.style.transform = `translate3d(${-travelled}px, 0, 0)`;
         gallery.classList.toggle('is-end', travelled >= maxTravel - 2);
-        focus(); // en móvil el foco lo da la animación de scroll (CSS)
-      }
-      ticking = false;
+        focus();
+      };
+
+      return { layout, onScroll };
     };
 
+    const instances = galleries.map(setup);
+
+    const onScrollAll = () => {
+      instances.forEach((i) => i.onScroll());
+      ticking = false;
+    };
     const requestTick = () => {
       if (ticking) return;
       ticking = true;
-      requestAnimationFrame(onScroll);
+      requestAnimationFrame(onScrollAll);
+    };
+    const relayout = () => {
+      instances.forEach((i) => i.layout());
+      requestTick();
     };
 
     window.addEventListener('scroll', requestTick, { passive: true });
-    track.addEventListener('scroll', requestTick, { passive: true }); // carrusel móvil
-    window.addEventListener('resize', () => {
-      layout();
-      requestTick();
-    });
-    if (sticky) sticky.addEventListener('transitionend', requestTick);
-
-    layout();
-    // primer cálculo tras el layout de imágenes
-    requestTick();
-    window.addEventListener('load', () => {
-      layout();
-      requestTick();
-    });
+    window.addEventListener('resize', relayout);
+    window.addEventListener('load', relayout);
+    relayout();
   }
 
   /* ------------------------------------------------------------------
