@@ -1170,12 +1170,43 @@ footer[id] {
   overflow: hidden;
 }
 
+/* Fondo de imagen con un sutil zoom continuo (efecto Ken Burns) */
+.ri-hero__bg {
+  position: absolute;
+  inset: 0;
+  background: url('../assets/img/hero-red-internacional.jpg') center / cover no-repeat;
+  transform-origin: center;
+  animation: ri-hero-zoom 22s ease-in-out infinite alternate;
+}
+
+@keyframes ri-hero-zoom {
+  from { transform: scale(1); }
+  to   { transform: scale(1.12); }
+}
+
+.ri-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(37, 39, 58, 0.58) 0%,
+    rgba(37, 39, 58, 0.34) 42%,
+    rgba(37, 39, 58, 0.62) 100%
+  );
+}
+
 .ri-hero__glow {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(60% 55% at 50% 42%, rgba(78, 82, 120, 0.55) 0%, rgba(37, 39, 58, 0) 70%),
+    radial-gradient(60% 55% at 50% 42%, rgba(78, 82, 120, 0.35) 0%, rgba(37, 39, 58, 0) 70%),
     radial-gradient(40% 40% at 78% 80%, rgba(255, 223, 7, 0.06) 0%, rgba(37, 39, 58, 0) 70%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ri-hero__bg {
+    animation: none;
+  }
 }
 
 .ri-hero__title {
@@ -1584,7 +1615,7 @@ footer[id] {
 
 /* Hero (usa .hero base; fondo propio) */
 .hero--servicios .hero__bg {
-  background-image: url('../assets/img/serv-hero.jpg');
+  background-image: url('../assets/img/hero-servicios-poster.jpg');
   animation: none;
 }
 
