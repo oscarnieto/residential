@@ -153,11 +153,37 @@
   const heroVideo = document.querySelector('.hero__video');
   if (heroVideo) {
     if (prefersReducedMotion) {
-      heroVideo.autoplay = false;
+      heroVideo.removeAttribute('autoplay');
       heroVideo.pause();
+    } else {
+      // Forzamos la reproducción: el atributo `autoplay` no siempre basta,
+      // sobre todo con vídeos algo más pesados o al volver a la pestaña.
+      const playHero = () => {
+        const promise = heroVideo.play();
+        if (promise && typeof promise.catch === 'function') {
+          promise.catch(() => {
+            // Si el navegador bloquea el autoplay, reintentamos en el primer
+            // gesto del usuario (sigue viéndose el póster mientras tanto).
+            const resume = () => heroVideo.play().catch(() => {});
+            document.addEventListener('pointerdown', resume, { once: true });
+            document.addEventListener('touchstart', resume, { once: true });
+          });
+        }
+      };
+
+      if (heroVideo.readyState >= 2) playHero();
+      heroVideo.addEventListener('loadeddata', playHero, { once: true });
+      heroVideo.addEventListener('canplay', playHero, { once: true });
+      // Reanuda si el vídeo se pausa al cambiar de pestaña
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden && heroVideo.paused) heroVideo.play().catch(() => {});
+      });
     }
-    const heroSource = heroVideo.querySelector('source');
-    heroSource.addEventListener('error', () => heroVideo.classList.add('is-hidden'));
+
+    // Solo ocultamos el vídeo si falla de verdad (queda el póster/imagen de
+    // fondo, que es idéntico al primer frame). Escuchamos el error del propio
+    // elemento, no del <source>, para no ocultarlo por hipos transitorios.
+    heroVideo.addEventListener('error', () => heroVideo.classList.add('is-hidden'));
   }
 
   /* ------------------------------------------------------------------
