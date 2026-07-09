@@ -2423,8 +2423,9 @@ footer[id] {
 /* --- Etiqueta de ciudad + LinkedIn (solo equipo España) --- */
 .team-card__tag {
   position: absolute;
-  left: 12px;
+  left: 50%;
   bottom: 12px;
+  transform: translateX(-50%);
   display: inline-flex;
   align-items: stretch;
   overflow: hidden;
