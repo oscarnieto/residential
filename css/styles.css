@@ -2543,3 +2543,171 @@ footer[id] {
     transition: none;
   }
 }
+
+/* ==========================================================================
+   Página · Contacto
+   ========================================================================== */
+
+.hero--contacto .hero__bg {
+  background-image: url('../assets/img/contacto-hero.jpg');
+  animation: none;
+}
+
+.hero--contacto .hero__overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(37, 39, 58, 0.42) 0%,
+    rgba(37, 39, 58, 0.24) 45%,
+    rgba(37, 39, 58, 0.46) 100%
+  );
+}
+
+.contact {
+  background-color: var(--cream-light);
+  padding-top: clamp(4rem, 9vw, 7rem);
+  padding-bottom: clamp(4rem, 9vw, 7rem);
+}
+
+/* Intro centrada */
+.contact__intro {
+  text-align: center;
+}
+
+.contact__title {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--fs-h2);
+  line-height: 1.1;
+  color: var(--navy);
+}
+
+.contact__title em {
+  font-style: italic;
+}
+
+.contact__lead {
+  max-width: 640px;
+  margin: 1.25rem auto 0;
+  line-height: 1.5;
+}
+
+.contact__lead strong {
+  font-weight: 600;
+}
+
+.contact__rule {
+  display: block;
+  width: 64px;
+  height: 1px;
+  margin: clamp(1.5rem, 3vw, 2.25rem) auto 0;
+  background-color: var(--navy);
+  opacity: 0.5;
+}
+
+/* Bloque: texto fijo (sticky) + ciudades que se deslizan */
+.contact__block {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 562px);
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: start;
+  margin-top: clamp(3rem, 8vw, 7rem);
+}
+
+.contact__aside {
+  position: sticky;
+  top: clamp(130px, 28vh, 260px);
+  align-self: start;
+}
+
+.contact__cta {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 1.1rem + 1.9vw, 2.375rem);
+  line-height: 1.18;
+  color: var(--navy);
+  max-width: 15ch;
+}
+
+.contact__cta em {
+  font-style: italic;
+}
+
+/* Columna de ciudades */
+.contact__cities {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.contact-city__media {
+  overflow: hidden;
+  aspect-ratio: 562 / 272;
+  background-color: var(--cream-dark);
+}
+
+.contact-city__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 1.4s var(--ease);
+}
+
+.contact-city:hover .contact-city__media img {
+  transform: scale(1.04);
+}
+
+.contact-city__name {
+  margin-top: clamp(0.85rem, 1.6vw, 1.15rem);
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--fs-h3);
+  line-height: 1.1;
+  color: var(--navy);
+}
+
+.contact-city__addr {
+  margin-top: 0.4rem;
+  font-size: 0.9375rem;
+  color: rgba(28, 28, 28, 0.6);
+}
+
+.contact-city__phone {
+  margin-top: 0.35rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.contact-city__phone a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.contact-city__phone a:hover {
+  color: var(--red);
+}
+
+/* Móvil / tablet: se apila y el texto deja de estar fijo */
+@media (max-width: 860px) {
+  .contact__block {
+    grid-template-columns: 1fr;
+    gap: clamp(2.5rem, 8vw, 4rem);
+  }
+
+  .contact__aside {
+    position: static;
+    top: auto;
+  }
+
+  .contact__cta {
+    max-width: 22ch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-city__media img {
+    transition: none;
+  }
+}
