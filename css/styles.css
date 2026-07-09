@@ -2264,3 +2264,250 @@ footer[id] {
     transition: none;
   }
 }
+
+/* ==========================================================================
+   Página · Equipo
+   ========================================================================== */
+
+/* Hero (usa .hero base; fondo propio) */
+.hero--equipo .hero__bg {
+  background-image: url('../assets/img/equipo-hero.jpg');
+  animation: none;
+}
+
+.hero--equipo .hero__overlay {
+  background: linear-gradient(
+    to bottom,
+    rgba(37, 39, 58, 0.30) 0%,
+    rgba(37, 39, 58, 0.14) 45%,
+    rgba(37, 39, 58, 0.34) 100%
+  );
+}
+
+/* --- Secciones de equipo --- */
+.team {
+  padding-top: clamp(4rem, 9vw, 7rem);
+  padding-bottom: clamp(4rem, 9vw, 7rem);
+}
+
+.team--es {
+  background-color: var(--cream-light);
+}
+
+.team--global {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--navy);
+}
+
+.team__intro {
+  text-align: center;
+}
+
+.team__lead {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--fs-h2);
+  line-height: 1.14;
+  color: var(--navy);
+}
+
+.team__lead em {
+  font-style: italic;
+}
+
+.team__rule {
+  display: block;
+  width: 64px;
+  height: 1px;
+  margin: clamp(1.5rem, 3vw, 2.25rem) auto 0;
+  background-color: var(--navy);
+  opacity: 0.5;
+}
+
+.team__title {
+  margin-top: clamp(1.75rem, 3.5vw, 2.75rem);
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--fs-sub);
+  line-height: 1.1;
+  color: var(--navy);
+}
+
+.team__title em {
+  font-style: italic;
+}
+
+.team__title--light {
+  color: var(--cream-light);
+}
+
+/* Fondo decorativo (globo terráqueo) del equipo global */
+.team__earth {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 62%;
+  background: url('../assets/img/team-earth.jpg') center bottom / cover no-repeat;
+  opacity: 0.4;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 55%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 55%);
+  pointer-events: none;
+}
+
+/* --- Rejilla de tarjetas --- */
+.team__grid {
+  --col-gap: clamp(1.25rem, 1.8vw, 1.85rem);
+  --row-gap: clamp(2.25rem, 3.5vw, 3rem);
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--row-gap) var(--col-gap);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.team-card {
+  flex: 0 0 calc((100% - 3 * var(--col-gap)) / 4);
+  max-width: 320px;
+}
+
+.team-card__media {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 304 / 397;
+  background-color: var(--cream-dark);
+}
+
+.team-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 1.4s var(--ease);
+}
+
+.team-card--link:hover .team-card__media img {
+  transform: scale(1.04);
+}
+
+.team-card__name {
+  margin-top: clamp(0.85rem, 1.5vw, 1.1rem);
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--fs-h3);
+  line-height: 1.12;
+  text-align: center;
+  color: var(--navy);
+}
+
+.team-card__role {
+  margin-top: 0.35rem;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.35;
+  text-align: center;
+  color: rgba(28, 28, 28, 0.6);
+}
+
+.team--global .team-card__name {
+  color: var(--white);
+}
+
+.team--global .team-card__role {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+/* --- Etiqueta de ciudad + LinkedIn (solo equipo España) --- */
+.team-card__tag {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: stretch;
+  overflow: hidden;
+  background-color: var(--yellow);
+  color: var(--ink);
+  border-radius: 3px;
+}
+
+.team-card__city {
+  padding: 5px 10px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+  white-space: nowrap;
+  transition: transform 0.55s var(--ease);
+}
+
+.team-card__linkedin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 0;
+  opacity: 0;
+  color: var(--ink);
+  border-left: 1px solid rgba(28, 28, 28, 0.22);
+  transition: width 0.55s var(--ease), opacity 0.4s var(--ease);
+}
+
+.team-card__linkedin svg {
+  width: 16px;
+  height: 16px;
+  transform: translateX(5px);
+  transition: transform 0.55s var(--ease);
+}
+
+.team-card--link:hover .team-card__tag,
+.team-card--link:focus-within .team-card__tag {
+  box-shadow: 0 4px 14px rgba(37, 39, 58, 0.28);
+}
+
+.team-card--link:hover .team-card__city,
+.team-card--link:focus-within .team-card__city {
+  transform: translateX(-2px);
+}
+
+.team-card--link:hover .team-card__linkedin,
+.team-card--link:focus-within .team-card__linkedin {
+  width: 30px;
+  opacity: 1;
+}
+
+.team-card--link:hover .team-card__linkedin svg,
+.team-card--link:focus-within .team-card__linkedin svg {
+  transform: none;
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .team-card {
+    flex-basis: calc((100% - var(--col-gap)) / 2);
+    max-width: none;
+  }
+}
+
+/* En dispositivos táctiles (sin hover) el icono de LinkedIn queda visible
+   para que siga siendo accesible con un toque */
+@media (hover: none) {
+  .team-card--link .team-card__linkedin {
+    width: 30px;
+    opacity: 1;
+  }
+
+  .team-card--link .team-card__linkedin svg {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .team-card__media img,
+  .team-card__city,
+  .team-card__linkedin,
+  .team-card__linkedin svg {
+    transition: none;
+  }
+}
