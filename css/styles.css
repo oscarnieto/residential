@@ -2714,43 +2714,37 @@ footer[id] {
 
 /* ==========================================================================
    Móvil · Texto centrado (general)
-   En pantallas pequeñas los bloques de texto se alinean al centro.
-   Se excluyen a propósito las tarjetas de tipología de Servicios y los
-   carruseles, que tienen su propia alineación de diseño.
+   En pantallas pequeñas TODOS los textos de todas las secciones se
+   alinean al centro.
    ========================================================================== */
 @media (max-width: 767px) {
-  /* Home · "¿Qué nos hace diferentes?" */
-  .card__title,
-  .card__text,
-  /* Home · Red internacional (+300 líneas de negocio) */
-  .network__subtitle,
-  .network__business-text,
-  .network__business-text p,
-  /* Red Internacional · Expertise 360 */
-  .ri-kicker,
-  .ri-expertise__title,
-  .ri-expertise__lead,
-  .ri-stat,
-  .ri-stat__number,
-  .ri-stat__label,
-  /* Red Internacional · Equipos especializados */
-  .ri-teams__feature-text,
-  .ri-teams__subtitle,
-  /* Red Internacional · Métricas globales */
-  .ri-metric__body,
-  .ri-metric__number,
-  .ri-metric__label,
-  /* Contacto */
-  .contact__cta,
-  .contact-city {
+  main {
     text-align: center;
   }
 
-  /* Bloques con ancho máximo propio: además centramos la caja */
+  /* Cajas con ancho máximo propio: se centran como bloque para que el
+     texto centrado quede realmente en el medio */
+  main p,
   .ri-expertise__lead,
   .ri-stat__label,
   .ri-metric__label,
+  .track__lead,
   .contact__cta {
     margin-inline: auto;
+  }
+
+  /* Tarjetas de tipología de Servicios: contenido centrado */
+  .serv-card__body {
+    align-items: center;
+    text-align: center;
+  }
+
+  .serv-card__rule {
+    margin-inline: auto;
+  }
+
+  /* Tarjetas de proyecto de Red Internacional: texto centrado */
+  .ri-project__caption {
+    text-align: center;
   }
 }
