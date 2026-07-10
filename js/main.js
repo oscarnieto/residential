@@ -306,7 +306,6 @@
         const top = gallery.getBoundingClientRect().top;
         const travelled = Math.min(Math.max(-top, 0), maxTravel);
         track.style.transform = `translate3d(${-travelled}px, 0, 0)`;
-        gallery.classList.toggle('is-end', travelled >= maxTravel - 2);
         focus();
       };
 

@@ -2176,23 +2176,6 @@ footer[id] {
   color: var(--navy);
 }
 
-.track-gallery__hint {
-  position: absolute;
-  bottom: clamp(1.25rem, 4vh, 2.5rem);
-  left: 50%;
-  translate: -50% 0;
-  font-size: 0.8rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: rgba(37, 39, 58, 0.5);
-  opacity: 1;
-  transition: opacity 0.4s ease;
-}
-
-.track-gallery.is-end .track-gallery__hint {
-  opacity: 0;
-}
-
 /* --- Móvil / sin JS: carrusel de swipe nativo --- */
 /* Variante navy (Track Record Internacional) */
 .track--navy {
