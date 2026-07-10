@@ -1204,7 +1204,11 @@ footer[id] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ri-hero__bg {
+  .ri-hero__bg,
+  .hero--servicios .hero__bg,
+  .hero--track .hero__bg,
+  .hero--equipo .hero__bg,
+  .hero--contacto .hero__bg {
     animation: none;
   }
 }
@@ -1616,7 +1620,7 @@ footer[id] {
 /* Hero (usa .hero base; fondo propio) */
 .hero--servicios .hero__bg {
   background-image: url('../assets/img/hero-servicios.jpg');
-  animation: none;
+  animation: ri-hero-zoom 22s ease-in-out infinite alternate;
 }
 
 .hero--servicios .hero__overlay {
@@ -2028,7 +2032,7 @@ footer[id] {
 
 .hero--track .hero__bg {
   background-image: url('../assets/img/hero-track.jpg');
-  animation: none;
+  animation: ri-hero-zoom 22s ease-in-out infinite alternate;
 }
 
 /* Intro */
@@ -2303,7 +2307,7 @@ footer[id] {
 /* Hero (usa .hero base; fondo propio) */
 .hero--equipo .hero__bg {
   background-image: url('../assets/img/hero-equipo.jpg');
-  animation: none;
+  animation: ri-hero-zoom 22s ease-in-out infinite alternate;
 }
 
 .hero--equipo .hero__overlay {
@@ -2550,7 +2554,7 @@ footer[id] {
 
 .hero--contacto .hero__bg {
   background-image: url('../assets/img/hero-contacto.jpg');
-  animation: none;
+  animation: ri-hero-zoom 22s ease-in-out infinite alternate;
 }
 
 .hero--contacto .hero__overlay {
