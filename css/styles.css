@@ -418,10 +418,13 @@ footer[id] {
   animation-delay: 0.25s;
 }
 
-.hero__title-line--italic {
-  font-style: italic;
+.hero__title-line:last-child {
   line-height: 1;
   animation-delay: 0.45s;
+}
+
+.hero__title-line--italic {
+  font-style: italic;
 }
 
 @keyframes hero-title {
