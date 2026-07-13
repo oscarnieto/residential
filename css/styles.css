@@ -505,7 +505,7 @@ footer[id] {
   z-index: 3; /* flota por encima del fondo de la sección Servicios */
   margin-top: clamp(2.5rem, 6vw, 3.75rem);
   margin-bottom: clamp(-14rem, -18vw, -6rem);
-  aspect-ratio: 1270 / 585;
+  aspect-ratio: 16 / 9;
   overflow: hidden;
   box-shadow: 0 30px 80px rgba(37, 39, 58, 0.22);
 }
