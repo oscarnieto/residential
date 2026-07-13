@@ -84,12 +84,13 @@
 
     const [, prefix, rawNumber, suffix] = match;
     const isDecimal = /^\d+,\d+$/.test(rawNumber);
+    const decimalDigits = isDecimal ? rawNumber.split(',')[1].length : 0;
     const numericValue = isDecimal
       ? parseFloat(rawNumber.replace(',', '.'))
       : parseInt(rawNumber.replace(/\./g, ''), 10);
 
     const format = (value) => {
-      if (isDecimal) return value.toFixed(1).replace('.', ',');
+      if (isDecimal) return value.toFixed(decimalDigits).replace('.', ',');
       return Math.round(value)
         .toString()
         .replace(/\B(?=(\d{3})+(?!\d))/g, '.');
