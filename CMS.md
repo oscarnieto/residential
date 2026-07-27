@@ -56,8 +56,23 @@ A la izquierda tienes las **siete secciones** editables:
 Cada sección se despliega en bloques. Al abrir uno aparecen sus campos, y **a la
 derecha ves la página real actualizándose mientras escribes**. Esa vista previa
 usa exactamente el mismo motor que la web publicada, así que lo que ves es
-literalmente lo que se va a publicar. Puedes cambiar entre escritorio, tablet y
-móvil con los botones de arriba.
+literalmente lo que se va a publicar.
+
+### Ajustar el espacio de trabajo
+
+Todo el reparto de la pantalla es tuyo, y el panel lo recuerda para la próxima
+vez:
+
+| Control | Qué hace |
+|---|---|
+| **Arrastrar la línea central** | Reparte el espacio entre el formulario y la vista previa. Haz doble clic sobre ella para volver al reparto original |
+| **− / + / Ajustar** | Acerca o aleja la vista previa. *Ajustar* la encaja en el espacio que tenga; al ampliar más de lo que cabe, puedes desplazarla |
+| **Escritorio / Tablet / Móvil** | Cambia el ancho de pantalla que se simula. No es lo mismo que el zoom: aquí eliges el dispositivo, con el zoom eliges cómo de grande lo ves |
+| **Ocultar vista previa** | Deja el formulario a pantalla completa |
+| **«** (arriba en el menú lateral) | Contrae el menú a iconos y gana espacio a lo ancho |
+
+El formulario y la vista previa se desplazan por separado: puedes bajar por los
+campos sin que la previsualización se mueva de sitio.
 
 Los cambios **no se publican solos**. Mientras editas:
 

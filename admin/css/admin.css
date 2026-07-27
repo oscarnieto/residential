@@ -385,10 +385,19 @@ a {
    Estructura
    ========================================================================== */
 
+/* Estructura de aplicación: la altura la fija la ventana y cada panel se
+   desplaza por dentro, de modo que la vista previa no se va al hacer scroll
+   en el formulario. */
 .app {
   display: grid;
-  grid-template-columns: var(--sidebar) 1fr;
-  min-height: 100vh;
+  grid-template-columns: var(--sidebar) minmax(0, 1fr);
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.app:has(.sidebar.is-collapsed) {
+  --sidebar: 62px;
 }
 
 /* Barra lateral */
@@ -403,6 +412,57 @@ a {
   top: 0;
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.sidebar__collapse {
+  align-self: flex-end;
+  margin: 10px 14px -6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.55);
+  font-size: 13px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.sidebar__collapse:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* Contraída: solo iconos, con el texto oculto */
+
+.sidebar.is-collapsed .sidebar__brand-text,
+.sidebar.is-collapsed .sidebar__label,
+.sidebar.is-collapsed .sidebar__group,
+.sidebar.is-collapsed .sidebar__foot {
+  display: none;
+}
+
+.sidebar.is-collapsed .sidebar__brand {
+  justify-content: center;
+  padding: 0 0 18px;
+}
+
+.sidebar.is-collapsed .sidebar__collapse {
+  align-self: center;
+  margin: 12px 0 4px;
+}
+
+.sidebar.is-collapsed .sidebar__link {
+  justify-content: center;
+  padding: 12px 0;
+}
+
+.sidebar.is-collapsed .sidebar__dot {
+  position: absolute;
+  margin: 0;
+  transform: translate(11px, -9px);
+}
+
+.sidebar.is-collapsed .sidebar__link {
+  position: relative;
 }
 
 .sidebar__brand {
@@ -435,7 +495,13 @@ a {
 .sidebar__repo {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.5);
-  word-break: break-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar__brand-text {
+  min-width: 0;
 }
 
 .sidebar__group {
@@ -511,11 +577,11 @@ a {
   display: flex;
   flex-direction: column;
   min-width: 0;
+  min-height: 0;
 }
 
 .topbar {
-  position: sticky;
-  top: 0;
+  flex: none;
   z-index: 20;
   display: flex;
   align-items: center;
@@ -575,18 +641,75 @@ a {
   min-height: 0;
 }
 
+/* El reparto entre editor y vista previa lo fija el separador arrastrable,
+   que escribe --preview-ratio. */
 .content.has-preview {
-  grid-template-columns: minmax(0, 1fr) minmax(420px, 44%);
+  grid-template-columns: minmax(0, 1fr) 7px calc(var(--preview-ratio, 0.44) * 100%);
 }
 
 .editor {
   padding: 26px;
-  max-width: 880px;
+  max-width: 1000px;
   width: 100%;
+  overflow-y: auto;
 }
 
 .content.has-preview .editor {
   max-width: none;
+}
+
+/* ==========================================================================
+   Separador arrastrable
+   ========================================================================== */
+
+.splitter {
+  position: relative;
+  cursor: col-resize;
+  background: var(--line);
+  transition: background 0.15s;
+  touch-action: none;
+}
+
+.splitter::before {
+  /* Zona de agarre más ancha que la línea visible. */
+  content: '';
+  position: absolute;
+  inset: 0 -5px;
+}
+
+.splitter::after {
+  /* Marca central para que se vea que es arrastrable. */
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3px;
+  height: 34px;
+  border-radius: 3px;
+  background: var(--navy-border);
+  transform: translate(-50%, -50%);
+  transition: background 0.15s;
+}
+
+.splitter:hover,
+.splitter:focus-visible {
+  background: var(--navy);
+  outline: none;
+}
+
+.splitter:hover::after,
+.splitter:focus-visible::after {
+  background: #fff;
+}
+
+/* Mientras se arrastra, el iframe no debe capturar el puntero. */
+.content.is-resizing {
+  user-select: none;
+  cursor: col-resize;
+}
+
+.content.is-resizing .preview__frame {
+  pointer-events: none;
 }
 
 /* Secciones */
@@ -754,13 +877,11 @@ a {
 /* Vista previa */
 
 .preview {
-  border-left: 1px solid var(--line);
   background: #fff;
   display: flex;
   flex-direction: column;
-  position: sticky;
-  top: 57px;
-  height: calc(100vh - 57px);
+  min-width: 0;
+  overflow: hidden;
 }
 
 .preview__bar {
@@ -782,7 +903,6 @@ a {
 }
 
 .preview__sizes {
-  margin-left: auto;
   display: flex;
   gap: 3px;
 }
@@ -804,16 +924,48 @@ a {
    el visitante y no una versión estrujada del panel. */
 .preview__stage {
   flex: 1;
-  overflow: hidden;
+  overflow: auto;
   display: flex;
-  justify-content: center;
+  /* `margin: auto` en el hijo y no `justify-content: center`: al ampliar por
+     encima del espacio disponible, centrar con flex recortaría el borde
+     izquierdo y no se podría desplazar hasta él. */
+  justify-content: flex-start;
   background: #eceae8;
 }
 
 .preview__canvas {
+  margin: 0 auto;
+  flex: none;
   overflow: hidden;
   background: #fff;
   box-shadow: 0 0 0 1px var(--line);
+}
+
+.preview__file {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview__zoom {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  padding-left: 6px;
+}
+
+.preview__zoom-value {
+  min-width: 40px;
+  text-align: center;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.preview__zoom .icon-btn {
+  width: 24px;
+  height: 24px;
+  font-size: 15px;
 }
 
 .preview__frame {
@@ -1047,12 +1199,15 @@ a {
    Responsive
    ========================================================================== */
 
-@media (max-width: 1100px) {
+/* Por debajo de este ancho no queda sitio para dos paneles: se deja solo el
+   editor y el separador desaparece. */
+@media (max-width: 1000px) {
   .content.has-preview {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .content.has-preview .preview {
+  .content.has-preview .preview,
+  .content.has-preview .splitter {
     display: none;
   }
 }
@@ -1060,6 +1215,9 @@ a {
 @media (max-width: 780px) {
   .app {
     grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
   }
 
   .sidebar {
@@ -1067,8 +1225,13 @@ a {
     height: auto;
   }
 
+  .sidebar__collapse {
+    display: none;
+  }
+
   .editor {
     padding: 18px 14px;
+    overflow: visible;
   }
 
   .topbar {

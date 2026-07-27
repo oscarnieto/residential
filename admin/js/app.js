@@ -17,6 +17,7 @@ import { el, getPath, setPath, clone, isEqual, debounce, slugifyFilename, format
    -------------------------------------------------------------------------- */
 
 const CONFIG_KEY = 'savills-cms-config';
+const LAYOUT_KEY = 'savills-cms-layout';
 const MEDIA_DIR = 'assets/img';
 const IMAGE_TYPES = /\.(jpe?g|png|gif|webp|avif|svg)$/i;
 const VIDEO_TYPES = /\.(mp4|webm)$/i;
@@ -31,6 +32,31 @@ const DEFAULTS = { owner: 'oscarnieto', repo: 'residential', branch: 'claude/cle
 
 /** Anchos reales a los que se renderiza la vista previa. */
 const PREVIEW_WIDTHS = { desktop: 1440, tablet: 768, mobile: 390 };
+
+/** Niveles de zoom de la vista previa; `fit` ajusta al espacio disponible. */
+const ZOOM_LEVELS = ['fit', 0.5, 0.75, 1, 1.5];
+
+/** Reparto del espacio y estado de los paneles. Se recuerda entre sesiones. */
+const LAYOUT_DEFAULTS = {
+  previewVisible: true,
+  /** Fracción del ancho que ocupa la vista previa (0,2 – 0,8). */
+  previewRatio: 0.44,
+  previewWidth: 'desktop',
+  previewZoom: 'fit',
+  sidebarCollapsed: false,
+};
+
+const MIN_PANEL = 320;
+
+const loadLayout = () => {
+  try {
+    return { ...LAYOUT_DEFAULTS, ...JSON.parse(localStorage.getItem(LAYOUT_KEY) ?? '{}') };
+  } catch {
+    return { ...LAYOUT_DEFAULTS };
+  }
+};
+
+const saveLayout = () => localStorage.setItem(LAYOUT_KEY, JSON.stringify(state.layout));
 
 const loadConfig = () => {
   try {
@@ -57,8 +83,7 @@ const state = {
   media: [],
   activeCollection: 'inicio',
   openSections: new Set(),
-  previewVisible: true,
-  previewWidth: 'desktop',
+  layout: loadLayout(),
   publishing: false,
 };
 
@@ -511,7 +536,7 @@ let previewFrame = null;
 let previewResizeObserver = null;
 
 const refreshPreview = debounce(() => {
-  if (!previewFrame || !state.previewVisible) return;
+  if (!previewFrame || !state.layout.previewVisible) return;
   const collection = SCHEMA.find((item) => item.id === state.activeCollection);
   const pageId = collection.preview ? collection.id : 'inicio';
   try {
@@ -528,14 +553,31 @@ const refreshPreview = debounce(() => {
 const renderSidebar = () => {
   const dirty = new Set(dirtyCollections());
 
-  return el('aside', { class: 'sidebar' }, [
+  const collapsed = state.layout.sidebarCollapsed;
+
+  return el('aside', { class: `sidebar ${collapsed ? 'is-collapsed' : ''}` }, [
     el('div', { class: 'sidebar__brand' }, [
       el('span', { class: 'sidebar__mark', text: 'sv' }),
-      el('div', {}, [
+      el('div', { class: 'sidebar__brand-text' }, [
         el('div', { class: 'sidebar__title', text: 'Gestor de contenidos' }),
-        el('div', { class: 'sidebar__repo', text: `${state.config.owner}/${state.config.repo} · ${state.config.branch}` }),
+        el('div', {
+          class: 'sidebar__repo',
+          title: `${state.config.owner}/${state.config.repo} · rama ${state.config.branch}`,
+          text: `${state.config.owner}/${state.config.repo} · ${state.config.branch}`,
+        }),
       ]),
     ]),
+    el('button', {
+      class: 'sidebar__collapse',
+      type: 'button',
+      title: collapsed ? 'Expandir el menú' : 'Contraer el menú',
+      text: collapsed ? '»' : '«',
+      onclick: () => {
+        state.layout.sidebarCollapsed = !collapsed;
+        saveLayout();
+        renderApp();
+      },
+    }),
     el('div', { class: 'sidebar__group', text: 'Contenido' }),
     ...SCHEMA.map((collection) =>
       el(
@@ -543,6 +585,7 @@ const renderSidebar = () => {
         {
           class: `sidebar__link ${collection.id === state.activeCollection ? 'is-active' : ''}`,
           type: 'button',
+          title: collapsed ? collection.label : null,
           onclick: () => {
             state.activeCollection = collection.id;
             state.openSections.clear();
@@ -551,7 +594,7 @@ const renderSidebar = () => {
         },
         [
           el('span', { class: 'sidebar__icon', text: collection.icon }),
-          el('span', { text: collection.label }),
+          el('span', { class: 'sidebar__label', text: collection.label }),
           dirty.has(collection.id) ? el('span', { class: 'sidebar__dot', title: 'Cambios sin publicar' }) : null,
         ]
       )
@@ -679,9 +722,10 @@ const renderApp = () => {
       el('button', {
         class: 'btn btn--ghost',
         type: 'button',
-        text: state.previewVisible ? 'Ocultar vista previa' : 'Ver vista previa',
+        text: state.layout.previewVisible ? 'Ocultar vista previa' : 'Ver vista previa',
         onclick: () => {
-          state.previewVisible = !state.previewVisible;
+          state.layout.previewVisible = !state.layout.previewVisible;
+          saveLayout();
           renderApp();
         },
       }),
@@ -712,19 +756,28 @@ const renderApp = () => {
 
   const canvas = el('div', { class: 'preview__canvas' }, [previewFrame]);
   const stage = el('div', { class: 'preview__stage' }, [canvas]);
+  const zoomLabel = el('span', { class: 'preview__zoom-value' });
 
-  /** Ajusta la escala para que quepa el ancho real del dispositivo elegido. */
+  /**
+   * Dibuja la vista previa al ancho real del dispositivo elegido y la escala
+   * para que quepa (`fit`) o al zoom fijo que haya pedido el editor. Si al
+   * ampliar no cabe, el escenario se puede desplazar.
+   */
   const fitPreview = () => {
-    const target = PREVIEW_WIDTHS[state.previewWidth];
+    const target = PREVIEW_WIDTHS[state.layout.previewWidth];
     const available = stage.clientWidth;
     const height = stage.clientHeight;
     if (!available || !height) return;
-    const scale = Math.min(1, available / target);
+
+    const zoom = state.layout.previewZoom;
+    const scale = zoom === 'fit' ? Math.min(1, available / target) : zoom;
+
     previewFrame.style.width = `${target}px`;
     previewFrame.style.height = `${height / scale}px`;
     previewFrame.style.transform = `scale(${scale})`;
     canvas.style.width = `${target * scale}px`;
     canvas.style.height = `${height}px`;
+    zoomLabel.textContent = `${Math.round(scale * 100)}%`;
   };
 
   previewResizeObserver?.disconnect();
@@ -737,12 +790,13 @@ const renderApp = () => {
     ['mobile', 'Móvil'],
   ].map(([value, label]) =>
     el('button', {
-      class: `preview__size ${state.previewWidth === value ? 'is-active' : ''}`,
+      class: `preview__size ${state.layout.previewWidth === value ? 'is-active' : ''}`,
       type: 'button',
       text: label,
       dataset: { size: value },
       onclick: (event) => {
-        state.previewWidth = value;
+        state.layout.previewWidth = value;
+        saveLayout();
         event.target.parentElement.querySelectorAll('.preview__size').forEach((button) => {
           button.classList.toggle('is-active', button.dataset.size === value);
         });
@@ -751,25 +805,108 @@ const renderApp = () => {
     })
   );
 
+  /** Salta al siguiente (o anterior) nivel de zoom de la lista. */
+  const stepZoom = (direction) => {
+    const current = ZOOM_LEVELS.indexOf(state.layout.previewZoom);
+    const next = Math.min(ZOOM_LEVELS.length - 1, Math.max(0, current + direction));
+    state.layout.previewZoom = ZOOM_LEVELS[next];
+    saveLayout();
+    fitPreview();
+    zoomFit.classList.toggle('is-active', state.layout.previewZoom === 'fit');
+  };
+
+  const zoomFit = el('button', {
+    class: `preview__size ${state.layout.previewZoom === 'fit' ? 'is-active' : ''}`,
+    type: 'button',
+    text: 'Ajustar',
+    title: 'Ajustar la vista previa al espacio disponible',
+    onclick: () => {
+      state.layout.previewZoom = 'fit';
+      saveLayout();
+      fitPreview();
+      zoomFit.classList.add('is-active');
+    },
+  });
+
+  const zoomControls = el('div', { class: 'preview__zoom' }, [
+    el('button', { class: 'icon-btn', type: 'button', text: '−', title: 'Reducir', onclick: () => stepZoom(-1) }),
+    zoomLabel,
+    el('button', { class: 'icon-btn', type: 'button', text: '+', title: 'Ampliar', onclick: () => stepZoom(1) }),
+    zoomFit,
+  ]);
+
   const preview = el('div', { class: 'preview' }, [
     el('div', { class: 'preview__bar' }, [
-      el('span', { text: collection.preview ? collection.preview : 'Vista previa de la portada' }),
+      el('span', { class: 'preview__file', text: collection.preview ?? 'index.html' }),
+      zoomControls,
       el('div', { class: 'preview__sizes' }, sizeButtons),
     ]),
     stage,
   ]);
 
+  const visible = state.layout.previewVisible;
+
+  const content = el('div', { class: `content ${visible ? 'has-preview' : ''}` });
+  content.style.setProperty('--preview-ratio', String(state.layout.previewRatio));
+
+  /* ---- Separador arrastrable entre el editor y la vista previa ---- */
+
+  const applyRatio = (ratio) => {
+    state.layout.previewRatio = ratio;
+    content.style.setProperty('--preview-ratio', String(ratio));
+    fitPreview();
+  };
+
+  /** Traduce una posición del ratón a fracción de ancho, con topes. */
+  const ratioFromX = (clientX) => {
+    const box = content.getBoundingClientRect();
+    const previewWidth = box.right - clientX;
+    const min = MIN_PANEL / box.width;
+    const max = (box.width - MIN_PANEL) / box.width;
+    return Math.min(max, Math.max(min, previewWidth / box.width));
+  };
+
+  const splitter = el('div', {
+    class: 'splitter',
+    role: 'separator',
+    'aria-orientation': 'vertical',
+    'aria-label': 'Redimensionar el editor y la vista previa',
+    tabindex: '0',
+    title: 'Arrastra para repartir el espacio · doble clic para restablecer',
+    onpointerdown: (event) => {
+      event.preventDefault();
+      splitter.setPointerCapture(event.pointerId);
+      // El iframe se tragaría los eventos del ratón mientras se arrastra.
+      content.classList.add('is-resizing');
+
+      const onMove = (move) => applyRatio(ratioFromX(move.clientX));
+      const onUp = () => {
+        splitter.removeEventListener('pointermove', onMove);
+        splitter.removeEventListener('pointerup', onUp);
+        content.classList.remove('is-resizing');
+        saveLayout();
+      };
+
+      splitter.addEventListener('pointermove', onMove);
+      splitter.addEventListener('pointerup', onUp, { once: true });
+    },
+    ondblclick: () => {
+      applyRatio(LAYOUT_DEFAULTS.previewRatio);
+      saveLayout();
+    },
+    onkeydown: (event) => {
+      const step = event.key === 'ArrowLeft' ? 0.03 : event.key === 'ArrowRight' ? -0.03 : 0;
+      if (!step) return;
+      event.preventDefault();
+      applyRatio(Math.min(0.8, Math.max(0.2, state.layout.previewRatio + step)));
+      saveLayout();
+    },
+  });
+
+  content.append(editor, ...(visible ? [splitter, preview] : []));
+
   root.replaceChildren(
-    el('div', { class: 'app' }, [
-      renderSidebar(),
-      el('div', { class: 'main' }, [
-        topbar,
-        el('div', { class: `content ${state.previewVisible ? 'has-preview' : ''}` }, [
-          editor,
-          state.previewVisible ? preview : null,
-        ]),
-      ]),
-    ])
+    el('div', { class: 'app' }, [renderSidebar(), el('div', { class: 'main' }, [topbar, content])])
   );
 
   refreshPreview();
