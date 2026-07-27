@@ -1,0 +1,177 @@
+# Gestor de contenidos — guía de uso
+
+Con este panel puedes cambiar **cualquier texto, cifra, imagen, enlace o color**
+de la web sin tocar código. No necesitas saber programar ni instalar nada: se
+usa desde el navegador.
+
+**Dirección del panel:** https://oscarnieto.github.io/residential/admin/
+
+---
+
+## 1. Preparación (solo la primera vez)
+
+El panel necesita permiso para escribir en el repositorio. Ese permiso se
+concede con un *token*, que es como una contraseña de un solo uso para una
+aplicación concreta.
+
+1. Entra en **[github.com → Settings → Developer settings → Fine-grained tokens](https://github.com/settings/personal-access-tokens/new)**.
+2. **Token name:** pon algo reconocible, por ejemplo `CMS web residencial`.
+3. **Expiration:** elige la caducidad que prefieras. Cuando caduque tendrás que
+   repetir estos pasos; un año es un equilibrio razonable.
+4. **Repository access:** marca *Only select repositories* y elige
+   **`oscarnieto/residential`**.
+5. **Permissions → Repository permissions:**
+   - `Contents` → **Read and write** *(imprescindible)*
+   - `Actions` → **Read-only** *(opcional: sirve para ver si la publicación ha ido bien)*
+6. Pulsa **Generate token** y **copia el código** que aparece. GitHub solo te lo
+   enseña una vez.
+7. Abre el panel, pega el token en el campo **Token de acceso** y entra.
+
+El token se guarda **solo en tu navegador**. No se envía a ningún sitio que no
+sea GitHub, y no queda registrado en la web. Si usas otro ordenador tendrás que
+volver a pegarlo, y si alguna vez crees que se ha filtrado, bórralo desde
+GitHub y genera uno nuevo.
+
+> **Sobre la rama:** el campo *Rama* debe coincidir con la rama desde la que se
+> publica la web. Si no te han dicho lo contrario, déjala en `main`.
+
+---
+
+## 2. Cómo funciona
+
+A la izquierda tienes las **siete secciones** editables:
+
+| Sección | Qué controla |
+|---|---|
+| **Ajustes globales** | Logotipo, favicon, menú de navegación, colores de marca y pie de página. Afecta a las seis páginas a la vez |
+| **Inicio** | Portada: hero con vídeo, introducción, tarjetas, cifras, mapa y bloque de España |
+| **Red internacional** | Expertise, equipos, métricas y proyectos globales |
+| **Servicios** | Círculo de proceso y tarjetas de tipología |
+| **Track record** | Las dos galerías de proyectos, nacional e internacional |
+| **Equipo** | Las personas del equipo en España y del equipo global |
+| **Contacto** | Textos de contacto y las oficinas |
+
+Cada sección se despliega en bloques. Al abrir uno aparecen sus campos, y **a la
+derecha ves la página real actualizándose mientras escribes**. Esa vista previa
+usa exactamente el mismo motor que la web publicada, así que lo que ves es
+literalmente lo que se va a publicar. Puedes cambiar entre escritorio, tablet y
+móvil con los botones de arriba.
+
+Los cambios **no se publican solos**. Mientras editas:
+
+- arriba aparece un aviso de *«N secciones sin publicar»*,
+- en el menú de la izquierda sale un punto amarillo junto a lo que has tocado.
+
+Cuando estés conforme, pulsa **Publicar cambios**. Te pedirá una breve
+descripción (queda en el historial) y en **1-3 minutos** la web estará
+actualizada. El indicador de arriba te avisa cuando termina.
+
+Si te arrepientes antes de publicar, **Descartar** deja todo como estaba.
+
+---
+
+## 3. Escribir textos
+
+La mayoría de campos son texto normal. En los que llevan botones **B** e *I*
+puedes dar formato:
+
+| Escribes | Se ve |
+|---|---|
+| `*así*` | *cursiva* |
+| `**así**` | **negrita** |
+| Un salto de línea | Fuerza un corte de línea en el titular |
+| Una línea **en blanco** entre dos párrafos | Separa en párrafos |
+
+También puedes seleccionar el texto y pulsar **B** o *I*, que es más cómodo.
+
+La cursiva es el recurso de estilo de la marca: en los titulares suele ir la
+parte destacada. Por ejemplo `¿Qué nos hace *diferentes*?` se ve como
+«¿Qué nos hace *diferentes*?».
+
+### Las cifras animadas
+
+Los campos de cifra (`+42.000`, `+£2,60bn`, `+35M`) se animan solos al aparecer
+en pantalla. Escríbelas tal cual quieras que se lean: el sistema entiende
+prefijos (`+`, `£`), separador de miles con punto y decimales con coma. No hace
+falta configurar nada.
+
+---
+
+## 4. Imágenes
+
+En cualquier campo de imagen tienes **Elegir imagen**. Se abre la biblioteca con
+todo lo que ya está subido, y puedes:
+
+- **Elegir una existente** — haz clic para seleccionarla (doble clic la elige y
+  cierra).
+- **Subir una nueva** — arrastra el archivo a la zona de puntos, o haz clic para
+  buscarlo. Se sube al instante.
+
+Consejos:
+
+- **Comprime antes de subir.** Una foto de 5 MB hace la web más lenta para todo
+  el mundo. Lo ideal está entre 200 y 600 KB. El panel rechaza archivos de más
+  de 12 MB.
+- **Anchos recomendados:** heros y fondos, 1920 px; fotos de equipo, 800 px;
+  tarjetas y proyectos, 1200 px.
+- **Si solo quieres cambiar una foto por otra** manteniendo todo igual, súbela
+  con el mismo nombre y sustituirá a la anterior en todas partes.
+- El **texto alternativo** describe la imagen para personas ciegas y para
+  Google. Merece la pena rellenarlo bien.
+
+---
+
+## 5. Listas: equipo, proyectos, oficinas, cifras…
+
+Todo lo que aparece repetido en la web (personas, proyectos, tarjetas, oficinas,
+marcadores del mapa, pasos del proceso) se gestiona igual. Cada elemento tiene
+sus botones a la derecha:
+
+| Botón | Qué hace |
+|---|---|
+| ↑ ↓ | Cambia el orden. **El orden de la lista es el orden en la web** |
+| ⧉ | Duplica el elemento, útil para crear uno parecido |
+| ✕ | Lo elimina (te pide confirmación) |
+
+Abajo del todo, **+ Añadir** crea uno nuevo en blanco.
+
+Añadir o quitar elementos es seguro: el diseño se adapta solo. Puedes tener
+siete personas en el equipo o doce, cinco proyectos o nueve, y la maquetación
+sigue funcionando. Incluso el círculo de Servicios reparte sus pasos
+automáticamente alrededor, tenga los que tenga.
+
+---
+
+## 6. Cosas que conviene saber
+
+**Puedo romper la web?** Es difícil. Los textos se limpian automáticamente antes
+de publicarse, así que no se puede colar código por accidente. Lo peor que puede
+pasar es que algo quede feo, y siempre se puede volver atrás.
+
+**Cómo deshago algo ya publicado?** Todo cambio queda registrado. En
+*Historial de cambios* (abajo a la izquierda) puedes ver quién cambió qué y
+cuándo. Para revertir algo, pídeselo a quien lleve el repositorio.
+
+**Puede editar más de una persona?** Sí, pero no a la vez sobre lo mismo. Si
+alguien publica mientras tú tenías cambios abiertos, el panel te avisa y te pide
+recargar en vez de pisar su trabajo.
+
+**He publicado y no veo el cambio.** Espera 2-3 minutos y recarga con
+`Ctrl+F5` (o `Cmd+Shift+R` en Mac) para saltarte la caché del navegador.
+
+**Se me ha olvidado publicar y he cerrado.** El navegador avisa antes de salir
+si hay cambios sin publicar. Si aun así se perdieron, no pasa nada: la web
+publicada nunca llegó a cambiar.
+
+---
+
+## 7. Lo que no se edita desde aquí
+
+El panel cubre el contenido. El **diseño** —tipografías, tamaños, espaciados,
+animaciones, cómo se comporta el círculo o las galerías— vive en el código
+(`css/styles.css` y `js/main.js`) y lo toca quien mantiene el sitio. Los colores
+de marca sí son editables, en *Ajustes globales*.
+
+Para cualquier cambio de esos, o para añadir una página nueva, habla con el
+equipo técnico: en [`ARCHITECTURE.md`](ARCHITECTURE.md) tienen documentado todo
+el montaje.

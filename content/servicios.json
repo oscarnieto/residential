@@ -1,0 +1,86 @@
+{
+  "seo": {
+    "title": "Servicios | Obra Nueva Residencial — Savills",
+    "description": "Un enfoque integral que combina conocimiento de mercado, estrategia y capacidad comercial para maximizar el valor de cada proyecto."
+  },
+  "hero": {
+    "image": "assets/img/hero-servicios.jpg",
+    "imageAlt": "Servicios integrales de Savills",
+    "scrollTo": "#proceso",
+    "lines": [
+      { "text": "Servicios", "italic": false },
+      { "text": "Integrales", "italic": true }
+    ]
+  },
+  "process": {
+    "title": "*Cada proyecto presenta decisiones clave desde sus fases iniciales.*",
+    "intro": "Por eso, acompañamos a promotores inmobiliarios en todas las fases del desarrollo, desde la definición del producto hasta su comercialización.\n\nUn enfoque integral que combina conocimiento de mercado, estrategia y capacidad comercial para maximizar el valor de cada proyecto y optimizar su salida al mercado.",
+    "steps": [
+      {
+        "title": "Análisis urbanístico y gestión de suelo",
+        "strong": "Identificar el potencial real de un suelo es el primer paso para el éxito de una promoción.",
+        "rest": "Analizamos su viabilidad urbanística y su capacidad de desarrollo para asegurar una base sólida desde el inicio."
+      },
+      {
+        "title": "Research y análisis de mercado",
+        "strong": "Tomar decisiones sin entender la demanda puede comprometer el resultado del proyecto.",
+        "rest": "Elaboramos estudios de mercado que permiten identificar oportunidades y respaldar la toma de decisiones estratégicas."
+      },
+      {
+        "title": "Desarrollo de estrategia",
+        "strong": "Definir el posicionamiento adecuado desde el inicio es clave para la competitividad del proyecto.",
+        "rest": "Desarrollamos estrategias que aseguran su encaje en el mercado y maximizan su valor."
+      },
+      {
+        "title": "Sostenibilidad e innovación",
+        "strong": "Las exigencias del mercado están evolucionando hacia modelos más eficientes y sostenibles.",
+        "rest": "Integramos criterios ESG y tendencias del sector para asegurar la competitividad futura del proyecto."
+      },
+      {
+        "title": "Estrategia de comercialización y marketing",
+        "strong": "Llegar al comprador adecuado en el momento correcto es uno de los mayores retos en obra nueva.",
+        "rest": "Diseñamos planes de comercialización y comunicación alineados con el público objetivo y los objetivos del proyecto."
+      },
+      {
+        "title": "Gestión de ventas",
+        "strong": "Mantener un flujo constante de ventas sin comprometer el valor requiere una ejecución sólida.",
+        "rest": "Gestionamos el proceso comercial optimizando la captación, cualificación y conversión de la demanda."
+      },
+      {
+        "title": "Seguimiento y optimización",
+        "strong": "El mercado cambia y la estrategia debe adaptarse.",
+        "rest": "Monitorizamos el rendimiento comercial y ajustamos las decisiones en función de la evolución del mercado."
+      },
+      {
+        "title": "Cierre",
+        "strong": "El proceso no termina con la venta.",
+        "rest": "Acompañamos hasta la formalización final, asegurando una gestión eficiente y controlada."
+      }
+    ]
+  },
+  "types": {
+    "title": "*Sabemos que cada proyecto es único.*\nPor eso abordamos cada proyecto con una estrategia a medida, de principio a fin.",
+    "cards": [
+      {
+        "title": "High End\nResidences",
+        "image": "assets/img/serv-card-4.jpg",
+        "desc": "Proyectos de alto nivel orientados a segmentos premium, donde la estrategia se centra en posicionamiento, exclusividad y valor."
+      },
+      {
+        "title": "Boutique\nCollection",
+        "image": "assets/img/serv-card-1.jpg",
+        "desc": "Proyectos exclusivos con un alto nivel de diseño y posicionamiento diferencial, orientados a un comprador que prioriza singularidad y calidad."
+      },
+      {
+        "title": "City\nResidences",
+        "image": "assets/img/serv-card-2.jpg",
+        "desc": "Promociones orientadas a demanda urbana, ubicadas en zonas consolidadas con alta liquidez y rotación."
+      },
+      {
+        "title": "Urban\nLiving",
+        "image": "assets/img/serv-card-3.jpg",
+        "desc": "Promociones adaptadas a nuevos estilos de vida, con un enfoque flexible y atractivo para comprador internacional."
+      }
+    ]
+  }
+}

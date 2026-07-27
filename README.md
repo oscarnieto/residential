@@ -1,66 +1,63 @@
-# Residential New Developments — Savills
+# Obra Nueva Residencial — Savills
 
-Landing page one-page desarrollada a partir del diseño de Figma
+Sitio de seis páginas desarrollado a partir del diseño de Figma
 [Residential New Developments](https://www.figma.com/design/jdwx4oQaPNUSJVW76JAmQG/Residential-New-Developments).
 
-**Demo:** https://oscarnieto.github.io/residential/
+**Web:** https://oscarnieto.github.io/residential/
+**Gestor de contenidos:** https://oscarnieto.github.io/residential/admin/
+
+## Documentación
+
+| Documento | Para quién |
+|---|---|
+| [`CMS.md`](CMS.md) | Quien edita el contenido de la web. Cómo entrar al panel, escribir textos, subir imágenes y publicar |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Equipo técnico. Stack, estructura, despliegue, seguridad y decisiones de diseño |
 
 ## Stack
 
-HTML + CSS + JavaScript vanilla, sin dependencias ni build. Se despliega
-automáticamente en GitHub Pages con GitHub Actions en cada push
-(`.github/workflows/deploy.yml`).
+HTML, CSS y JavaScript vanilla, sin frameworks ni dependencias. El contenido
+vive en `content/*.json` y un script de Node sin dependencias
+(`build/build.mjs`) genera los seis HTML. GitHub Actions construye y publica en
+GitHub Pages en cada push (`.github/workflows/deploy.yml`).
 
 ## Estructura
 
 ```
-├── index.html          Página completa (6 secciones)
+├── content/            Contenido editable (fuente de la verdad)
+├── build/              Generador estático (Node, sin dependencias)
+├── admin/              Gestor de contenidos
+├── *.html              GENERADOS por el build — no editar a mano
 ├── css/
 │   ├── fonts.css       @font-face (fuentes variables self-hosted)
-│   └── styles.css      Estilos: tokens de diseño, layout, responsive
+│   ├── styles.css      Estilos: tokens de diseño, layout, responsive
+│   └── theme.css       GENERADO: colores de marca e imágenes de fondo
 ├── js/
-│   └── main.js         Menú móvil, reveals, contadores, mapa, vídeo
+│   └── main.js         Menú móvil, reveals, contadores, mapa, galerías, vídeo
 └── assets/
     ├── fonts/          Playfair Display + Montserrat (woff2, latin)
-    └── img/            Imágenes y SVG
+    └── img/            Imágenes, vídeo y SVG
 ```
 
-## Secciones
+## Páginas
 
-1. **Hero** — imagen a pantalla completa, navegación con logo central.
-2. **Intro + vídeo** — claim principal y vídeo que se solapa con la sección siguiente.
-3. **Servicios** — “¿Qué nos hace diferentes?”, rejilla de 6 tarjetas.
-4. **Red internacional** — contadores animados, bloque de negocio y mapa mundial punteado con pins.
-5. **Savills en España** — fondo fotográfico fijo con cifras destacadas.
-6. **Footer** — menú, redes sociales y barra legal.
+| Página | Contenido |
+|---|---|
+| **Inicio** | Hero con vídeo, intro, «¿Qué nos hace diferentes?», red internacional con contadores y mapa interactivo, Savills en España |
+| **Red internacional** | Expertise 360, equipos especializados, métricas globales y proyectos internacionales |
+| **Servicios** | Círculo interactivo de proceso y tarjetas de tipología de producto |
+| **Track record** | Dos galerías horizontales ancladas al scroll, nacional e internacional |
+| **Equipo** | Equipo en España y equipo global, con enlaces a LinkedIn |
+| **Contacto** | Textos de contacto y las tres oficinas |
 
-## Imágenes placeholder
+## Desarrollo en local
 
-La red de este entorno no permite exportar los bitmaps de Figma, así que estas
-imágenes son degradados generados como marcador de posición. Para usar las
-reales, exporta desde Figma y sobreescribe el archivo con el mismo nombre:
+```bash
+node build/build.mjs          # regenera los 6 HTML y css/theme.css
+python3 -m http.server 8000   # http://localhost:8000
+```
 
-| Archivo                        | Nodo en Figma                  | Tamaño sugerido |
-| ------------------------------ | ------------------------------ | --------------- |
-| `assets/img/hero.jpg`          | `Hero > hero-bg`               | 1920×1080       |
-| `assets/img/video-poster.jpg`  | `section-1 > video`            | 1440×700        |
-| `assets/img/lifestyle.jpg`     | `section-3 > img`              | 1152×758        |
-| `assets/img/aerial.jpg`        | `section-4 > bg-section4`      | 1920×900        |
-| `assets/img/img-map.png`       | `section-3 > map > img-map`    | 1440×~860 (PNG con transparencia) |
-| `assets/img/savills-logo.svg`  | `savills-logo` (logo real)     | vectorial       |
-
-El mapa (`img-map.png`) es un mapa de puntos recreado con la misma estética y
-curvatura del diseño; los pins (`.map__pin`) se posicionan en porcentaje sobre
-él y muestran país + nº de oficinas al pasar el cursor. Si reemplazas el PNG por
-el export real de Figma, revisa las coordenadas `--x`/`--y` de cada pin en
-`index.html` por si necesitan un pequeño reajuste.
-
-El vídeo de la sección 2 se activa poniendo la URL (YouTube/Vimeo embed) en el
-atributo `data-video-url` del `div.video` en `index.html`.
-
-El fondo del hero es un vídeo MP4: añade el archivo en `assets/video/hero.mp4`
-(recomendado 1920×1080, H.264, sin audio, &lt;10 MB). Mientras no exista, se
-muestra el poster `assets/img/hero.jpg` automáticamente.
+El panel de administración se sirve igual, en `/admin/`, y funciona contra el
+repositorio real de GitHub (necesita un token, ver [`CMS.md`](CMS.md)).
 
 ## Créditos
 

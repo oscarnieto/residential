@@ -1,0 +1,86 @@
+{
+  "seo": {
+    "title": "Red Internacional | Obra Nueva Residencial — Savills",
+    "description": "Conectamos cada proyecto con compradores en distintos mercados a través de la red global de Savills."
+  },
+  "hero": {
+    "image": "assets/img/hero-red-internacional.jpg",
+    "imageAlt": "Red internacional de Savills",
+    "scrollTo": "#expertise",
+    "lines": [
+      { "text": "Red", "italic": false },
+      { "text": "Internacional", "italic": true }
+    ]
+  },
+  "expertise": {
+    "kicker": "Expertise 360 en real estate",
+    "title": "Conectamos cada proyecto con compradores en distintos mercados a través de la red global de Savills.",
+    "lead": "Trabajamos con equipos especializados en el sector residencial en todo el mundo para ampliar el alcance de cada proyecto y optimizar su comercialización.",
+    "stats": [
+      { "number": "+35", "label": "Oficinas especializadas en Residencial" },
+      { "number": "+20k", "label": "Viviendas vendidas en Europa" }
+    ]
+  },
+  "teams": {
+    "title": "*Equipos especializados*\nen obra nueva en todo el mundo",
+    "intro": "Como una de las principales consultoras internacionales especializadas en obra nueva, confiamos en nuestra capacidad para generar demanda y mantener un ritmo de ventas constante, así como lograr la comercialización completa de los proyectos dentro de los plazos previstos.\n\nTodo ello es posible gracias a nuestra presencia en mercados globales, que incluye una red de más de 480 oficinas en América, Reino Unido y Europa, Asia-Pacífico, África y Oriente Medio. De este modo, allí donde se encuentren los compradores adecuados, cada desarrollo puede llegar a ellos.",
+    "feature": {
+      "image": "assets/img/net-team.jpg",
+      "imageAlt": "Equipo de profesionales de Savills",
+      "subtitle": "Una red internacional de profesionales especializados en el sector residencial, con *presencia consolidada en los principales mercados.*",
+      "text": "Relaciones desarrolladas a lo largo de los años que permiten combinar conocimiento local y capacidad global en la comercialización de proyectos."
+    },
+    "metrics": [
+      {
+        "image": "assets/img/net-card-1.jpg",
+        "number": "+35M",
+        "label": "visitas a nuestra búsqueda global de propiedades en 2025"
+      },
+      {
+        "image": "assets/img/net-card-2.jpg",
+        "number": "22",
+        "label": "Nuestra web está disponible en 22 idiomas"
+      },
+      {
+        "image": "assets/img/net-card-3.jpg",
+        "number": "+13M",
+        "label": "visitas a la web desde fuera del Reino Unido"
+      },
+      {
+        "image": "assets/img/net-card-4.jpg",
+        "number": "239",
+        "label": "visitas a la web desde 244 países"
+      }
+    ]
+  },
+  "projects": {
+    "title": "Algunos de nuestros proyectos *a nivel global*",
+    "cta": "Ver propiedad",
+    "items": [
+      {
+        "name": "DONO",
+        "place": "Roma, Italia",
+        "image": "assets/img/project-1.jpg",
+        "url": "https://search.savills.com/property-detail/gbsroeroe240182"
+      },
+      {
+        "name": "Miramar Tower",
+        "place": "Oporto, Portugal",
+        "image": "assets/img/project-2.jpg",
+        "url": "https://residencial.savills.pt/empreendimento/miramar-tower/21209127"
+      },
+      {
+        "name": "Six Senses Residences",
+        "place": "Comporta, Portugal",
+        "image": "assets/img/project-3.jpg",
+        "url": "https://search.savills.com/property-detail/gbgnhxlai260032"
+      },
+      {
+        "name": "Flow25",
+        "place": "Abu Dhabi",
+        "image": "assets/img/project-4.jpg",
+        "url": "https://search.savills.com/property-detail/gbgnhxlai260087"
+      }
+    ]
+  }
+}

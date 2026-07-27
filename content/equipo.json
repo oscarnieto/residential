@@ -1,0 +1,132 @@
+{
+  "seo": {
+    "title": "Equipo | Obra Nueva Residencial — Savills",
+    "description": "Un equipo especializado en obra nueva, con amplia experiencia en la definición, posicionamiento y comercialización de proyectos residenciales a nivel local e internacional."
+  },
+  "hero": {
+    "image": "assets/img/hero-equipo.jpg",
+    "imageAlt": "Equipo de Savills",
+    "scrollTo": "#equipo-espana",
+    "lines": [
+      { "text": "Nuestro", "italic": false },
+      { "text": "Equipo", "italic": true }
+    ]
+  },
+  "spain": {
+    "lead": "Un equipo especializado en obra nueva, con amplia experiencia en la *definición*, *posicionamiento* y *comercialización* de proyectos residenciales a nivel local e internacional",
+    "title": "Nuestro equipo en *España*",
+    "members": [
+      {
+        "name": "José Félix Pérez-Peña",
+        "role": "Head of Andalucía",
+        "city": "Málaga",
+        "photo": "assets/img/team-es-7-jose-felix.jpg",
+        "linkedin": "https://www.linkedin.com/in/jose-felix-perez-pe%C3%B1a-garrido-21705011/"
+      },
+      {
+        "name": "Pablo Balea",
+        "role": "Head of Residential",
+        "city": "Barcelona",
+        "photo": "assets/img/team-es-1-pablo-balea.jpg",
+        "linkedin": "https://www.linkedin.com/in/pablobalea/"
+      },
+      {
+        "name": "Ana Fernández",
+        "role": "New Develop. Sales Director",
+        "city": "Barcelona",
+        "photo": "assets/img/team-es-2-ana-fernandez.jpg",
+        "linkedin": "https://www.linkedin.com/in/ana-fernandez-rubiano-427591ba/"
+      },
+      {
+        "name": "Yolanda Rueda",
+        "role": "New Develop. Sales Director",
+        "city": "Madrid",
+        "photo": "assets/img/team-es-3-yolanda-rueda.jpg",
+        "linkedin": "https://www.linkedin.com/in/yolandaruedapaneque/"
+      },
+      {
+        "name": "Beatriz Hernández",
+        "role": "New Developments High-End Specialist",
+        "city": "Madrid",
+        "photo": "assets/img/team-es-4-beatriz-hernandez.jpg",
+        "linkedin": "https://www.linkedin.com/in/beatriz-hernandez-mingo-55833951/"
+      },
+      {
+        "name": "José Luis Bravo",
+        "role": "Residential Sales Director",
+        "city": "Málaga",
+        "photo": "assets/img/team-es-5-jose-luis-bravo.jpg",
+        "linkedin": "https://www.linkedin.com/in/jose-luis-bravo-serrano/"
+      },
+      {
+        "name": "Alejandro Martín",
+        "role": "New Develop. Coordinator",
+        "city": "Málaga",
+        "photo": "assets/img/team-es-6-alejandro-martin.jpg",
+        "linkedin": "https://www.linkedin.com/in/alejandro-martin-cairo-53529b4a/"
+      }
+    ]
+  },
+  "global": {
+    "title": "Nuestro equipo a nivel *Global*",
+    "background": "assets/img/team-earth.jpg",
+    "members": [
+      {
+        "name": "Andrew Hawkins",
+        "role": "Head of Global Residential Development Sales",
+        "city": "Londres",
+        "photo": "assets/img/team-global-1-andrew-hawkins.jpg",
+        "linkedin": "https://www.linkedin.com/in/andrew-hawkins-146a721/"
+      },
+      {
+        "name": "Sinead Canning",
+        "role": "Director Global Residential Development Sales",
+        "city": "Londres",
+        "photo": "assets/img/team-global-2-sinead-canning.jpg",
+        "linkedin": "https://www.linkedin.com/in/sin%C3%A9ad-canning-78949928/"
+      },
+      {
+        "name": "Odge Davey",
+        "role": "Head of International Sales",
+        "city": "Londres",
+        "photo": "assets/img/team-global-3-odge-davey.jpg",
+        "linkedin": "https://www.linkedin.com/in/odge-davey-b45828a1/"
+      },
+      {
+        "name": "Hud Anwar",
+        "role": "Associate",
+        "city": "Londres",
+        "photo": "assets/img/team-global-4-hud-anwar.jpg",
+        "linkedin": "https://www.linkedin.com/in/hud-anwar-b41259182/"
+      },
+      {
+        "name": "Maria Santurio",
+        "role": "Head of Spanish Desk",
+        "city": "Londres",
+        "photo": "assets/img/team-global-5-maria-santurio.jpg",
+        "linkedin": "https://www.linkedin.com/in/mariasanturio/"
+      },
+      {
+        "name": "Adrienne Li",
+        "role": "Senior Marketing Manager",
+        "city": "Londres",
+        "photo": "assets/img/team-global-6-adrienne-li.jpg",
+        "linkedin": "https://www.linkedin.com/in/adrienne-li/"
+      },
+      {
+        "name": "Asha Jandu",
+        "role": "Senior Marketing Manager",
+        "city": "Londres",
+        "photo": "assets/img/team-global-7-asha-jandu.jpg",
+        "linkedin": "https://www.linkedin.com/in/asha-jandu-69a51b8b/"
+      },
+      {
+        "name": "Niki Riley",
+        "role": "PR Director",
+        "city": "Londres",
+        "photo": "assets/img/team-global-8-niki-riley.jpg",
+        "linkedin": "https://www.linkedin.com/in/niki-riley/"
+      }
+    ]
+  }
+}

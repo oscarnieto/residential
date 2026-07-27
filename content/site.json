@@ -1,0 +1,43 @@
+{
+  "brand": {
+    "name": "Savills",
+    "lang": "es",
+    "logo": "assets/img/savills-logo.svg",
+    "logoHref": "https://www.savills.es/viviendas/",
+    "favicon": "assets/img/favicon.png"
+  },
+  "theme": {
+    "navy": "#25273a",
+    "navyLight": "#2d2e45",
+    "navyCard": "#272837",
+    "navyBorder": "#9ea0b2",
+    "creamLight": "#efe8e3",
+    "creamDark": "#e6dbd3",
+    "yellow": "#ffdf07",
+    "red": "#c90c0f"
+  },
+  "nav": [
+    { "page": "inicio", "label": "Inicio", "href": "index.html", "selfHref": "#inicio" },
+    { "page": "red-internacional", "label": "Red internacional", "href": "red-internacional.html" },
+    { "page": "servicios", "label": "Servicios", "href": "servicios.html" },
+    { "page": "track-record", "label": "Track record", "href": "track-record.html" },
+    { "page": "equipo", "label": "Equipo", "href": "equipo.html" },
+    { "page": "contacto", "label": "Contacto", "href": "contacto.html" }
+  ],
+  "footer": {
+    "copyright": "All content © copyright 2026 Savills. All rights reserved.",
+    "backToTop": "Volver arriba",
+    "social": [
+      {
+        "network": "instagram",
+        "label": "Instagram",
+        "url": "https://www.instagram.com/savillsresidencial_es/"
+      },
+      {
+        "network": "linkedin",
+        "label": "LinkedIn",
+        "url": "https://www.linkedin.com/search/results/all/?keywords=Savills+Residencial+Espa%C3%B1a&origin=RICH_QUERY_SUGGESTION&heroEntityKey=urn%3Ali%3Aorganization%3A106848792&position=0"
+      }
+    ]
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "seo": {
+    "title": "Obra Nueva Residencial | Savills",
+    "description": "Obra Nueva Residencial de Savills. Ayudamos a los promotores desde las primeras fases del proyecto, combinando conocimiento de mercado, estrategia y capacidad comercial."
+  },
+  "hero": {
+    "image": "assets/img/hero-poster.jpg",
+    "imageAlt": "Villa residencial de lujo con piscina",
+    "scrollTo": "#intro",
+    "lines": [
+      { "text": "Obra Nueva", "italic": true },
+      { "text": "Residencial", "italic": false }
+    ],
+    "video": {
+      "src": "assets/img/hero.mp4",
+      "poster": "assets/img/hero-poster.jpg"
+    }
+  },
+  "intro": {
+    "title": "*Cada promoción presenta retos distintos:* definir el producto adecuado, llegar al comprador correcto o mantener el ritmo comercial sin comprometer valor.",
+    "text": "Ayudamos a los promotores a resolverlos desde las primeras fases del proyecto, combinando conocimiento de mercado, estrategia y capacidad comercial.",
+    "video": {
+      "url": "https://www.youtube.com/embed/owW7szWinok?autoplay=1&rel=0",
+      "poster": "assets/img/cover-youtube.jpg",
+      "posterAlt": "Vídeo de presentación"
+    }
+  },
+  "services": {
+    "title": "¿Qué nos hace *diferentes*?",
+    "cards": [
+      {
+        "title": "Visión estratégica",
+        "text": "Cada proyecto necesita encajar en su mercado desde el inicio. Analizamos su contexto para definir un posicionamiento sólido."
+      },
+      {
+        "title": "Definición de producto",
+        "text": "Uno de los principales retos es acertar con el producto. Lo ajustamos a la demanda para maximizar su valor y atractivo."
+      },
+      {
+        "title": "Conocimiento de mercado",
+        "text": "Tomar decisiones sin información puede comprometer el resultado. Trabajamos con un conocimiento actualizado de cada mercado."
+      },
+      {
+        "title": "Posicionamiento y pricing",
+        "text": "Encontrar el equilibrio entre velocidad de ventas y valor es clave. Diseñamos la estrategia de precios y posicionamiento adaptadas a cada proyecto."
+      },
+      {
+        "title": "Estrategia comercial",
+        "text": "Una buena estrategia marca la diferencia en la comercialización. Definimos planes adaptados a cada promoción y a su público objetivo."
+      },
+      {
+        "title": "Seguimiento y optimización",
+        "text": "El mercado evoluciona constantemente. Monitorizamos el rendimiento y ajustamos la estrategia para optimizar resultados."
+      }
+    ]
+  },
+  "network": {
+    "title": "Nuestra *red internacional*",
+    "stats": [
+      { "number": "+42.000", "label": "empleados en el mundo" },
+      { "number": "+700", "label": "oficinas y asociados" },
+      { "number": "+70", "label": "países" },
+      { "number": "+£2,60bn", "label": "facturación global 2025" }
+    ],
+    "business": {
+      "subtitle": "**+300 líneas de negocio,**\ntodas para dar servicio al real estate",
+      "text": "Con más de **170 años de experiencia en el mercado global**, nuestro tamaño y diversificación nos proporciona un profundo conocimiento especializado de cada mercado local para ofrecer soluciones a medida para cualquier necesidad inmobiliaria.\n\n**700 oficinas en:** América, Europa, Asia-Pacífico, África y Oriente Medio.\n\nSavills plc cotiza en la Bolsa de Londres.",
+      "image": "assets/img/lifestyle.jpg",
+      "imageAlt": "Estilo de vida residencial"
+    },
+    "map": {
+      "image": "assets/img/map-2.png",
+      "label": "Presencia internacional de Savills",
+      "unit": "oficinas",
+      "pins": [
+        { "region": "América", "number": "82", "x": "12.95", "y": "87.6", "highlight": false },
+        { "region": "Reino Unido", "number": "131", "x": "39.8", "y": "16.0", "highlight": false },
+        { "region": "España", "number": "5", "x": "43.8", "y": "36.4", "highlight": true },
+        { "region": "Europa", "number": "129", "x": "52.9", "y": "29.0", "highlight": false },
+        { "region": "Asia-Pacífico", "number": "75", "x": "77.9", "y": "50.9", "highlight": false }
+      ]
+    }
+  },
+  "spain": {
+    "kicker": "Savills en España",
+    "title": "*Conocemos tu zona, también es la nuestra*",
+    "text": "En España contamos con una sólida trayectoria en el sector inmobiliario, con equipos especializados en el mercado residencial y en la comercialización de obra nueva.\n\nNuestra presencia local nos permite entender cada mercado en profundidad y adaptar la estrategia a las particularidades de cada proyecto.",
+    "image": "assets/img/aerial.jpg",
+    "stats": [
+      { "number": "+35", "label": "años de experiencia" },
+      { "number": "+800", "label": "profesionales" },
+      { "number": "+60", "label": "expertos en residencial" }
+    ]
+  }
+}

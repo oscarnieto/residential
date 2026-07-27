@@ -1,0 +1,40 @@
+{
+  "seo": {
+    "title": "Contacto | Obra Nueva Residencial — Savills",
+    "description": "Cuéntanos tu proyecto y nos pondremos en contacto contigo a la mayor brevedad. Oficinas en Barcelona, Madrid y Málaga."
+  },
+  "hero": {
+    "image": "assets/img/hero-contacto.jpg",
+    "imageAlt": "Contacto con Savills",
+    "scrollTo": "#contacto-oficinas",
+    "lines": [
+      { "text": "Háblanos", "italic": false },
+      { "text": "de tu proyecto", "italic": true }
+    ]
+  },
+  "intro": {
+    "title": "Cada proyecto es *único*\ny presenta retos específicos.",
+    "lead": "Nuestro equipo está preparado para ayudarte a abordarlos y llevar **tu promoción al siguiente nivel**",
+    "cta": "*Cuéntanos tu proyecto* y nos pondremos en contacto contigo a la mayor brevedad"
+  },
+  "offices": [
+    {
+      "city": "Barcelona",
+      "address": "Av. Diagonal, 615, Barcelona 08028",
+      "phone": "+34 93 439 54 54",
+      "image": "assets/img/contacto-barcelona.jpg"
+    },
+    {
+      "city": "Madrid",
+      "address": "Paseo de la Castellana 81, 28046",
+      "phone": "+34 913 191 314",
+      "image": "assets/img/contacto-madrid.jpg"
+    },
+    {
+      "city": "Málaga",
+      "address": "C/ Marqués de Larios 3, 29015",
+      "phone": "+34 952 062 782",
+      "image": "assets/img/contacto-malaga.jpg"
+    }
+  ]
+}

@@ -359,7 +359,7 @@ footer[id] {
 .hero__bg {
   position: absolute;
   inset: 0;
-  background-image: url('../assets/img/hero-poster.jpg');
+  background-image: var(--img-hero-inicio);
   background-size: cover;
   background-position: center;
   animation: hero-zoom 16s var(--ease) forwards;
@@ -876,7 +876,7 @@ footer[id] {
 
 .spain {
   position: relative;
-  background-image: url('../assets/img/aerial.jpg');
+  background-image: var(--img-spain);
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
@@ -1177,7 +1177,7 @@ footer[id] {
 .ri-hero__bg {
   position: absolute;
   inset: 0;
-  background: url('../assets/img/hero-red-internacional.jpg') center / cover no-repeat;
+  background: var(--img-hero-red-internacional) center / cover no-repeat;
   transform-origin: center;
   animation: ri-hero-zoom 22s ease-in-out infinite alternate;
 }
@@ -1622,7 +1622,7 @@ footer[id] {
 
 /* Hero (usa .hero base; fondo propio) */
 .hero--servicios .hero__bg {
-  background-image: url('../assets/img/hero-servicios.jpg');
+  background-image: var(--img-hero-servicios);
   animation: ri-hero-zoom 22s ease-in-out infinite alternate;
 }
 
@@ -2039,7 +2039,7 @@ footer[id] {
    ========================================================================== */
 
 .hero--track .hero__bg {
-  background-image: url('../assets/img/hero-track.jpg');
+  background-image: var(--img-hero-track-record);
   animation: ri-hero-zoom 22s ease-in-out infinite alternate;
 }
 
@@ -2297,7 +2297,7 @@ footer[id] {
 
 /* Hero (usa .hero base; fondo propio) */
 .hero--equipo .hero__bg {
-  background-image: url('../assets/img/hero-equipo.jpg');
+  background-image: var(--img-hero-equipo);
   animation: ri-hero-zoom 22s ease-in-out infinite alternate;
 }
 
@@ -2375,7 +2375,7 @@ footer[id] {
   right: 0;
   bottom: 0;
   height: 62%;
-  background: url('../assets/img/team-earth.jpg') center bottom / cover no-repeat;
+  background: var(--img-team-earth) center bottom / cover no-repeat;
   opacity: 0.4;
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 55%);
           mask-image: linear-gradient(to bottom, transparent 0%, #000 55%);
@@ -2544,7 +2544,7 @@ footer[id] {
    ========================================================================== */
 
 .hero--contacto .hero__bg {
-  background-image: url('../assets/img/hero-contacto.jpg');
+  background-image: var(--img-hero-contacto);
   animation: ri-hero-zoom 22s ease-in-out infinite alternate;
 }
 
