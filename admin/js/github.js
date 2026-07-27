@@ -67,16 +67,31 @@ export class GitHub {
   }
 
   async request(path, options = {}) {
-    const response = await fetch(path.startsWith('http') ? path : `${this.base}${path}`, {
-      ...options,
-      headers: {
-        Accept: 'application/vnd.github+json',
-        Authorization: `Bearer ${this.token}`,
-        'X-GitHub-Api-Version': '2022-11-28',
-        ...(options.body ? { 'Content-Type': 'application/json' } : {}),
-        ...options.headers,
-      },
-    });
+    let response;
+    try {
+      response = await fetch(path.startsWith('http') ? path : `${this.base}${path}`, {
+        ...options,
+        // Nunca servir desde la caché del navegador: al publicar necesitamos
+        // el estado real de la rama. Se hace con la opción `cache` y no con
+        // una cabecera Cache-Control, porque esa cabecera no está en la lista
+        // CORS que admite GitHub y el preflight fallaría.
+        cache: 'no-store',
+        headers: {
+          Accept: 'application/vnd.github+json',
+          Authorization: `Bearer ${this.token}`,
+          'X-GitHub-Api-Version': '2022-11-28',
+          ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+          ...options.headers,
+        },
+      });
+    } catch (caught) {
+      // `fetch` sólo rechaza por fallo de red o de CORS; los errores HTTP
+      // llegan como respuesta y se tratan más abajo.
+      throw new GitHubError(
+        `No se ha podido contactar con GitHub (${caught.message}). Revisa la conexión y si algún bloqueador de anuncios o extensión está bloqueando api.github.com.`,
+        0
+      );
+    }
 
     if (response.status === 204) return null;
 
@@ -104,11 +119,24 @@ export class GitHub {
 
   /** Lee un archivo de texto y devuelve su contenido junto con el sha. */
   async readFile(path) {
-    const data = await this.request(
-      `/contents/${encodeURI(path)}?ref=${encodeURIComponent(this.branch)}`,
-      { headers: { 'Cache-Control': 'no-cache' } }
-    );
+    const data = await this.request(`/contents/${encodeURI(path)}?ref=${encodeURIComponent(this.branch)}`);
     return { text: decodeBase64(data.content), sha: data.sha };
+  }
+
+  /** Ramas del repositorio, para poder orientar cuando el contenido no aparece. */
+  async listBranches() {
+    const data = await this.request('/branches?per_page=100');
+    return Array.isArray(data) ? data.map((branch) => branch.name) : [];
+  }
+
+  /** ¿Existe este archivo en esta rama? */
+  async fileExists(path, ref) {
+    try {
+      await this.request(`/contents/${encodeURI(path)}?ref=${encodeURIComponent(ref)}`);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
   /** Lista los archivos de un directorio. */

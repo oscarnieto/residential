@@ -23,7 +23,11 @@ const VIDEO_TYPES = /\.(mp4|webm)$/i;
 /** GitHub rechaza blobs por encima de ~100 MB; avisamos mucho antes. */
 const MAX_UPLOAD = 12 * 1024 * 1024;
 
-const DEFAULTS = { owner: 'oscarnieto', repo: 'residential', branch: 'main' };
+/**
+ * Rama por defecto: la que se está publicando hoy. Cuando el proyecto se
+ * fusione a `main` basta con cambiarla una vez en el formulario de acceso.
+ */
+const DEFAULTS = { owner: 'oscarnieto', repo: 'residential', branch: 'claude/clever-brahmagupta-abt3is' };
 
 /** Anchos reales a los que se renderiza la vista previa. */
 const PREVIEW_WIDTHS = { desktop: 1440, tablet: 768, mobile: 390 };
@@ -228,8 +232,36 @@ const boot = async () => {
     await loadMedia();
     renderApp();
   } catch (caught) {
-    renderLogin(`No se ha podido cargar el contenido: ${caught.message}`);
+    renderLogin(await explainLoadFailure(caught));
   }
+};
+
+/**
+ * El fallo más probable al arrancar es apuntar a una rama que todavía no tiene
+ * el contenido. En ese caso decimos en qué ramas sí está, en lugar de dejar un
+ * «Not Found» sin pistas.
+ */
+const explainLoadFailure = async (caught) => {
+  if (caught.status !== 404) return `No se ha podido cargar el contenido: ${caught.message}`;
+
+  const base = `No se encuentra "content/site.json" en la rama «${state.config.branch}».`;
+
+  try {
+    const branches = await state.api.listBranches();
+    const found = [];
+    for (const branch of branches) {
+      if (branch === state.config.branch) continue;
+      if (await state.api.fileExists('content/site.json', branch)) found.push(branch);
+      if (found.length === 3) break;
+    }
+    if (found.length) {
+      return `${base} Sí está en: ${found.join(', ')}. Cambia el campo «Rama» a la rama desde la que se publica la web.`;
+    }
+  } catch {
+    /* Si ni siquiera podemos listar ramas, nos quedamos con el mensaje base. */
+  }
+
+  return `${base} Comprueba que el campo «Rama» apunta a la rama desde la que se publica la web.`;
 };
 
 const loadMedia = async () => {

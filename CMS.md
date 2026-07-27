@@ -33,7 +33,9 @@ volver a pegarlo, y si alguna vez crees que se ha filtrado, bórralo desde
 GitHub y genera uno nuevo.
 
 > **Sobre la rama:** el campo *Rama* debe coincidir con la rama desde la que se
-> publica la web. Si no te han dicho lo contrario, déjala en `main`.
+> publica la web, y viene ya relleno con la correcta. Si algún día cambia (por
+> ejemplo al fusionar el proyecto a `main`), el panel te avisará indicándote en
+> qué ramas sí encuentra el contenido.
 
 ---
 
