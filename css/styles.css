@@ -2155,7 +2155,9 @@ footer[id] {
   }
 }
 
-.logo-marquee:hover .logo-marquee__track,
+/* El carrusel no se detiene al pasar el ratón: sigue girando siempre.
+   Sólo se pausa si el foco del teclado entra en él, para que quien navegue
+   sin ratón pueda alcanzar un logotipo enlazado sin perseguirlo. */
 .logo-marquee:focus-within .logo-marquee__track {
   animation-play-state: paused;
 }
