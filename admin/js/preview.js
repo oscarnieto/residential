@@ -12,7 +12,7 @@ import { renderTheme } from '../../build/lib/theme.mjs';
 import * as inicio from '../../build/pages/inicio.mjs';
 import * as redInternacional from '../../build/pages/red-internacional.mjs';
 import * as servicios from '../../build/pages/servicios.mjs';
-import * as trackRecord from '../../build/pages/track-record.mjs';
+import * as producto from '../../build/pages/producto.mjs';
 import * as equipo from '../../build/pages/equipo.mjs';
 import * as contacto from '../../build/pages/contacto.mjs';
 
@@ -20,7 +20,7 @@ const RENDERERS = {
   inicio,
   'red-internacional': redInternacional,
   servicios,
-  'track-record': trackRecord,
+  producto,
   equipo,
   contacto,
 };

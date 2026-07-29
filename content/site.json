@@ -20,7 +20,7 @@
     { "page": "inicio", "label": "Inicio", "href": "index.html", "selfHref": "#inicio" },
     { "page": "red-internacional", "label": "Red internacional", "href": "red-internacional.html" },
     { "page": "servicios", "label": "Servicios", "href": "servicios.html" },
-    { "page": "track-record", "label": "Track record", "href": "track-record.html" },
+    { "page": "producto", "label": "Producto", "href": "producto.html" },
     { "page": "equipo", "label": "Equipo", "href": "equipo.html" },
     { "page": "contacto", "label": "Contacto", "href": "contacto.html" }
   ],

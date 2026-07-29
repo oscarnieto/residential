@@ -45,7 +45,7 @@ GitHub Pages en cada push (`.github/workflows/deploy.yml`).
 | **Inicio** | Hero con vídeo, intro, «¿Qué nos hace diferentes?», red internacional con contadores y mapa interactivo, Savills en España |
 | **Red internacional** | Expertise 360, equipos especializados, métricas globales y proyectos internacionales |
 | **Servicios** | Círculo interactivo de proceso y tarjetas de tipología de producto |
-| **Track record** | Dos galerías horizontales ancladas al scroll, nacional e internacional |
+| **Producto** | Bloques de producto con galerías horizontales ancladas al scroll y carrusel de logotipos |
 | **Equipo** | Equipo en España y equipo global, con enlaces a LinkedIn |
 | **Contacto** | Textos de contacto y las tres oficinas |
 

@@ -19,7 +19,7 @@ import { renderTheme } from './lib/theme.mjs';
 import * as inicio from './pages/inicio.mjs';
 import * as redInternacional from './pages/red-internacional.mjs';
 import * as servicios from './pages/servicios.mjs';
-import * as trackRecord from './pages/track-record.mjs';
+import * as producto from './pages/producto.mjs';
 import * as equipo from './pages/equipo.mjs';
 import * as contacto from './pages/contacto.mjs';
 
@@ -35,7 +35,7 @@ export const PAGES = [
     renderer: redInternacional,
   },
   { id: 'servicios', content: 'servicios.json', output: 'servicios.html', renderer: servicios },
-  { id: 'track-record', content: 'track-record.json', output: 'track-record.html', renderer: trackRecord },
+  { id: 'producto', content: 'producto.json', output: 'producto.html', renderer: producto },
   { id: 'equipo', content: 'equipo.json', output: 'equipo.html', renderer: equipo },
   { id: 'contacto', content: 'contacto.json', output: 'contacto.html', renderer: contacto },
 ];

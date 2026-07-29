@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Track Record | Obra Nueva Residencial — Savills</title>
-  <meta name="description" content="Trayectoria consolidada en el sector residencial, con participación en algunos de los proyectos más relevantes a nivel nacional e internacional.">
+  <title>Producto | Obra Nueva Residencial — Savills</title>
+  <meta name="description" content="Promociones residenciales de obra nueva que destacan por su ubicación, diseño y calidad, concebidas para responder a las necesidades del comprador actual.">
   <link rel="icon" type="image/png" href="assets/img/favicon.png">
   <link rel="preload" href="assets/fonts/playfair-display-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/montserrat-var.woff2" as="font" type="font/woff2" crossorigin>
@@ -26,7 +26,7 @@
         <img src="assets/img/savills-logo.svg" alt="Savills" width="90" height="90">
       </a>
       <ul class="topbar__menu topbar__menu--right">
-        <li><a href="track-record.html" class="topbar__link is-active">Track record</a></li>
+        <li><a href="producto.html" class="topbar__link is-active">Producto</a></li>
         <li><a href="equipo.html" class="topbar__link">Equipo</a></li>
         <li><a href="contacto.html" class="topbar__link">Contacto</a></li>
       </ul>
@@ -42,7 +42,7 @@
       <li><a href="index.html" class="mobile-menu__link">Inicio</a></li>
       <li><a href="red-internacional.html" class="mobile-menu__link">Red internacional</a></li>
       <li><a href="servicios.html" class="mobile-menu__link">Servicios</a></li>
-      <li><a href="track-record.html" class="mobile-menu__link">Track record</a></li>
+      <li><a href="producto.html" class="mobile-menu__link">Producto</a></li>
       <li><a href="equipo.html" class="mobile-menu__link">Equipo</a></li>
       <li><a href="contacto.html" class="mobile-menu__link">Contacto</a></li>
     </ul>
@@ -65,15 +65,29 @@
       </a>
     </section>
 
-    <!-- ===== Sección 1 · Experiencia + galería de productos ===== -->
-    <section class="track section" id="experiencia">
+    <!-- ===== Sección 1 · Intro + navegación ===== -->
+    <section class="producto-intro section" id="experiencia">
+      <div class="container container--narrow">
+        <h2 class="producto-intro__title reveal">Contamos con una trayectoria consolidada en proyectos que destacan por su <em>ubicación</em>, <em>diseño</em> y <em>calidad</em>, concebidos para responder a las necesidades del comprador actual</h2>
+      </div>
+      <div class="container">
+    <nav class="producto-nav reveal" aria-label="Secciones de producto">
+      <a class="producto-nav__link" href="#producto-nacional">Producto nacional</a>
+      <a class="producto-nav__link" href="#producto-internacional">Producto internacional</a>
+      <a class="producto-nav__link" href="#track-record">Track record</a>
+    </nav>
+      </div>
+    </section>
+
+    <!-- ===== Sección 2 · Producto nacional ===== -->
+    <section class="track section" id="producto-nacional">
       <div class="container container--narrow track__intro">
-        <h2 class="track__title reveal"><em>La experiencia es clave a la hora de anticipar retos y tomar decisiones en el desarrollo de promociones</em></h2>
+        <h2 class="track__title reveal">La experiencia es clave a la hora de anticipar retos y tomar decisiones en el desarrollo de promociones</h2>
         <p class="track__lead reveal">Contamos con una <strong>trayectoria consolidada en el sector residencial</strong>, con participación en algunos de los proyectos más relevantes a nivel nacional e internacional.</p>
       </div>
 
       <!-- Galería horizontal anclada (pin) -->
-      <div class="track-gallery" id="track-gallery">
+      <div class="track-gallery" id="gallery-producto-nacional">
         <div class="track-gallery__sticky">
           <div class="track-gallery__track">
 
@@ -145,15 +159,16 @@
       </div>
     </section>
 
-    <!-- ===== Sección 2 · Track Record Internacional (navy) ===== -->
-    <section class="track track--navy section">
+    <!-- ===== Sección 3 · Producto internacional ===== -->
+    <section class="track track--navy section" id="producto-internacional">
       <div class="container container--narrow track__intro">
-        <h2 class="track__title reveal">Track Record <em>Internacional</em></h2>
-        <p class="track__lead reveal">Contamos con una <strong>trayectoria consolidada en el sector residencial</strong>, con participación en algunos de los proyectos más relevantes a nivel nacional e internacional.</p>
+        <h2 class="track__title reveal">Producto <em>Internacional</em></h2>
+        <p class="track__lead reveal"><strong>Una selección de promociones residenciales de obra nueva en algunos de los mercados internacionales más atractivos y consolidados.</strong></p>
+        <p class="track__lead reveal">Proyectos que destacan por su ubicación, diseño y calidad, concebidos para responder a las necesidades de un comprador global.</p>
       </div>
 
       <!-- Galería horizontal anclada (pin) -->
-      <div class="track-gallery" id="track-gallery-2">
+      <div class="track-gallery" id="gallery-producto-internacional">
         <div class="track-gallery__sticky">
           <div class="track-gallery__track">
 
@@ -207,6 +222,36 @@
       </div>
     </section>
 
+    <!-- ===== Sección 4 · Track record ===== -->
+    <section class="track section" id="track-record">
+      <div class="container container--narrow track__intro">
+        <h2 class="track__title reveal">Track Record</h2>
+        <p class="track__lead reveal"><strong>Una muestra de promociones residenciales que han formado parte de nuestra trayectoria.</strong></p>
+        <p class="track__lead reveal">Proyectos de obra nueva seleccionados por su calidad, ubicación y relevancia dentro de algunos de los mercados residenciales más atractivos a nivel mundial.</p>
+      </div>
+
+    </section>
+
+    <!-- ===== Carrusel de logotipos ===== -->
+    <section class="logo-marquee" aria-label="Promotoras con las que trabajamos">
+      <div class="logo-marquee__viewport">
+        <ul class="logo-marquee__track" style="--marquee-duration: 45s">
+          <li class="logo-marquee__item"><img class="logo-marquee__img" src="assets/img/logo-neinor.png" alt="Neinor Homes" loading="lazy"></li>
+          <li class="logo-marquee__item"><img class="logo-marquee__img" src="assets/img/logo-acciona.png" alt="Acciona" loading="lazy"></li>
+          <li class="logo-marquee__item"><img class="logo-marquee__img" src="assets/img/logo-metrovacesa.png" alt="Metrovacesa" loading="lazy"></li>
+          <li class="logo-marquee__item"><img class="logo-marquee__img" src="assets/img/logo-nortia.png" alt="Nortia" loading="lazy"></li>
+          <li class="logo-marquee__item"><img class="logo-marquee__img" src="assets/img/logo-grupo-galia.png" alt="Grupo Galia" loading="lazy"></li>
+          <li class="logo-marquee__item"><img class="logo-marquee__img" src="assets/img/logo-nidom.png" alt="Nidom" loading="lazy"></li>
+          <li class="logo-marquee__item" aria-hidden="true"><img class="logo-marquee__img" src="assets/img/logo-neinor.png" alt="" loading="lazy"></li>
+          <li class="logo-marquee__item" aria-hidden="true"><img class="logo-marquee__img" src="assets/img/logo-acciona.png" alt="" loading="lazy"></li>
+          <li class="logo-marquee__item" aria-hidden="true"><img class="logo-marquee__img" src="assets/img/logo-metrovacesa.png" alt="" loading="lazy"></li>
+          <li class="logo-marquee__item" aria-hidden="true"><img class="logo-marquee__img" src="assets/img/logo-nortia.png" alt="" loading="lazy"></li>
+          <li class="logo-marquee__item" aria-hidden="true"><img class="logo-marquee__img" src="assets/img/logo-grupo-galia.png" alt="" loading="lazy"></li>
+          <li class="logo-marquee__item" aria-hidden="true"><img class="logo-marquee__img" src="assets/img/logo-nidom.png" alt="" loading="lazy"></li>
+        </ul>
+      </div>
+    </section>
+
   </main>
 
   <!-- ===== Footer ===== -->
@@ -221,7 +266,7 @@
             <li><a href="index.html">Inicio</a></li>
             <li><a href="red-internacional.html">Red internacional</a></li>
             <li><a href="servicios.html">Servicios</a></li>
-            <li><a href="track-record.html">Track record</a></li>
+            <li><a href="producto.html">Producto</a></li>
             <li><a href="equipo.html">Equipo</a></li>
             <li><a href="contacto.html">Contacto</a></li>
           </ul>

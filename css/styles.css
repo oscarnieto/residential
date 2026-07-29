@@ -2035,11 +2035,11 @@ footer[id] {
 }
 
 /* ==========================================================================
-   Página · Track Record
+   Página · Producto
    ========================================================================== */
 
 .hero--track .hero__bg {
-  background-image: var(--img-hero-track-record);
+  background-image: var(--img-hero-producto);
   animation: ri-hero-zoom 22s ease-in-out infinite alternate;
 }
 
@@ -2071,6 +2071,122 @@ footer[id] {
 
 .track__lead strong {
   font-weight: 600;
+}
+
+/* Segundo párrafo de la entradilla: más pegado al primero */
+.track__lead + .track__lead {
+  margin-top: 0.7rem;
+}
+
+/* --- Intro de la página y navegación entre bloques --- */
+.producto-intro {
+  background-color: var(--cream-light);
+  padding-top: clamp(4rem, 9vw, 7rem);
+  padding-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.producto-intro__title {
+  font-family: var(--font-serif);
+  font-size: var(--fs-h2);
+  font-weight: 400;
+  line-height: 1.16;
+  text-align: center;
+  color: var(--navy);
+}
+
+.producto-intro__title em {
+  font-style: italic;
+}
+
+.producto-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(0.75rem, 1.6vw, 1.5rem);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+.producto-nav__link {
+  flex: 0 1 272px;
+  padding: 0.7rem 1.25rem;
+  border: 1px solid var(--navy);
+  background-color: var(--navy);
+  color: var(--cream-light);
+  font-size: 0.875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.35s var(--ease), color 0.35s var(--ease);
+}
+
+.producto-nav__link:hover,
+.producto-nav__link:focus-visible {
+  background-color: transparent;
+  color: var(--navy);
+}
+
+/* --- Carrusel de logotipos --- */
+.logo-marquee {
+  background-color: var(--cream-light);
+  padding: clamp(2.5rem, 6vw, 4.5rem) 0;
+  overflow: hidden;
+}
+
+.logo-marquee__viewport {
+  /* Difumina los extremos para que los logos entren y salgan sin corte seco */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+.logo-marquee__track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  list-style: none;
+  gap: clamp(2.5rem, 5vw, 5rem);
+  animation: logo-marquee var(--marquee-duration, 45s) linear infinite;
+}
+
+/* La lista se imprime dos veces, así que recorrer la mitad vuelve al origen */
+@keyframes logo-marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.logo-marquee:hover .logo-marquee__track,
+.logo-marquee:focus-within .logo-marquee__track {
+  animation-play-state: paused;
+}
+
+.logo-marquee__item {
+  flex: none;
+}
+
+/* Todos los logotipos ocupan la misma caja, independientemente del archivo */
+.logo-marquee__img {
+  display: block;
+  width: auto;
+  height: clamp(2.25rem, 4vw, 3.25rem);
+  max-width: 190px;
+  object-fit: contain;
+  opacity: 0.75;
+  transition: opacity 0.35s var(--ease);
+}
+
+.logo-marquee__item:hover .logo-marquee__img {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-marquee__track {
+    animation: none;
+    /* Sin animación, se navega con scroll horizontal */
+    width: 100%;
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
 }
 
 /* --- Galería horizontal anclada --- */

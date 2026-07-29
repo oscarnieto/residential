@@ -49,7 +49,7 @@ A la izquierda tienes las **siete secciones** editables:
 | **Inicio** | Portada: hero con vídeo, introducción, tarjetas, cifras, mapa y bloque de España |
 | **Red internacional** | Expertise, equipos, métricas y proyectos globales |
 | **Servicios** | Círculo de proceso y tarjetas de tipología |
-| **Track record** | Las dos galerías de proyectos, nacional e internacional |
+| **Producto** | Los bloques de proyectos (nacional, internacional, track record…) y el carrusel de logotipos |
 | **Equipo** | Las personas del equipo en España y del equipo global |
 | **Contacto** | Textos de contacto y las oficinas |
 
@@ -156,6 +156,28 @@ Añadir o quitar elementos es seguro: el diseño se adapta solo. Puedes tener
 siete personas en el equipo o doce, cinco proyectos o nueve, y la maquetación
 sigue funcionando. Incluso el círculo de Servicios reparte sus pasos
 automáticamente alrededor, tenga los que tenga.
+
+### Los bloques de Producto
+
+En la página de Producto, cada **bloque** es una sección completa con su
+titular, su texto y su galería. Se gestionan como cualquier otra lista, así que
+puedes reordenarlos, duplicar uno para crear otro parecido o añadir uno nuevo.
+Dos detalles propios:
+
+- **Los botones de navegación de arriba se generan solos** a partir de los
+  bloques y en el mismo orden. No hay que mantenerlos aparte.
+- Cada bloque elige su **fondo**, crema o azul, para poder alternarlos.
+- Un bloque **sin proyectos** muestra solo su titular y su texto, sin galería
+  vacía. Es útil para dejar una sección preparada antes de tener las fotos.
+
+### El carrusel de logotipos
+
+Se desplaza solo, en bucle continuo, y se detiene al pasar el ratón por encima.
+**Todos los logotipos se muestran a la misma altura**, así que no te preocupes
+por el tamaño del archivo: sube el que tengas y el carrusel lo iguala. Lo ideal
+es un PNG o SVG **con fondo transparente**. El orden de la lista es el orden en
+que aparecen, y con *Duración de una vuelta* ajustas la velocidad — más
+segundos, más lento.
 
 ---
 

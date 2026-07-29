@@ -35,7 +35,7 @@ residential/
 │   ├── inicio.json               Contenido de cada página, uno por archivo
 │   ├── red-internacional.json
 │   ├── servicios.json
-│   ├── track-record.json
+│   ├── producto.json
 │   ├── equipo.json
 │   └── contacto.json
 │
@@ -58,7 +58,7 @@ residential/
 ├── index.html                 ┐
 ├── red-internacional.html     │  GENERADOS por build/build.mjs.
 ├── servicios.html             ├─ Se versionan para que GitHub Pages pueda
-├── track-record.html          │  servirlos sin build, pero NO se editan a mano.
+├── producto.html              │  servirlos sin build, pero NO se editan a mano.
 ├── equipo.html                │
 ├── contacto.html              ┘
 │
@@ -101,7 +101,7 @@ generado.
 | Inicio | `index.html` | Hero con vídeo, intro, "¿Qué nos hace diferentes?", red internacional (contadores + mapa de puntos interactivo), Savills en España |
 | Red Internacional | `red-internacional.html` | Expertise 360, equipos especializados, métricas globales, proyectos internacionales, hero con zoom Ken Burns |
 | Servicios | `servicios.html` | Círculo interactivo de 8 pasos (SVG + JS), tarjetas de tipología de producto |
-| Track Record | `track-record.html` | Dos galerías horizontales "pinned" (nacional e internacional) con scroll-driven animation |
+| Producto | `producto.html` | Titular de entrada con navegación por anclas, bloques de producto configurables (cada uno con su galería horizontal "pinned") y carrusel de logotipos en bucle |
 | Equipo | `equipo.html` | Equipo España (con enlaces LinkedIn on-hover) y equipo Global |
 | Contacto | `contacto.html` | Texto sticky + tarjetas de oficina que se desplazan por scroll |
 
@@ -138,7 +138,7 @@ Un único archivo, un único IIFE (`(() => { ... })()`), sin módulos ES ni bund
 5. **Vídeo embed** (Inicio) — carga un iframe de YouTube/Vimeo al pulsar play, si `data-video-url` está definido.
 6. **Vídeo de fondo del hero** (Inicio) — fuerza `play()` con reintento en el primer gesto del usuario si el navegador bloquea el autoplay; oculta el vídeo si falla y deja el poster estático.
 7. **Círculo interactivo** (Servicios) — lee los 8 pasos de un `<script type="application/json" id="circle-data">` embebido en el HTML, gestiona el estado activo y la navegación con flechas de teclado.
-8. **Galerías horizontales "pinned"** (Track Record) — en desktop, ancla la sección (`position: sticky`) y traduce el scroll vertical en `translateX` del track, con efecto de foco (`scale`/`opacity`) calculado en cada frame; en móvil se desactiva y el carrusel pasa a ser scroll-snap nativo con el efecto CSS del §4. Soporta **múltiples galerías independientes en la misma página** (Track Record tiene dos).
+8. **Galerías horizontales "pinned"** (Track Record) — en desktop, ancla la sección (`position: sticky`) y traduce el scroll vertical en `translateX` del track, con efecto de foco (`scale`/`opacity`) calculado en cada frame; en móvil se desactiva y el carrusel pasa a ser scroll-snap nativo con el efecto CSS del §4. Soporta **múltiples galerías independientes en la misma página**, tantas como bloques tenga Producto.
 9. **Volver arriba** — scroll suave al inicio.
 
 No hay estado global ni gestión de rutas: cada interacción es local a su sección.
