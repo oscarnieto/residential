@@ -2065,7 +2065,7 @@ footer[id] {
 
 .track__lead {
   max-width: 720px;
-  margin: 1.5rem auto 0;
+  margin: 1.1rem auto 0;
   line-height: 1.4;
 }
 
@@ -2075,7 +2075,7 @@ footer[id] {
 
 /* Segundo párrafo de la entradilla: más pegado al primero */
 .track__lead + .track__lead {
-  margin-top: 0.7rem;
+  margin-top: 0.55rem;
 }
 
 /* --- Intro de la página y navegación entre bloques --- */
@@ -2259,6 +2259,9 @@ footer[id] {
 /* --- Galería horizontal anclada --- */
 .track-gallery {
   position: relative;
+  /* Ancho de una tarjeta. Se declara aquí para que lo hereden tanto el track
+     como la zona anclada, que lo usa para calcular su holgura vertical. */
+  --track-card: min(880px, 72vw);
   /* la altura la fija el JS en desktop para crear el recorrido del pin */
 }
 
@@ -2271,6 +2274,15 @@ footer[id] {
   align-items: flex-start; /* la fila arranca a la izquierda; el hueco la centra en el 1er producto */
   justify-content: center;
   overflow: hidden;
+  /* Sube la fila por encima del centro exacto. Sin esto, el texto de la
+     sección y la primera imagen quedan separados por toda la holgura del
+     centrado en una pantalla completa, y esa holgura crece con el alto de la
+     ventana: eran 111px en un portátil y más de 200 en un monitor alto.
+     Restando el alto aproximado de una tarjeta, el hueco sale parecido en
+     cualquier pantalla. En ventanas bajas queda en 0 y se comporta como antes.
+     El alto sigue siendo 100svh, así que el cálculo del anclaje que hace el JS
+     no se ve afectado. */
+  padding-bottom: clamp(0px, calc(100svh - 0.56 * var(--track-card) - 275px), 40rem);
 }
 
 .track-gallery__track {
@@ -2281,7 +2293,6 @@ footer[id] {
   /* huecos laterales para que el primer y último producto centren */
   padding-inline: max(var(--gutter), calc(50vw - var(--track-card) / 2));
   will-change: transform;
-  --track-card: min(880px, 72vw);
 }
 
 .track-product {
@@ -2301,7 +2312,7 @@ footer[id] {
   line-height: 1;
   color: var(--navy);
   white-space: nowrap;
-  margin-bottom: clamp(1rem, 2.4vw, 1.75rem);
+  margin-bottom: clamp(0.5rem, 1.2vw, 0.9rem);
 }
 
 .track-product__media {
@@ -2367,7 +2378,7 @@ footer[id] {
 }
 
 .track-product__name {
-  margin-top: 1.1rem;
+  margin-top: 0.8rem;
   text-align: center;
   font-size: 0.9375rem;
   font-weight: 500;
