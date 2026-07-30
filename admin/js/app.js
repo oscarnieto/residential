@@ -305,6 +305,41 @@ const loadMedia = async () => {
    Biblioteca de medios
    -------------------------------------------------------------------------- */
 
+/**
+ * Secciones donde se está usando un archivo. Se busca la ruta entre comillas
+ * para que sea una coincidencia exacta de valor y no un trozo de otra ruta.
+ * Sirve de aviso antes de borrar: la web quedaría con una imagen rota.
+ */
+const mediaUsage = (path) =>
+  SCHEMA.filter((collection) => JSON.stringify(state.content[collection.id] ?? null).includes(`"${path}"`)).map(
+    (collection) => collection.label
+  );
+
+/** Borra un archivo del repositorio, avisando si está en uso. */
+const deleteMedia = async (item) => {
+  const usedIn = mediaUsage(item.path);
+
+  const warning = usedIn.length
+    ? `«${item.name}» se está usando en: ${usedIn.join(', ')}.\n\nSi lo borras, ahí quedará una imagen rota. ¿Seguro que quieres borrarlo?`
+    : `¿Borrar «${item.name}»?\n\nNo aparece en ninguna sección. Se puede recuperar del historial del repositorio.`;
+
+  if (!window.confirm(warning)) return false;
+
+  try {
+    await state.api.deleteFile(item.path, item.sha, `Borrar ${item.name} desde el gestor de contenidos`);
+    state.media = state.media.filter((other) => other.path !== item.path);
+    toast(`«${item.name}» borrado.`, 'ok');
+    return true;
+  } catch (caught) {
+    const detail =
+      caught.status === 409
+        ? 'El archivo ha cambiado en el repositorio. Recarga el panel e inténtalo otra vez.'
+        : caught.message;
+    toast(`No se ha podido borrar: ${detail}`, 'error');
+    return false;
+  }
+};
+
 const pickMedia = ({ video = false } = {}) =>
   new Promise((resolve) => {
     let selected = null;
@@ -324,21 +359,48 @@ const pickMedia = ({ video = false } = {}) =>
       }
       grid.replaceChildren(
         ...items.map((item) => {
-          const node = el('button', { class: 'media-item', type: 'button' }, [
+          const usedIn = mediaUsage(item.path);
+
+          const pick = el('button', { class: 'media-item__pick', type: 'button' }, [
             el('div', {
               class: 'media-item__thumb',
               style: video ? '' : `background-image:url('${assetUrl(item.path)}')`,
               text: video ? '▶' : '',
             }),
-            el('div', { class: 'media-item__name', text: item.name, title: `${item.name} · ${formatBytes(item.size)}` }),
+            el('div', {
+              class: 'media-item__name',
+              text: item.name,
+              title: `${item.name} · ${formatBytes(item.size)}${usedIn.length ? ` · en uso en ${usedIn.join(', ')}` : ' · sin usar'}`,
+            }),
           ]);
-          node.addEventListener('click', () => {
+
+          const node = el('div', { class: 'media-item' }, [
+            pick,
+            usedIn.length ? el('span', { class: 'media-item__badge', title: `En uso en ${usedIn.join(', ')}`, text: '●' }) : null,
+            el('button', {
+              class: 'media-item__del',
+              type: 'button',
+              title: `Borrar ${item.name}`,
+              text: '✕',
+              onclick: async (event) => {
+                event.stopPropagation();
+                if (!(await deleteMedia(item))) return;
+                if (selected === item.path) {
+                  selected = null;
+                  confirm.disabled = true;
+                }
+                paintGrid();
+              },
+            }),
+          ]);
+
+          pick.addEventListener('click', () => {
             grid.querySelectorAll('.media-item').forEach((other) => other.classList.remove('is-selected'));
             node.classList.add('is-selected');
             selected = item.path;
             confirm.disabled = false;
           });
-          node.addEventListener('dblclick', () => close(item.path));
+          pick.addEventListener('dblclick', () => close(item.path));
           return node;
         })
       );

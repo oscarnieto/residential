@@ -123,6 +123,24 @@ todo lo que ya está subido, y puedes:
   cierra).
 - **Subir una nueva** — arrastra el archivo a la zona de puntos, o haz clic para
   buscarlo. Se sube al instante.
+- **Borrar** — pasa el ratón por encima y pulsa la **✕** de la esquina.
+
+### Borrar imágenes
+
+Un **punto verde** en la esquina marca los archivos que se están usando en
+alguna sección. Antes de borrar, el panel comprueba si es el caso:
+
+- Si **no se usa en ninguna parte**, te lo dice y lo borra sin más.
+- Si **sí se está usando**, el aviso te indica en qué secciones y te advierte de
+  que ahí quedará una imagen rota. Sigue siendo tu decisión, pero con la
+  información delante.
+
+El borrado se aplica al repositorio al instante, igual que las subidas: no
+espera a que pulses *Publicar cambios*. Aun así, **nada se pierde de verdad** —
+todo queda en el historial del repositorio y se puede recuperar.
+
+Los archivos sin punto verde son candidatos a limpieza: suelen quedar cuando
+cambias una foto por otra o quitas a alguien del equipo.
 
 Consejos:
 
