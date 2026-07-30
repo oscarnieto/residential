@@ -8,8 +8,14 @@
     "imageAlt": "Track record de Savills",
     "scrollTo": "#experiencia",
     "lines": [
-      { "text": "Nuestro", "italic": false },
-      { "text": "Track Record", "italic": true }
+      {
+        "text": "Nuestro",
+        "italic": false
+      },
+      {
+        "text": "Track Record",
+        "italic": true
+      }
     ]
   },
   "intro": {
@@ -120,12 +126,11 @@
     "label": "Promotoras con las que trabajamos",
     "speed": 45,
     "items": [
-      { "name": "Neinor Homes", "image": "assets/img/logo-neinor.png", "url": "" },
-      { "name": "Acciona", "image": "assets/img/logo-acciona.png", "url": "" },
-      { "name": "Metrovacesa", "image": "assets/img/logo-metrovacesa.png", "url": "" },
-      { "name": "Nortia", "image": "assets/img/logo-nortia.png", "url": "" },
-      { "name": "Grupo Galia", "image": "assets/img/logo-grupo-galia.png", "url": "" },
-      { "name": "Nidom", "image": "assets/img/logo-nidom.png", "url": "" }
+      {
+        "name": "Acciona",
+        "image": "assets/img/acciona.png",
+        "url": ""
+      }
     ]
   }
 }
