@@ -2138,6 +2138,24 @@ footer[id] {
   /* Difumina los extremos para que los logos entren y salgan sin corte seco */
   -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
   mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  cursor: grab;
+  /* Los arrastres horizontales los gestiona el JS; los verticales siguen
+     desplazando la página, que es lo que se espera en móvil. */
+  touch-action: pan-y;
+}
+
+.logo-marquee.is-dragging {
+  user-select: none;
+}
+
+.logo-marquee.is-dragging .logo-marquee__viewport {
+  cursor: grabbing;
+}
+
+/* Arrastrar sobre una imagen no debe iniciar el arrastre nativo del navegador */
+.logo-marquee__img {
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 .logo-marquee__track {

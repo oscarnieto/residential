@@ -336,6 +336,140 @@
   }
 
   /* ------------------------------------------------------------------
+   * Carrusel de logotipos (página Producto)
+   *  - Avanza solo, en bucle continuo.
+   *  - Se puede arrastrar con el ratón o el dedo, y al soltar retoma la
+   *    marcha desde donde se ha quedado, conservando el impulso.
+   *
+   * El desplazamiento lo lleva JS y no la animación CSS porque ambos
+   * escriben el mismo `transform`: una animación en curso gana a cualquier
+   * valor en línea, así que no se puede arrastrar mientras esté activa. La
+   * animación se queda en el CSS como respaldo para cuando este código no
+   * llega a ejecutarse.
+   * ------------------------------------------------------------------ */
+  const marquee = document.querySelector('.logo-marquee');
+  if (marquee && !prefersReducedMotion) {
+    const track = marquee.querySelector('.logo-marquee__track');
+    const group = marquee.querySelector('.logo-marquee__group');
+    const viewport = marquee.querySelector('.logo-marquee__viewport');
+
+    // JS toma el control del transform
+    track.style.animation = 'none';
+
+    /** Ancho de un grupo: la distancia tras la que el bucle se repite. */
+    let groupWidth = group.offsetWidth;
+
+    /** Velocidad de crucero en px/s, derivada de la duración configurada. */
+    const cruiseSpeed = () => {
+      const declared = parseFloat(getComputedStyle(track).getPropertyValue('--marquee-duration')) || 45;
+      return groupWidth / declared;
+    };
+
+    let speed = cruiseSpeed();
+    let offset = 0; // px recorridos, siempre dentro de [0, groupWidth)
+    let velocity = speed;
+    let dragging = false;
+    let pointerId = null;
+    let startX = 0;
+    let startOffset = 0;
+    let lastX = 0;
+    let lastTime = 0;
+    let moved = 0;
+
+    const apply = () => {
+      track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+    };
+
+    let previous = performance.now();
+    const step = (now) => {
+      const dt = Math.min((now - previous) / 1000, 0.1); // ignora saltos al volver a la pestaña
+      previous = now;
+
+      if (!dragging && !marquee.contains(document.activeElement)) {
+        // La velocidad converge suavemente a la de crucero, de modo que el
+        // impulso del arrastre se disuelve sin dar un tirón.
+        velocity += (speed - velocity) * (1 - Math.pow(0.002, dt));
+        offset += velocity * dt;
+        if (groupWidth > 0) offset = ((offset % groupWidth) + groupWidth) % groupWidth;
+        apply();
+      }
+
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+
+    /* --- Arrastre --- */
+
+    viewport.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0 && event.pointerType === 'mouse') return;
+      dragging = true;
+      pointerId = event.pointerId;
+      startX = lastX = event.clientX;
+      startOffset = offset;
+      lastTime = performance.now();
+      moved = 0;
+      velocity = 0;
+      marquee.classList.add('is-dragging');
+      viewport.setPointerCapture(pointerId);
+    });
+
+    viewport.addEventListener('pointermove', (event) => {
+      if (!dragging || event.pointerId !== pointerId) return;
+      event.preventDefault();
+
+      const dx = event.clientX - startX;
+      moved = Math.max(moved, Math.abs(dx));
+      offset = startOffset - dx;
+      if (groupWidth > 0) offset = ((offset % groupWidth) + groupWidth) % groupWidth;
+      apply();
+
+      // Velocidad instantánea, para el impulso al soltar
+      const now = performance.now();
+      const dt = (now - lastTime) / 1000;
+      if (dt > 0) velocity = -(event.clientX - lastX) / dt;
+      lastX = event.clientX;
+      lastTime = now;
+    });
+
+    const endDrag = (event) => {
+      if (!dragging || (event && event.pointerId !== pointerId)) return;
+      dragging = false;
+      marquee.classList.remove('is-dragging');
+      // Un impulso desmedido daría un salto; se acota a algo creíble
+      velocity = Math.max(-4000, Math.min(4000, velocity));
+      previous = performance.now();
+    };
+
+    viewport.addEventListener('pointerup', endDrag);
+    viewport.addEventListener('pointercancel', endDrag);
+
+    // Tras arrastrar no debe abrirse el enlace del logotipo que quede debajo
+    viewport.addEventListener(
+      'click',
+      (event) => {
+        if (moved > 6) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      },
+      true
+    );
+
+    window.addEventListener('resize', () => {
+      groupWidth = group.offsetWidth;
+      speed = cruiseSpeed();
+      if (groupWidth > 0) offset = ((offset % groupWidth) + groupWidth) % groupWidth;
+      apply();
+    });
+
+    // Las imágenes cambian el ancho del grupo al acabar de cargar
+    window.addEventListener('load', () => {
+      groupWidth = group.offsetWidth;
+      speed = cruiseSpeed();
+    });
+  }
+
+  /* ------------------------------------------------------------------
    * Volver arriba
    * ------------------------------------------------------------------ */
   document.getElementById('back-to-top').addEventListener('click', () => {

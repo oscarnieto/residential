@@ -196,12 +196,18 @@ de enlace vacío, se desactiva solo, aunque la casilla esté marcada.
 
 ### El carrusel de logotipos
 
-Se desplaza solo, en bucle continuo, y se detiene al pasar el ratón por encima.
-**Todos los logotipos se muestran a la misma altura**, así que no te preocupes
-por el tamaño del archivo: sube el que tengas y el carrusel lo iguala. Lo ideal
-es un PNG o SVG **con fondo transparente**. El orden de la lista es el orden en
-que aparecen, y con *Duración de una vuelta* ajustas la velocidad — más
-segundos, más lento.
+Se desplaza solo, en bucle continuo y sin parar. Además **se puede arrastrar con
+el ratón o con el dedo** para adelantarlo o retrocederlo; al soltar retoma la
+marcha desde donde lo hayas dejado, conservando el impulso del gesto.
+
+**Todos los logotipos ocupan la misma caja**, así que no te preocupes por el
+tamaño ni la proporción del archivo: sube el que tengas y el carrusel lo encaja
+sin deformarlo. Lo ideal es un PNG o SVG **con fondo transparente**. El orden de
+la lista es el orden en que aparecen, y con *Duración de una vuelta* ajustas la
+velocidad — más segundos, más lento.
+
+Conviene subirlos ya reducidos: no hace falta más de unos 600 px de ancho, porque
+se muestran a unos 170 px.
 
 ---
 
