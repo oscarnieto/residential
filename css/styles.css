@@ -2128,6 +2128,7 @@ footer[id] {
 
 /* --- Carrusel de logotipos --- */
 .logo-marquee {
+  --logo-gap: clamp(2rem, 4vw, 4rem);
   background-color: var(--cream-light);
   padding: clamp(2.5rem, 6vw, 4.5rem) 0;
   overflow: hidden;
@@ -2141,18 +2142,53 @@ footer[id] {
 
 .logo-marquee__track {
   display: flex;
-  align-items: center;
   width: max-content;
-  list-style: none;
-  gap: clamp(2.5rem, 5vw, 5rem);
   animation: logo-marquee var(--marquee-duration, 45s) linear infinite;
 }
 
-/* La lista se imprime dos veces, así que recorrer la mitad vuelve al origen */
+/* Dos grupos idénticos: recorrer el 50% del track es exactamente un grupo,
+   así que al cerrar la vuelta se ve lo mismo y el bucle no salta. */
 @keyframes logo-marquee {
   to {
     transform: translate3d(-50%, 0, 0);
   }
+}
+
+.logo-marquee__group {
+  display: flex;
+  align-items: center;
+  flex: none;
+  list-style: none;
+  gap: var(--logo-gap);
+  /* El hueco entre el último logo de un grupo y el primero del siguiente.
+     Va como padding para que ambos grupos midan lo mismo y el 50% siga
+     cuadrando con un grupo exacto. */
+  padding-inline-end: var(--logo-gap);
+  /* Nunca más estrecho que la ventana: si hay pocos logotipos se reparten
+     en lugar de dejar un hueco vacío al girar. */
+  min-width: 100vw;
+  justify-content: space-around;
+}
+
+/* Caja de tamaño fijo por logotipo. Es lo que mantiene la maquetación estable
+   aunque la imagen aún no haya cargado (con `width: auto` el ancho sería 0 y
+   el carrusel nacería descolocado), y lo que iguala visualmente logotipos con
+   proporciones muy distintas, del cuadrado al panorámico. */
+/* Bloque, no rejilla: dentro de una rejilla con filas automáticas el
+   `height: 100%` de la imagen no resuelve y se escalaba sólo al ancho. Con un
+   bloque de alto definido sí resuelve, y no hace falta centrar por layout
+   porque ya lo hace `object-position`. */
+.logo-marquee__item {
+  flex: none;
+  display: block;
+  width: clamp(7rem, 11vw, 10.5rem);
+  height: clamp(2.5rem, 4vw, 3.5rem);
+}
+
+.logo-marquee__item > a {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 /* El carrusel no se detiene al pasar el ratón: sigue girando siempre.
@@ -2162,17 +2198,17 @@ footer[id] {
   animation-play-state: paused;
 }
 
-.logo-marquee__item {
-  flex: none;
-}
-
-/* Todos los logotipos ocupan la misma caja, independientemente del archivo */
+/* La imagen ocupa la caja completa y `object-fit` encaja el bitmap dentro sin
+   deformarlo. Se fijan width/height en vez de max-*: un `max-height: 100%` no
+   resuelve contra una fila de rejilla automática y las imágenes se escalaban
+   sólo al ancho, desbordando a lo alto. Además, así el elemento mide lo mismo
+   antes y después de cargar la imagen. */
 .logo-marquee__img {
   display: block;
-  width: auto;
-  height: clamp(2.25rem, 4vw, 3.25rem);
-  max-width: 190px;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
+  object-position: center;
   opacity: 0.75;
   transition: opacity 0.35s var(--ease);
 }
@@ -2182,12 +2218,23 @@ footer[id] {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* Sin animación basta un grupo, que se recorre con scroll horizontal */
+  .logo-marquee__viewport {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
   .logo-marquee__track {
     animation: none;
-    /* Sin animación, se navega con scroll horizontal */
-    width: 100%;
-    overflow-x: auto;
-    justify-content: flex-start;
+  }
+
+  .logo-marquee__group + .logo-marquee__group {
+    display: none;
+  }
+
+  .logo-marquee__group {
+    padding-inline-end: 0;
   }
 }
 

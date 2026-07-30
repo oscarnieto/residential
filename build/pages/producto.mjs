@@ -82,36 +82,38 @@ ${block.products.length ? `\n${gallery(block, cta)}` : ''}
 };
 
 /**
- * Carrusel infinito de logotipos. La lista se imprime dos veces para que el
- * desplazamiento pueda volver al origen sin salto visible; la copia queda
- * oculta a los lectores de pantalla.
+ * Carrusel infinito de logotipos.
+ *
+ * La lista se imprime dos veces en dos grupos idénticos: desplazar el track un
+ * 50% equivale exactamente al ancho de un grupo, así que al terminar la vuelta
+ * la imagen es la misma y el bucle no da salto. Cada grupo se estira para
+ * cubrir como mínimo el ancho de la ventana (ver `min-width` en el CSS), que es
+ * lo que evita que quede hueco cuando hay pocos logotipos.
  */
 const logosSection = (logos) => {
   if (!logos?.items?.length) return '';
 
-  const item = (logo) => {
-    const image = `<img class="logo-marquee__img" src="${esc(logo.image)}" alt="${esc(logo.name)}" loading="lazy">`;
-    return `          <li class="logo-marquee__item">${
-      logo.url
-        ? `<a href="${esc(logo.url)}" target="_blank" rel="noopener">${image}</a>`
-        : image
+  const item = (logo, hidden) => {
+    // Carga inmediata a propósito: con `lazy`, los logotipos desplazados a la
+    // derecha por la animación no entran en el viewport y aparecían en blanco
+    // al llegar su turno. Pesan poco, así que sale más barato traerlos ya.
+    const image = `<img class="logo-marquee__img" src="${esc(logo.image)}" alt="${hidden ? '' : esc(logo.name)}" loading="eager" decoding="async">`;
+    return `            <li class="logo-marquee__item">${
+      logo.url ? `<a href="${esc(logo.url)}" target="_blank" rel="noopener">${image}</a>` : image
     }</li>`;
   };
 
-  const list = logos.items.map(item).join('\n');
-  const clone = logos.items
-    .map((logo) =>
-      item({ ...logo, name: '' }).replace('<li class="logo-marquee__item">', '<li class="logo-marquee__item" aria-hidden="true">')
-    )
-    .join('\n');
+  const group = (hidden) => `          <ul class="logo-marquee__group"${hidden ? ' aria-hidden="true"' : ''}>
+${logos.items.map((logo) => item(logo, hidden)).join('\n')}
+          </ul>`;
 
   return `    <!-- ===== Carrusel de logotipos ===== -->
     <section class="logo-marquee" aria-label="${esc(logos.label)}">
       <div class="logo-marquee__viewport">
-        <ul class="logo-marquee__track" style="--marquee-duration: ${esc(logos.speed)}s">
-${list}
-${clone}
-        </ul>
+        <div class="logo-marquee__track" style="--marquee-duration: ${esc(logos.speed)}s">
+${group(false)}
+${group(true)}
+        </div>
       </div>
     </section>`;
 };
