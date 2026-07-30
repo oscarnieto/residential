@@ -29,12 +29,23 @@ const gallery = (block, cta) => `      <!-- Galería horizontal anclada (pin) --
 ${block.products
   .map((product) => {
     const alt = `${product.name}, ${product.city}`;
+    const image = `<img src="${esc(product.image)}" alt="${esc(alt)}" loading="lazy">`;
+
+    // Sin enlace, o con el hover desactivado a mano, la imagen se muestra
+    // tal cual: ni <a> ni capa de «Ver proyecto».
+    const media =
+      product.url && product.hover !== false
+        ? `              <a class="track-product__media" href="${esc(product.url)}" target="_blank" rel="noopener" aria-label="${esc(cta)}: ${esc(alt)}">
+                ${image}
+                <span class="track-product__overlay"><span class="track-product__cta">${esc(cta)}</span></span>
+              </a>`
+        : `              <div class="track-product__media track-product__media--static">
+                ${image}
+              </div>`;
+
     return `            <article class="track-product">
               <p class="track-product__city">${esc(product.city)}</p>
-              <a class="track-product__media" href="${esc(product.url)}" target="_blank" rel="noopener" aria-label="${esc(cta)}: ${esc(alt)}">
-                <img src="${esc(product.image)}" alt="${esc(alt)}" loading="lazy">
-                <span class="track-product__overlay"><span class="track-product__cta">${esc(cta)}</span></span>
-              </a>
+${media}
               <p class="track-product__name">${esc(product.name)}</p>
             </article>`;
   })

@@ -170,6 +170,12 @@ Dos detalles propios:
 - Un bloque **sin proyectos** muestra solo su titular y su texto, sin galería
   vacía. Es útil para dejar una sección preparada antes de tener las fotos.
 
+En cada proyecto, la casilla **«Enlazable, con *Ver proyecto* al pasar el
+ratón»** controla si la imagen es clicable. Desmárcala y el proyecto se muestra
+como una imagen sin enlace, sin la capa oscura ni el zoom al pasar por encima
+—útil para promociones que todavía no tienen ficha publicada. Si dejas el campo
+de enlace vacío, se desactiva solo, aunque la casilla esté marcada.
+
 ### El carrusel de logotipos
 
 Se desplaza solo, en bucle continuo, y se detiene al pasar el ratón por encima.

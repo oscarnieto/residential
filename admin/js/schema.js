@@ -57,6 +57,13 @@ const productFields = [
   { key: 'name', type: 'text', label: 'Nombre del proyecto' },
   { key: 'image', type: 'image', label: 'Imagen' },
   { key: 'url', type: 'url', label: 'Enlace' },
+  {
+    key: 'hover',
+    type: 'boolean',
+    default: true,
+    label: 'Enlazable, con «Ver proyecto» al pasar el ratón',
+    help: 'Desactívalo para que la imagen se muestre sin enlace ni efecto. Si no hay enlace, se desactiva solo.',
+  },
 ];
 
 const memberFields = [
@@ -621,11 +628,15 @@ export const SCHEMA = [
 /** Devuelve la colección con ese identificador. */
 export const collectionById = (id) => SCHEMA.find((collection) => collection.id === id);
 
-/** Plantilla vacía para un elemento nuevo de una lista. */
+/**
+ * Plantilla vacía para un elemento nuevo de una lista. Un campo puede declarar
+ * `default` para estrenarse con otro valor que el vacío de su tipo.
+ */
 export const blankItem = (fields) => {
   const item = {};
   for (const field of fields) {
-    if (field.type === 'boolean') item[field.key] = false;
+    if (field.default !== undefined) item[field.key] = field.default;
+    else if (field.type === 'boolean') item[field.key] = false;
     else if (field.type === 'number') item[field.key] = 0;
     else if (field.type === 'select') item[field.key] = field.options[0].value;
     else item[field.key] = '';

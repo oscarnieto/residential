@@ -2259,6 +2259,15 @@ footer[id] {
   transform: scale(1.05);
 }
 
+/* Variante sin enlace: la imagen no reacciona al ratón */
+.track-product__media--static {
+  cursor: default;
+}
+
+.track-product__media--static:hover img {
+  transform: none;
+}
+
 .track-product__overlay {
   position: absolute;
   inset: 0;
