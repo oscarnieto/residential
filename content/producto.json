@@ -119,7 +119,29 @@
       "theme": "cream",
       "title": "Track Record",
       "lead": "**Una muestra de promociones residenciales que han formado parte de nuestra trayectoria.**\n\nProyectos de obra nueva seleccionados por su calidad, ubicación y relevancia dentro de algunos de los mercados residenciales más atractivos a nivel mundial.",
-      "products": []
+      "products": [
+        {
+          "city": "Prueba 1",
+          "name": "Producto 1",
+          "image": "assets/img/producto-prueba1.jpg",
+          "url": "",
+          "hover": false
+        },
+        {
+          "city": "Prueba 2",
+          "name": "Producto 2",
+          "image": "assets/img/producto-prueba2.jpg",
+          "url": "",
+          "hover": false
+        },
+        {
+          "city": "Prueba 3",
+          "name": "Producto 3",
+          "image": "assets/img/producto-prueba3.jpg",
+          "url": "",
+          "hover": false
+        }
+      ]
     }
   ],
   "logos": {
@@ -129,6 +151,71 @@
       {
         "name": "Acciona",
         "image": "assets/img/acciona.png",
+        "url": ""
+      },
+      {
+        "name": "Metrovacesa",
+        "image": "assets/img/metrovacesa.png",
+        "url": ""
+      },
+      {
+        "name": "Nortia",
+        "image": "assets/img/nortia.png",
+        "url": ""
+      },
+      {
+        "name": "Grupo Galia",
+        "image": "assets/img/grupogalia.png",
+        "url": ""
+      },
+      {
+        "name": "Med Hills",
+        "image": "assets/img/mogan.png",
+        "url": ""
+      },
+      {
+        "name": "Avantespacia",
+        "image": "assets/img/avantespacia.png",
+        "url": ""
+      },
+      {
+        "name": "Neinor",
+        "image": "assets/img/neinor.png",
+        "url": ""
+      },
+      {
+        "name": "Nidom",
+        "image": "assets/img/nidom.png",
+        "url": ""
+      },
+      {
+        "name": "Nouvit",
+        "image": "assets/img/nouvit.png",
+        "url": ""
+      },
+      {
+        "name": "Wildsur",
+        "image": "assets/img/wilsur.png",
+        "url": ""
+      },
+      {
+        "name": "Impact Homes",
+        "image": "assets/img/impacthomes.png",
+        "url": ""
+      },
+      {
+        "name": "KPC",
+        "image": "assets/img/kpc.png",
+        "url": ""
+      },
+      {
+        "name": "Osim",
+        "image": "assets/img/osim.png",
+        "url": ""
+      },
+      {
+        "name": "Daoysa",
+        "image": "assets/img/daoysa.png",
         "url": ""
       }
     ]
