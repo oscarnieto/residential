@@ -13,6 +13,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, join as joinPath } from 'node:path';
+import { createHash } from 'node:crypto';
 
 import { document } from './partials/layout.mjs';
 import { renderTheme } from './lib/theme.mjs';
@@ -53,6 +54,16 @@ const THEME_HEADER = `/* =======================================================
 
 `;
 
+/** Archivos cuyo cambio debe invalidar la caché del navegador. */
+const VERSIONED_ASSETS = ['css/fonts.css', 'css/styles.css', 'css/theme.css', 'js/main.js'];
+
+/** Huella corta del contenido de un archivo. */
+const fingerprint = async (relativePath) =>
+  createHash('sha1')
+    .update(await readFile(joinPath(root, relativePath)))
+    .digest('hex')
+    .slice(0, 8);
+
 export const build = async () => {
   const site = await readJson('content/site.json');
 
@@ -62,15 +73,21 @@ export const build = async () => {
 
   const written = [];
 
+  // El tema se escribe antes de calcular las huellas: es uno de los archivos
+  // versionados, así que su contenido tiene que estar ya en disco.
+  await writeFile(joinPath(root, 'css/theme.css'), THEME_HEADER + renderTheme(site, pages), 'utf8');
+  written.push('css/theme.css');
+
+  const assets = Object.fromEntries(
+    await Promise.all(VERSIONED_ASSETS.map(async (path) => [path, await fingerprint(path)]))
+  );
+
   for (const page of pages) {
     const main = page.renderer.render(page.data);
-    const html = document({ site, page: { ...page.data, id: page.id }, main });
+    const html = document({ site, page: { ...page.data, id: page.id }, main, assets });
     await writeFile(joinPath(root, page.output), html, 'utf8');
     written.push(page.output);
   }
-
-  await writeFile(joinPath(root, 'css/theme.css'), THEME_HEADER + renderTheme(site, pages), 'utf8');
-  written.push('css/theme.css');
 
   return written;
 };

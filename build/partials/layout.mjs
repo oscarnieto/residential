@@ -17,9 +17,22 @@ import { social as socialIcons } from '../lib/icons.mjs';
 const navHref = (item, pageId) =>
   item.page === pageId && item.selfHref ? item.selfHref : item.href;
 
-export const head = ({ site, page }) => {
+/**
+ * Añade una huella del contenido a los CSS y al JS: `styles.css?v=1a2b3c4d`.
+ * Cuando el archivo cambia, la URL cambia, así que el navegador se baja la
+ * versión nueva en lugar de servir la que tenía en caché. Sin esto, un cambio
+ * de estilos puede tardar días en verse en un navegador que ya había estado
+ * en la web.
+ *
+ * `assets` lo calcula el build; la vista previa del panel no lo necesita y
+ * pasa un objeto vacío, con lo que las rutas salen sin sufijo.
+ */
+const versioned = (assets) => (path) => (assets[path] ? `${path}?v=${assets[path]}` : path);
+
+export const head = ({ site, page, assets = {} }) => {
   const title = page.seo.title;
   const description = page.seo.description;
+  const v = versioned(assets);
 
   return `<head>
   <meta charset="UTF-8">
@@ -29,9 +42,9 @@ export const head = ({ site, page }) => {
   <link rel="icon" type="image/png" href="${esc(site.brand.favicon)}">
   <link rel="preload" href="assets/fonts/playfair-display-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/montserrat-var.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="css/fonts.css">
-  <link rel="stylesheet" href="css/styles.css">
-  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="${esc(v('css/fonts.css'))}">
+  <link rel="stylesheet" href="${esc(v('css/styles.css'))}">
+  <link rel="stylesheet" href="${esc(v('css/theme.css'))}">
 </head>`;
 };
 
@@ -120,10 +133,10 @@ ${socialLinks}
 };
 
 /** Envuelve el contenido de una página en el documento completo. */
-export const document = ({ site, page, main }) =>
+export const document = ({ site, page, main, assets = {} }) =>
   `<!DOCTYPE html>
 <html lang="${esc(site.brand.lang)}">
-${head({ site, page })}
+${head({ site, page, assets })}
 <body>
 
 ${topbar({ site, page })}
@@ -138,7 +151,7 @@ ${main}
 
 ${footer({ site, page })}
 
-  <script src="js/main.js"></script>
+  <script src="${esc(versioned(assets)('js/main.js'))}"></script>
 </body>
 </html>
 `;
