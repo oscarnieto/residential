@@ -1,0 +1,53 @@
+# FUENTE UNICA DE VERDAD de la Politica de Seguridad de Aplicaciones.
+# La consumen: (1) la skill de Claude Code (guia de autoria) y
+# (2) el gate de CI (via los scripts de security/checks/).
+# Mantener este fichero y los scripts sincronizados.
+#
+# scope:        TODO = cualquier entrega web | APP = solo si hay backend/auth/sesion/entrada
+# verification: code = revision del fuente | headers = respuesta HTTP | runtime = prueba dinamica
+# automated:    true = lo comprueba un script del gate | false = requiere atestacion manual
+
+version: 1
+
+controls:
+  # 1. Divulgacion de informacion
+  - { id: INFO-01, scope: TODO, verification: headers, automated: true,  owasp: A05, desc: "Ocultar huella y version del servidor en cabeceras y errores" }
+  - { id: INFO-02, scope: TODO, verification: runtime, automated: false, owasp: A05, desc: "No exponer versiones de librerias JS; assets minificados" }
+  - { id: INFO-03, scope: APP,  verification: runtime, automated: false, owasp: A05, desc: "Paginas de error genericas, sin stack traces ni info interna" }
+  - { id: INFO-04, scope: APP,  verification: code,    automated: true,  owasp: A05, desc: "Sin modo debug/verbose en produccion" }
+  - { id: INFO-05, scope: TODO, verification: code,    automated: false, owasp: A02, desc: "Sin datos sensibles en comentarios HTML, JSON o logs accesibles" }
+  - { id: INFO-06, scope: TODO, verification: code,    automated: true,  owasp: A02, desc: "Sin secretos/credenciales/connection strings en el codigo fuente" }
+
+  # 2. Cabeceras y transporte
+  - { id: HDR-01, scope: TODO, verification: headers, automated: true, owasp: A05, desc: "X-Frame-Options: DENY o CSP frame-ancestors 'none' (anti-clickjacking)" }
+  - { id: HDR-02, scope: TODO, verification: headers, automated: true, owasp: A05, desc: "Content-Security-Policy restrictiva" }
+  - { id: HDR-03, scope: TODO, verification: headers, automated: true, owasp: A05, desc: "X-Content-Type-Options: nosniff" }
+  - { id: HDR-04, scope: TODO, verification: headers, automated: true, owasp: A05, desc: "Referrer-Policy y Permissions-Policy" }
+  - { id: HDR-05, scope: TODO, verification: headers, automated: true, owasp: A02, desc: "HTTPS forzado, redireccion HTTP->HTTPS y HSTS" }
+  - { id: HDR-06, scope: APP,  verification: headers, automated: true, owasp: A05, desc: "CORS restrictivo; nunca '*' con credenciales" }
+
+  # 3. Autenticacion
+  - { id: AUTH-01, scope: APP, verification: runtime, automated: false, owasp: A07, desc: "Mensajes de login genericos (anti-enumeracion)" }
+  - { id: AUTH-02, scope: APP, verification: code,    automated: false, owasp: A07, desc: "Bloqueo/limitacion por intentos fallidos" }
+  - { id: AUTH-03, scope: APP, verification: code,    automated: true,  owasp: A02, desc: "Hashing fuerte de contrasenas (bcrypt/argon2/scrypt)" }
+
+  # 4. Autorizacion
+  - { id: AUTHZ-01, scope: APP, verification: runtime, automated: false, owasp: A01, desc: "Acceso por rol comprobado en servidor en cada ruta/recurso" }
+  - { id: AUTHZ-02, scope: APP, verification: code,    automated: false, owasp: A01, desc: "Autorizacion a nivel de objeto (evitar IDOR)" }
+  - { id: AUTHZ-03, scope: APP, verification: code,    automated: false, owasp: A01, desc: "Denegar por defecto; verificacion siempre en servidor" }
+
+  # 5. Sesiones
+  - { id: SESS-01, scope: APP, verification: headers, automated: true,  owasp: A05, desc: "Cookies Secure/HttpOnly/SameSite y valor firmado/cifrado" }
+  - { id: SESS-02, scope: APP, verification: code,    automated: false, owasp: A02, desc: "Cookies sin informacion sensible en claro" }
+  - { id: SESS-03, scope: APP, verification: runtime, automated: false, owasp: A07, desc: "Logout invalida la sesion en servidor" }
+  - { id: SESS-04, scope: APP, verification: runtime, automated: false, owasp: A07, desc: "Cierre de sesion por inactividad (ref. 15 min)" }
+  - { id: SESS-05, scope: APP, verification: runtime, automated: false, owasp: A07, desc: "Regeneracion del ID de sesion tras login" }
+
+  # 6. Validacion de entrada e inyeccion
+  - { id: INJ-01, scope: APP, verification: runtime, automated: false, owasp: A03, desc: "XSS almacenado: sanitizar/escapar entrada persistida" }
+  - { id: INJ-02, scope: APP, verification: code,    automated: true,  owasp: A03, desc: "XSS reflejado/DOM: codificacion contextual de salida" }
+  - { id: INJ-03, scope: APP, verification: code,    automated: true,  owasp: A03, desc: "SQLi: consultas parametrizadas, nunca concatenacion" }
+  - { id: INJ-04, scope: APP, verification: code,    automated: false, owasp: A01, desc: "CSRF: token anti-CSRF y SameSite" }
+  - { id: INJ-05, scope: APP, verification: code,    automated: true,  owasp: A03, desc: "Inyeccion de comandos: no pasar entrada a comandos del SO" }
+  - { id: INJ-06, scope: APP, verification: code,    automated: false, owasp: A10, desc: "SSRF: allow-list de destinos en peticiones salientes" }
+  - { id: INJ-07, scope: APP, verification: runtime, automated: false, owasp: A05, desc: "Subida de ficheros: content-type + extension + tamano + magic bytes; almacenamiento seguro" }
