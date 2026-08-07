@@ -7,7 +7,7 @@
    también genera el build.
    ========================================================================== */
 
-import { esc } from '../lib/html.mjs';
+import { esc, url } from '../lib/html.mjs';
 import { chevronDown } from '../lib/icons.mjs';
 
 const titleLines = (lines, baseClass) =>
@@ -19,7 +19,7 @@ const titleLines = (lines, baseClass) =>
     })
     .join('\n');
 
-const scrollLink = (hero) => `      <a href="${esc(hero.scrollTo)}" class="hero__scroll" aria-label="Bajar a la siguiente sección">
+const scrollLink = (hero) => `      <a href="${url(hero.scrollTo)}" class="hero__scroll" aria-label="Bajar a la siguiente sección">
         ${chevronDown}
       </a>`;
 
@@ -27,8 +27,8 @@ const scrollLink = (hero) => `      <a href="${esc(hero.scrollTo)}" class="hero_
 export const hero = (hero_, { modifier = '', video = null } = {}) => {
   const classes = ['hero', modifier].filter(Boolean).join(' ');
   const videoMarkup = video
-    ? `\n      <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="${esc(video.poster)}" aria-hidden="true" tabindex="-1">
-        <source src="${esc(video.src)}" type="video/mp4">
+    ? `\n      <video class="hero__video" autoplay muted loop playsinline preload="metadata" poster="${url(video.poster)}" aria-hidden="true" tabindex="-1">
+        <source src="${url(video.src)}" type="video/mp4">
       </video>`
     : '';
 

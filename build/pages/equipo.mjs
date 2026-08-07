@@ -1,4 +1,4 @@
-import { esc, inline } from '../lib/html.mjs';
+import { esc, inline, url } from '../lib/html.mjs';
 import { hero } from '../partials/hero.mjs';
 import { linkedinSquare } from '../lib/icons.mjs';
 
@@ -7,14 +7,14 @@ const memberCard = (member) => {
   const classes = ['team-card', linked ? 'team-card--link' : '', 'reveal'].filter(Boolean).join(' ');
   const linkedinMarkup = linked
     ? `
-              <a class="team-card__linkedin" href="${esc(member.linkedin)}" target="_blank" rel="noopener" aria-label="Perfil de LinkedIn de ${esc(member.name)}">
+              <a class="team-card__linkedin" href="${url(member.linkedin)}" target="_blank" rel="noopener" aria-label="Perfil de LinkedIn de ${esc(member.name)}">
                 ${linkedinSquare}
               </a>`
     : '';
 
   return `        <article class="${classes}">
           <div class="team-card__media">
-            <img src="${esc(member.photo)}" alt="${esc(member.name)}" loading="lazy">
+            <img src="${url(member.photo)}" alt="${esc(member.name)}" loading="lazy">
             <div class="team-card__tag">
               <span class="team-card__city">${esc(member.city)}</span>${linkedinMarkup}
             </div>

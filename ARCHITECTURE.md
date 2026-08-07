@@ -221,10 +221,19 @@ Tras cualquier cambio: `git commit` + `git push` a la rama de despliegue → Git
 
 ## 11. Seguridad
 
+Revisión completa, con hallazgos y modelo de amenazas, en [`SECURITY.md`](SECURITY.md).
+
 - Superficie de ataque mínima: sin backend, sin base de datos, sin dependencias npm (sin riesgo de supply-chain vía paquetes), sin formularios que reciban datos de usuarios.
 - Todos los enlaces externos (`target="_blank"`) llevan `rel="noopener"`.
 - El despliegue usa el `GITHUB_TOKEN` efímero estándar de Actions con permisos `contents: write` (necesario para devolver el HTML regenerado), `pages: write` e `id-token: write`. No hay secretos adicionales configurados.
-- **Todo el contenido se escapa al generar el HTML.** `build/lib/html.mjs` es la única frontera entre los datos del CMS y la página: escapa `& < > "` y solo después aplica el marcado ligero permitido. Un editor no puede inyectar etiquetas ni scripts, ni siquiera intencionadamente. El bloque JSON del círculo de Servicios escapa además los `<` para que ningún texto pueda cerrar la etiqueta `<script>` antes de tiempo.
+- **Todo el contenido se escapa al generar el HTML.** `build/lib/html.mjs` es la única frontera entre los datos del CMS y la página, y expone tres saneadores según dónde caiga el valor:
+  - `esc()` / `inline()` para texto: escapan `& < > "` y sólo después aplican el marcado ligero permitido.
+  - `url()` para `href` y `src`: escapar no basta ahí, porque `javascript:...` no lleva comillas ni ángulos y sobrevive al escapado. Se admiten sólo `http(s)`, `mailto`, `tel` y rutas relativas o anclas; lo demás se sustituye por `#`.
+  - `num()` para valores dentro de un atributo `style`: tampoco basta escapar, porque `1s;background:url(…)` pasaría el filtro y se colaría como CSS.
+
+  El bloque JSON del círculo de Servicios escapa además los `<` para que ningún texto pueda cerrar la etiqueta `<script>` antes de tiempo.
+
+  **Regla al añadir campos:** un valor del CMS nunca debe llegar a `innerHTML`, ni a un `href`/`src` sin pasar por `url()`, ni a un `style` sin pasar por `num()`. Los tres agujeros que encontró la revisión de seguridad de §13 eran exactamente eso.
 - **El panel `/admin` es público pero inerte.** Cualquiera puede abrir la URL; sin un token de GitHub con permiso de escritura sobre el repositorio no puede leer ni modificar nada. La autorización real la hace GitHub, no el panel. La página lleva `noindex, nofollow`.
 - **El token del editor vive solo en su navegador** (`localStorage`) y viaja únicamente a `api.github.com`. No hay servidor intermedio que pueda interceptarlo. Si se filtra, se revoca desde GitHub y deja de servir al instante.
 

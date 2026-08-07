@@ -13,7 +13,9 @@
  */
 export const renderTheme = (site, pages, prefix = '../') => {
   const theme = site.theme;
-  const url = (path) => `url('${prefix}${path}')`;
+  // encodeURI deja la ruta legible pero neutraliza comillas y paréntesis, que
+  // podrían cerrar el url() e inyectar CSS desde una ruta de imagen.
+  const url = (path) => `url('${prefix}${encodeURI(String(path)).replace(/['()]/g, encodeURIComponent)}')`;
 
   const heroVars = pages
     .map(({ id, data }) => `  --img-hero-${id}: ${url(data.hero.image)};`)

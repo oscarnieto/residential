@@ -12,6 +12,7 @@ Sitio de seis páginas desarrollado a partir del diseño de Figma
 |---|---|
 | [`CMS.md`](CMS.md) | Quien edita el contenido de la web. Cómo entrar al panel, escribir textos, subir imágenes y publicar |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Equipo técnico. Stack, estructura, despliegue, seguridad y decisiones de diseño |
+| [`SECURITY.md`](SECURITY.md) | Equipo técnico. Informe de seguridad: modelo de amenazas, hallazgos y recomendaciones |
 
 ## Stack
 

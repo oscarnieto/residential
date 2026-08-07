@@ -6,7 +6,7 @@
    páginas sin tocar el HTML.
    ========================================================================== */
 
-import { esc, inline, join } from '../lib/html.mjs';
+import { esc, inline, join, url } from '../lib/html.mjs';
 import { social as socialIcons } from '../lib/icons.mjs';
 
 /**
@@ -39,7 +39,7 @@ export const head = ({ site, page, assets = {} }) => {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${esc(title)}</title>
   <meta name="description" content="${esc(description)}">
-  <link rel="icon" type="image/png" href="${esc(site.brand.favicon)}">
+  <link rel="icon" type="image/png" href="${url(site.brand.favicon)}">
   <link rel="preload" href="assets/fonts/playfair-display-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/montserrat-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="${esc(v('css/fonts.css'))}">
@@ -55,7 +55,7 @@ export const topbar = ({ site, page }) => {
     group
       .map((item) => {
         const active = item.page === page.id ? ' is-active' : '';
-        return `        <li><a href="${esc(navHref(item, page.id))}" class="topbar__link${active}">${esc(item.label)}</a></li>`;
+        return `        <li><a href="${url(navHref(item, page.id))}" class="topbar__link${active}">${esc(item.label)}</a></li>`;
       })
       .join('\n');
 
@@ -65,8 +65,8 @@ export const topbar = ({ site, page }) => {
       <ul class="topbar__menu topbar__menu--left">
 ${renderGroup(items.slice(0, half))}
       </ul>
-      <a href="${esc(site.brand.logoHref)}" class="topbar__logo" aria-label="${esc(site.brand.name)}" target="_blank" rel="noopener">
-        <img src="${esc(site.brand.logo)}" alt="${esc(site.brand.name)}" width="90" height="90">
+      <a href="${url(site.brand.logoHref)}" class="topbar__logo" aria-label="${esc(site.brand.name)}" target="_blank" rel="noopener">
+        <img src="${url(site.brand.logo)}" alt="${esc(site.brand.name)}" width="90" height="90">
       </a>
       <ul class="topbar__menu topbar__menu--right">
 ${renderGroup(items.slice(half))}
@@ -84,7 +84,7 @@ export const mobileMenu = ({ site, page }) => `  <!-- Mobile menu overlay -->
 ${site.nav
   .map(
     (item) =>
-      `      <li><a href="${esc(navHref(item, page.id))}" class="mobile-menu__link">${esc(item.label)}</a></li>`
+      `      <li><a href="${url(navHref(item, page.id))}" class="mobile-menu__link">${esc(item.label)}</a></li>`
   )
   .join('\n')}
     </ul>
@@ -93,14 +93,14 @@ ${site.nav
 export const footer = ({ site, page }) => {
   const links = site.nav
     .map(
-      (item) => `            <li><a href="${esc(navHref(item, page.id))}">${esc(item.label)}</a></li>`
+      (item) => `            <li><a href="${url(navHref(item, page.id))}">${esc(item.label)}</a></li>`
     )
     .join('\n');
 
   const socialLinks = site.footer.social
     .filter((item) => item.url && socialIcons[item.network])
     .map(
-      (item) => `          <a href="${esc(item.url)}" target="_blank" rel="noopener" aria-label="${esc(item.label)}">
+      (item) => `          <a href="${url(item.url)}" target="_blank" rel="noopener" aria-label="${esc(item.label)}">
             ${socialIcons[item.network]}
           </a>`
     )
@@ -110,8 +110,8 @@ export const footer = ({ site, page }) => {
   <footer class="footer" id="contacto">
     <div class="footer__main">
       <div class="container footer__main-inner">
-        <a href="${esc(site.brand.logoHref)}" class="footer__logo" aria-label="${esc(site.brand.name)}" target="_blank" rel="noopener">
-          <img src="${esc(site.brand.logo)}" alt="${esc(site.brand.name)}" width="88" height="88">
+        <a href="${url(site.brand.logoHref)}" class="footer__logo" aria-label="${esc(site.brand.name)}" target="_blank" rel="noopener">
+          <img src="${url(site.brand.logo)}" alt="${esc(site.brand.name)}" width="88" height="88">
         </a>
         <nav aria-label="Navegación del pie de página">
           <ul class="footer__menu">

@@ -226,7 +226,12 @@
       window.setTimeout(() => {
         numEl.textContent = String(index + 1).padStart(2, '0');
         titleEl.textContent = step.title;
-        descEl.innerHTML = `<strong>${step.strong}</strong> ${step.rest}`;
+        // Se construye con nodos en vez de innerHTML: el texto viene del
+        // contenido editable y con innerHTML cualquier etiqueta que se
+        // escribiera ahí se ejecutaría en la página publicada.
+        const strong = document.createElement('strong');
+        strong.textContent = step.strong;
+        descEl.replaceChildren(strong, document.createTextNode(` ${step.rest}`));
         center.classList.remove('is-changing');
       }, prefersReducedMotion ? 0 : 200);
     };

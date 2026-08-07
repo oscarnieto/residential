@@ -1,4 +1,4 @@
-import { esc, inline } from '../lib/html.mjs';
+import { esc, inline, url } from '../lib/html.mjs';
 import { hero } from '../partials/hero.mjs';
 
 /** `+34 93 439 54 54` → `tel:+34934395454` */
@@ -23,11 +23,11 @@ ${page.offices
   .map(
     (office) => `          <article class="contact-city reveal">
             <div class="contact-city__media">
-              <img src="${esc(office.image)}" alt="Oficina de Savills en ${esc(office.city)}" loading="lazy">
+              <img src="${url(office.image)}" alt="Oficina de Savills en ${esc(office.city)}" loading="lazy">
             </div>
             <h3 class="contact-city__name">${esc(office.city)}</h3>
             <p class="contact-city__addr">${esc(office.address)}</p>
-            <p class="contact-city__phone"><a href="${esc(telHref(office.phone))}">${esc(office.phone)}</a></p>
+            <p class="contact-city__phone"><a href="${url(telHref(office.phone))}">${esc(office.phone)}</a></p>
           </article>`
   )
   .join('\n\n')}

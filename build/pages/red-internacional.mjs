@@ -1,4 +1,4 @@
-import { esc, inline, paragraphs } from '../lib/html.mjs';
+import { esc, inline, paragraphs, url } from '../lib/html.mjs';
 import { riHero } from '../partials/hero.mjs';
 
 /** El alt y el aria-label usan sólo la ciudad, no el país. */
@@ -35,7 +35,7 @@ ${paragraphs(teams.intro, '          ')}
 
         <div class="ri-teams__feature">
           <figure class="ri-teams__img reveal">
-            <img src="${esc(teams.feature.image)}" alt="${esc(teams.feature.imageAlt)}" loading="lazy">
+            <img src="${url(teams.feature.image)}" alt="${esc(teams.feature.imageAlt)}" loading="lazy">
           </figure>
           <div class="ri-teams__feature-text reveal">
             <h3 class="ri-teams__subtitle">${inline(teams.feature.subtitle)}</h3>
@@ -47,7 +47,7 @@ ${paragraphs(teams.feature.text, '            ')}
 ${teams.metrics
   .map(
     (metric) => `          <article class="ri-metric reveal">
-            <img class="ri-metric__img" src="${esc(metric.image)}" alt="" loading="lazy">
+            <img class="ri-metric__img" src="${url(metric.image)}" alt="" loading="lazy">
             <div class="ri-metric__body">
               <p class="ri-metric__number" data-counter="${esc(metric.number)}">${esc(metric.number)}</p>
               <p class="ri-metric__label">${inline(metric.label)}</p>
@@ -68,8 +68,8 @@ ${projects.items
   .map((item) => {
     const alt = `${item.name}, ${shortPlace(item.place)}`;
     return `          <article class="ri-project reveal">
-            <a class="ri-project__link" href="${esc(item.url)}" target="_blank" rel="noopener" aria-label="${esc(projects.cta)}: ${esc(alt)}">
-              <img class="ri-project__img" src="${esc(item.image)}" alt="${esc(alt)}" loading="lazy">
+            <a class="ri-project__link" href="${url(item.url)}" target="_blank" rel="noopener" aria-label="${esc(projects.cta)}: ${esc(alt)}">
+              <img class="ri-project__img" src="${url(item.image)}" alt="${esc(alt)}" loading="lazy">
               <span class="ri-project__overlay"><span class="ri-project__cta">${esc(projects.cta)}</span></span>
             </a>
             <figcaption class="ri-project__caption">

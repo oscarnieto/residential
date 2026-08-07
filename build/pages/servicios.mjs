@@ -1,4 +1,4 @@
-import { esc, inline, paragraphs } from '../lib/html.mjs';
+import { esc, inline, paragraphs, url } from '../lib/html.mjs';
 import { hero } from '../partials/hero.mjs';
 import { plus } from '../lib/icons.mjs';
 
@@ -75,7 +75,7 @@ ${types.cards
   .map((card) => {
     const alt = String(card.title).replace(/\s*\n\s*/g, ' ').trim();
     return `          <article class="serv-card reveal">
-            <img class="serv-card__img" src="${esc(card.image)}" alt="${esc(alt)}" loading="lazy">
+            <img class="serv-card__img" src="${url(card.image)}" alt="${esc(alt)}" loading="lazy">
             <span class="serv-card__more" aria-hidden="true">
               ${plus}
             </span>

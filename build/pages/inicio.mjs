@@ -1,4 +1,4 @@
-import { esc, inline, inlineNoBreaks, paragraphs } from '../lib/html.mjs';
+import { esc, inline, inlineNoBreaks, paragraphs, num, url } from '../lib/html.mjs';
 import { hero } from '../partials/hero.mjs';
 import { play, mapPin } from '../lib/icons.mjs';
 
@@ -11,8 +11,8 @@ const introSection = (intro) => `    <!-- ===== Sección 1 · Intro + vídeo ===
         <span class="ornament reveal" aria-hidden="true"></span>
       </div>
       <div class="container">
-        <div class="video reveal" data-video-url="${esc(intro.video.url)}">
-          <img class="video__poster" src="${esc(intro.video.poster)}" alt="${esc(intro.video.posterAlt)}">
+        <div class="video reveal" data-video-url="${url(intro.video.url)}">
+          <img class="video__poster" src="${url(intro.video.poster)}" alt="${esc(intro.video.posterAlt)}">
           <button class="video__play" aria-label="Reproducir vídeo">
             ${play}
           </button>
@@ -42,7 +42,7 @@ const mapPins = (map) =>
     .map((pin) => {
       const classes = ['map__pin', pin.highlight ? 'map__pin--spain' : ''].filter(Boolean).join(' ');
       const radar = pin.highlight ? '\n            <span class="map__radar" aria-hidden="true"></span>' : '';
-      return `          <li class="${classes}" style="--x: ${esc(pin.x)}%; --y: ${esc(pin.y)}%;">${radar}
+      return `          <li class="${classes}" style="--x: ${num(pin.x)}%; --y: ${num(pin.y)}%;">${radar}
             <button class="map__pin-btn" type="button" aria-label="${esc(pin.region)}: ${esc(pin.number)} ${esc(map.unit)}">
               ${mapPin}
             </button>
@@ -77,13 +77,13 @@ ${network.stats
 ${paragraphs(network.business.text, '            ')}
           </div>
           <figure class="network__business-img reveal">
-            <img src="${esc(network.business.image)}" alt="${esc(network.business.imageAlt)}" loading="lazy">
+            <img src="${url(network.business.image)}" alt="${esc(network.business.imageAlt)}" loading="lazy">
           </figure>
         </div>
       </div>
 
       <div class="map reveal">
-        <img class="map__world" src="${esc(network.map.image)}" alt="" aria-hidden="true">
+        <img class="map__world" src="${url(network.map.image)}" alt="" aria-hidden="true">
         <ul class="map__pins" aria-label="${esc(network.map.label)}">
 ${mapPins(network.map)}
         </ul>

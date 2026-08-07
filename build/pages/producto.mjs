@@ -1,4 +1,4 @@
-import { esc, inline, paragraphs } from '../lib/html.mjs';
+import { esc, inline, paragraphs, num, url } from '../lib/html.mjs';
 import { hero } from '../partials/hero.mjs';
 
 /** Navegación de anclas a cada bloque. */
@@ -29,13 +29,13 @@ const gallery = (block, cta) => `      <!-- Galería horizontal anclada (pin) --
 ${block.products
   .map((product) => {
     const alt = `${product.name}, ${product.city}`;
-    const image = `<img src="${esc(product.image)}" alt="${esc(alt)}" loading="lazy">`;
+    const image = `<img src="${url(product.image)}" alt="${esc(alt)}" loading="lazy">`;
 
     // Sin enlace, o con el hover desactivado a mano, la imagen se muestra
     // tal cual: ni <a> ni capa de «Ver proyecto».
     const media =
       product.url && product.hover !== false
-        ? `              <a class="track-product__media" href="${esc(product.url)}" target="_blank" rel="noopener" aria-label="${esc(cta)}: ${esc(alt)}">
+        ? `              <a class="track-product__media" href="${url(product.url)}" target="_blank" rel="noopener" aria-label="${esc(cta)}: ${esc(alt)}">
                 ${image}
                 <span class="track-product__overlay"><span class="track-product__cta">${esc(cta)}</span></span>
               </a>`
@@ -97,9 +97,9 @@ const logosSection = (logos) => {
     // Carga inmediata a propósito: con `lazy`, los logotipos desplazados a la
     // derecha por la animación no entran en el viewport y aparecían en blanco
     // al llegar su turno. Pesan poco, así que sale más barato traerlos ya.
-    const image = `<img class="logo-marquee__img" src="${esc(logo.image)}" alt="${hidden ? '' : esc(logo.name)}" loading="eager" decoding="async">`;
+    const image = `<img class="logo-marquee__img" src="${url(logo.image)}" alt="${hidden ? '' : esc(logo.name)}" loading="eager" decoding="async">`;
     return `            <li class="logo-marquee__item">${
-      logo.url ? `<a href="${esc(logo.url)}" target="_blank" rel="noopener">${image}</a>` : image
+      logo.url ? `<a href="${url(logo.url)}" target="_blank" rel="noopener">${image}</a>` : image
     }</li>`;
   };
 
@@ -110,7 +110,7 @@ ${logos.items.map((logo) => item(logo, hidden)).join('\n')}
   return `    <!-- ===== Carrusel de logotipos ===== -->
     <section class="logo-marquee" aria-label="${esc(logos.label)}">
       <div class="logo-marquee__viewport">
-        <div class="logo-marquee__track" style="--marquee-duration: ${esc(logos.speed)}s">
+        <div class="logo-marquee__track" style="--marquee-duration: ${num(logos.speed, 45)}s">
 ${group(false)}
 ${group(true)}
         </div>
