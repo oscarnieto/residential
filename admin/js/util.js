@@ -69,6 +69,59 @@ export const slugifyFilename = (name) => {
   return `${slug || 'imagen'}${ext}`;
 };
 
+/* --------------------------------------------------------------------------
+   Validación del contenido de un archivo subido (control INJ-07)
+   --------------------------------------------------------------------------
+   Fiarse de la extensión no vale: la pone quien sube el archivo. Se comprueban
+   los primeros bytes, que sí describen el formato real.
+   -------------------------------------------------------------------------- */
+
+/** Lee `n` bytes como ASCII desde la posición `desde`. */
+const ascii = (bytes, desde, n) =>
+  String.fromCharCode(...bytes.subarray(desde, desde + n));
+
+const FIRMAS = [
+  { ext: /\.jpe?g$/i, formato: 'JPEG', ok: (b) => b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff },
+  { ext: /\.png$/i, formato: 'PNG', ok: (b) => b[0] === 0x89 && ascii(b, 1, 3) === 'PNG' },
+  { ext: /\.gif$/i, formato: 'GIF', ok: (b) => ascii(b, 0, 3) === 'GIF' },
+  { ext: /\.webp$/i, formato: 'WebP', ok: (b) => ascii(b, 0, 4) === 'RIFF' && ascii(b, 8, 4) === 'WEBP' },
+  { ext: /\.avif$/i, formato: 'AVIF', ok: (b) => ascii(b, 4, 4) === 'ftyp' },
+  { ext: /\.mp4$/i, formato: 'MP4', ok: (b) => ascii(b, 4, 4) === 'ftyp' },
+  { ext: /\.webm$/i, formato: 'WebM', ok: (b) => b[0] === 0x1a && b[1] === 0x45 && b[2] === 0xdf && b[3] === 0xa3 },
+];
+
+/**
+ * Un SVG es texto y puede traer script dentro. Importa porque el campo de
+ * imagen ofrece un enlace «Ver» que abre el archivo en primer plano y en el
+ * mismo origen del panel: ahí sí se ejecutaría, con acceso al token guardado.
+ */
+const SVG_PELIGROSO = /<script[\s>]|<foreignObject[\s>]|\son[a-z]+\s*=|javascript:/i;
+
+/**
+ * Comprueba que el contenido corresponde a la extensión.
+ * Devuelve `null` si está bien, o un mensaje explicando el problema.
+ */
+export const validarArchivo = (nombre, buffer) => {
+  const bytes = new Uint8Array(buffer);
+
+  if (/\.svg$/i.test(nombre)) {
+    const texto = new TextDecoder('utf-8', { fatal: false }).decode(bytes.subarray(0, 65536));
+    if (!/<svg[\s>]/i.test(texto)) return `«${nombre}» no parece un SVG válido.`;
+    if (SVG_PELIGROSO.test(texto)) {
+      return `«${nombre}» contiene código ejecutable (script o manejadores de eventos) y no se puede subir. Expórtalo de nuevo como SVG plano, o súbelo en PNG.`;
+    }
+    return null;
+  }
+
+  const firma = FIRMAS.find((f) => f.ext.test(nombre));
+  if (!firma) return null; // extensión ya filtrada antes; sin firma conocida no se bloquea
+  if (bytes.length < 12) return `«${nombre}» está vacío o incompleto.`;
+  if (!firma.ok(bytes)) {
+    return `El contenido de «${nombre}» no es ${firma.formato} de verdad, aunque lo parezca por la extensión. No se sube.`;
+  }
+  return null;
+};
+
 export const formatBytes = (bytes) => {
   if (!bytes) return '';
   const units = ['B', 'KB', 'MB'];

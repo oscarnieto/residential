@@ -7,29 +7,39 @@
 navegador. Cada hallazgo se comprobó explotándolo antes de darlo por bueno, y se
 volvió a comprobar después de corregirlo.
 
-> **Nota sobre el encargo.** Se pidió generar este informe con un skill llamado
-> `seguridad-aplicaciones`, que no existe en este entorno. El informe se ha
-> elaborado con una revisión manual, sin apoyarse en ninguna herramienta
-> automática de análisis estático: conviene tenerlo en cuenta al valorar la
-> cobertura (ver §5).
+> **Complemento:** este documento recoge la revisión y su investigación. La
+> certificación formal contra la Política de Seguridad de Aplicaciones de la
+> empresa, control por control, está en
+> [`security/compliance-report.md`](security/compliance-report.md).
+
+> **Nota sobre el encargo.** Se pidió generar este informe con el skill
+> `seguridad-aplicaciones`. La plantilla corporativa sí está en el repositorio,
+> pero el `SKILL.md` no llegó a subirse (el subidor web de GitHub ignora las
+> carpetas que empiezan por punto), así que la revisión se hizo a mano tomando
+> como referencia `security/policy.yml`, que la propia plantilla designa fuente
+> única de verdad. No se usó ninguna herramienta automática de análisis
+> estático: conviene tenerlo en cuenta al valorar la cobertura (ver §5).
 
 ---
 
 ## 1. Resumen
 
-Se encontraron **tres vulnerabilidades de inyección**, todas explotables por
-alguien con permiso de edición de contenidos, y todas corregidas en esta misma
-revisión. Dos estaban confirmadas mediante ejecución real de código en el
-navegador.
+Se encontraron **cuatro vulnerabilidades de inyección**, todas explotables por
+alguien con permiso de edición de contenidos, y todas corregidas. Las tres
+primeras salieron de esta revisión manual; la cuarta la destapó después la
+certificación contra la política corporativa (control INJ-07), y está detallada
+en [`security/compliance-report.md`](security/compliance-report.md) §4.
 
 | # | Hallazgo | Severidad | Estado |
 |---|---|---|---|
 | 1 | XSS almacenado en los pasos del círculo de Servicios (`innerHTML`) | **Alta** | Corregido |
 | 2 | XSS almacenado vía `javascript:` en campos de enlace | **Alta** | Corregido |
 | 3 | Inyección de CSS en atributos `style` | Baja | Corregido |
-| 4 | El panel es público (por diseño) | Informativo | Aceptado |
-| 5 | Sin cabeceras de seguridad (CSP, HSTS…) | Baja | Abierto |
-| 6 | Token del editor en `localStorage` | Baja | Aceptado con matices |
+| 4 | Subida de ficheros sin validar contenido; SVG con script (INJ-07) | **Alta** | Corregido |
+| 5 | El panel es público (por diseño) | Informativo | Aceptado |
+| 6 | Sin cabeceras de seguridad (CSP, HSTS…) | Baja | Abierto |
+| 7 | Token del editor en `localStorage` | Baja | Aceptado con matices |
+| 8 | Sin caducidad por inactividad del token (SESS-04) | Baja | Abierto |
 
 **Superficie de ataque general:** muy reducida. Sin backend, sin base de datos,
 sin dependencias de terceros (`npm`), sin formularios que reciban datos y sin

@@ -233,7 +233,11 @@ Revisión completa, con hallazgos y modelo de amenazas, en [`SECURITY.md`](SECUR
 
   El bloque JSON del círculo de Servicios escapa además los `<` para que ningún texto pueda cerrar la etiqueta `<script>` antes de tiempo.
 
-  **Regla al añadir campos:** un valor del CMS nunca debe llegar a `innerHTML`, ni a un `href`/`src` sin pasar por `url()`, ni a un `style` sin pasar por `num()`. Los tres agujeros que encontró la revisión de seguridad de §13 eran exactamente eso.
+  **Regla al añadir campos:** un valor del CMS nunca debe llegar a `innerHTML`, ni a un `href`/`src` sin pasar por `url()`, ni a un `style` sin pasar por `num()`. Los tres agujeros que encontró la revisión de seguridad eran exactamente eso.
+
+- **Los archivos subidos se validan por contenido, no por extensión.** `validarArchivo()` (`admin/js/util.js`) comprueba los primeros bytes contra la extensión declarada y rechaza los SVG que traigan `<script>`, manejadores `on…=` o `<foreignObject>`. Importa porque el campo de imagen ofrece un enlace «Ver» que abre el archivo en primer plano y en el origen del panel: un SVG con script se ejecutaría ahí, con acceso al token guardado.
+
+- **Certificación formal** contra la Política de Seguridad de Aplicaciones de la empresa, control por control: [`security/compliance-report.md`](security/compliance-report.md). El gate de CI vive en `security/checks/` y se dispara desde `.github/workflows/security-gate.yml`.
 - **El panel `/admin` es público pero inerte.** Cualquiera puede abrir la URL; sin un token de GitHub con permiso de escritura sobre el repositorio no puede leer ni modificar nada. La autorización real la hace GitHub, no el panel. La página lleva `noindex, nofollow`.
 - **El token del editor vive solo en su navegador** (`localStorage`) y viaja únicamente a `api.github.com`. No hay servidor intermedio que pueda interceptarlo. Si se filtra, se revoca desde GitHub y deja de servir al instante.
 

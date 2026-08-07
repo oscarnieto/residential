@@ -1,0 +1,40 @@
+name: Gate de seguridad
+
+# Replica de azure-pipelines.yml para GitHub, que es donde vive este repositorio.
+#
+# El BLOQUEO real no lo da este workflow, sino la PROTECCION DE RAMA:
+#   Settings -> Branches -> Require status checks -> marcar "gate" como requerido.
+# Sin ese paso, esto es un aviso, no una barrera.
+
+on:
+  pull_request:
+    branches:
+      - main
+      - 'release/*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    name: Politica de seguridad de aplicaciones
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Preparar herramientas (semgrep / gitleaks)
+        run: |
+          python -m pip install --quiet semgrep || true
+          # gitleaks es opcional; si esta disponible, check_secrets.sh lo usa solo.
+
+      - name: Gate de seguridad
+        run: bash security/checks/run_all.sh
+        env:
+          # Este sitio es estatico y no publica un preview, asi que la variable
+          # va vacia y el check de cabeceras se salta. Consecuencia declarada en
+          # security/compliance-report.md: los controles HDR quedan fuera de la
+          # verificacion automatica y se registran como "Activa" en la
+          # atestacion hasta que el alojamiento permita cabeceras.
+          PREVIEW_URL: ${{ vars.PREVIEW_URL }}

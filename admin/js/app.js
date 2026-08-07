@@ -10,7 +10,7 @@ import { SCHEMA } from './schema.js';
 import { GitHub, GitHubError, encodeBase64, bufferToBase64 } from './github.js';
 import { renderField } from './fields.js';
 import { renderPreview } from './preview.js';
-import { el, getPath, setPath, clone, isEqual, debounce, slugifyFilename, formatBytes } from './util.js';
+import { el, getPath, setPath, clone, isEqual, debounce, slugifyFilename, formatBytes, validarArchivo } from './util.js';
 
 /* --------------------------------------------------------------------------
    Configuración
@@ -419,15 +419,28 @@ const pickMedia = ({ video = false } = {}) =>
         return;
       }
 
+      dropzone.textContent = 'Comprobando…';
+
+      // El contenido tiene que corresponder a la extensión: la pone quien sube
+      // el archivo, así que por sí sola no dice nada (control INJ-07).
+      const blobs = [];
+      for (const file of accepted) {
+        const buffer = await file.arrayBuffer();
+        const problema = validarArchivo(file.name, buffer);
+        if (problema) {
+          toast(problema, 'error');
+          dropzone.textContent = dropzoneLabel;
+          return;
+        }
+        blobs.push({
+          path: `${MEDIA_DIR}/${slugifyFilename(file.name)}`,
+          content: bufferToBase64(buffer),
+          encoding: 'base64',
+        });
+      }
+
       dropzone.textContent = 'Subiendo…';
       try {
-        const blobs = await Promise.all(
-          accepted.map(async (file) => ({
-            path: `${MEDIA_DIR}/${slugifyFilename(file.name)}`,
-            content: bufferToBase64(await file.arrayBuffer()),
-            encoding: 'base64',
-          }))
-        );
 
         await state.api.commitFiles(
           blobs,
