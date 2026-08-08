@@ -17,6 +17,7 @@ import { createHash } from 'node:crypto';
 
 import { document } from './partials/layout.mjs';
 import { renderTheme } from './lib/theme.mjs';
+import { minifyCss, minifyJs } from './lib/minify.mjs';
 import * as inicio from './pages/inicio.mjs';
 import * as redInternacional from './pages/red-internacional.mjs';
 import * as servicios from './pages/servicios.mjs';
@@ -54,8 +55,18 @@ const THEME_HEADER = `/* =======================================================
 
 `;
 
-/** Archivos cuyo cambio debe invalidar la caché del navegador. */
-const VERSIONED_ASSETS = ['css/fonts.css', 'css/styles.css', 'css/theme.css', 'js/main.js'];
+/**
+ * Assets que se publican minificados (INFO-02). La clave es el fuente, que
+ * sigue siendo lo que se edita y lo que se versiona de forma legible; el valor
+ * es la copia que referencia el HTML. El minificador está en `lib/minify.mjs`
+ * y sólo quita comentarios y espacio en blanco.
+ */
+const MINIFICABLES = {
+  'css/fonts.css': 'css/fonts.min.css',
+  'css/styles.css': 'css/styles.min.css',
+  'css/theme.css': 'css/theme.min.css',
+  'js/main.js': 'js/main.min.js',
+};
 
 /** Huella corta del contenido de un archivo. */
 const fingerprint = async (relativePath) =>
@@ -78,9 +89,17 @@ export const build = async () => {
   await writeFile(joinPath(root, 'css/theme.css'), THEME_HEADER + renderTheme(site, pages), 'utf8');
   written.push('css/theme.css');
 
-  const assets = Object.fromEntries(
-    await Promise.all(VERSIONED_ASSETS.map(async (path) => [path, await fingerprint(path)]))
-  );
+  // Se minifica después de escribir el tema (es uno de los assets) y antes de
+  // calcular las huellas, que se toman sobre el archivo que de verdad se
+  // descarga el navegador.
+  const assets = {};
+  for (const [source, minified] of Object.entries(MINIFICABLES)) {
+    const original = await readFile(joinPath(root, source), 'utf8');
+    const minify = source.endsWith('.css') ? minifyCss : minifyJs;
+    await writeFile(joinPath(root, minified), minify(original), 'utf8');
+    written.push(minified);
+    assets[source] = `${minified}?v=${await fingerprint(minified)}`;
+  }
 
   for (const page of pages) {
     const main = page.renderer.render(page.data);

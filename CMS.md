@@ -32,6 +32,13 @@ sea GitHub, y no queda registrado en la web. Si usas otro ordenador tendrás que
 volver a pegarlo, y si alguna vez crees que se ha filtrado, bórralo desde
 GitHub y genera uno nuevo.
 
+> **La sesión se cierra sola a los 15 minutos sin usarla.** Es a propósito: el
+> token da permiso para publicar, y no puede quedarse abierto en un ordenador
+> que dejas desatendido. Cuando pasa, el panel se tapa y te pide el token otra
+> vez — **no pierdes nada**: los cambios que no habías publicado siguen ahí y
+> continúas donde estabas. Ten el token a mano (o guárdalo en tu gestor de
+> contraseñas) para no tener que generar uno nuevo cada vez.
+
 > **Sobre la rama:** el campo *Rama* debe coincidir con la rama desde la que se
 > publica la web, y viene ya relleno con la correcta. Si algún día cambia (por
 > ejemplo al fusionar el proyecto a `main`), el panel te avisará indicándote en
@@ -231,6 +238,11 @@ recargar en vez de pisar su trabajo.
 **Se me ha olvidado publicar y he cerrado.** El navegador avisa antes de salir
 si hay cambios sin publicar. Si aun así se perdieron, no pasa nada: la web
 publicada nunca llegó a cambiar.
+
+**Me ha saltado «Sesión cerrada por inactividad».** Es el cierre automático a
+los 15 minutos. Vuelve a pegar el token y sigues donde estabas, con los cambios
+sin publicar intactos. Si has cerrado la pestaña entremedias, esos cambios sí se
+pierden — pero, otra vez, la web publicada no cambió.
 
 ---
 

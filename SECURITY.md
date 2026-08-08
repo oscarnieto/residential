@@ -37,9 +37,9 @@ en [`security/compliance-report.md`](security/compliance-report.md) §4.
 | 3 | Inyección de CSS en atributos `style` | Baja | Corregido |
 | 4 | Subida de ficheros sin validar contenido; SVG con script (INJ-07) | **Alta** | Corregido |
 | 5 | El panel es público (por diseño) | Informativo | Aceptado |
-| 6 | Sin cabeceras de seguridad (CSP, HSTS…) | Baja | Abierto |
+| 6 | Sin cabeceras de seguridad (CSP, HSTS…) | Baja | Parcialmente corregido |
 | 7 | Token del editor en `localStorage` | Baja | Aceptado con matices |
-| 8 | Sin caducidad por inactividad del token (SESS-04) | Baja | Abierto |
+| 8 | Sin caducidad por inactividad del token (SESS-04) | Baja | Corregido |
 
 **Superficie de ataque general:** muy reducida. Sin backend, sin base de datos,
 sin dependencias de terceros (`npm`), sin formularios que reciban datos y sin
@@ -181,14 +181,25 @@ habla con `api.github.com`.
 
 ---
 
-### 3.5 — Sin cabeceras de seguridad · Baja · Abierto
-
-No hay `Content-Security-Policy`, `X-Content-Type-Options`, `Referrer-Policy` ni
-`Permissions-Policy`. GitHub Pages **no permite configurar cabeceras**, así que
-no es corregible mientras el alojamiento sea ese.
+### 3.5 — Sin cabeceras de seguridad · Baja · Parcialmente corregido
 
 Una CSP habría sido una segunda barrera frente a los hallazgos 1 y 2: aunque el
-payload se hubiera colado, `script-src 'self'` habría impedido su ejecución.
+payload se hubiera colado, `script-src 'self'` habría impedido su ejecución. Por
+eso se ha entregado ya, sin esperar al cambio de alojamiento.
+
+**Lo que se ha hecho.** GitHub Pages no permite configurar cabeceras, pero dos
+de estas políticas también viajan en `<meta>` y el navegador las aplica igual:
+
+- **`Content-Security-Policy`** por `<meta http-equiv>` en las seis páginas
+  (`build/partials/layout.mjs`) y en el panel (`admin/index.html`).
+- **`Referrer-Policy`** por `<meta name="referrer">`.
+
+**Lo que sigue abierto, y por qué.** `X-Content-Type-Options` y
+`Strict-Transport-Security` sólo existen como cabecera; `Permissions-Policy`
+tampoco tiene forma `<meta>`; y `frame-ancestors` **se ignora** expresamente
+cuando la CSP llega por `<meta>`, así que el anti-clickjacking se queda en el
+apaño de `admin/js/antiframe.js`, que sólo cubre el panel. Nada de esto es
+corregible mientras el alojamiento sea GitHub Pages.
 
 **Recomendación.** Al mover el sitio a los servidores de la empresa (algo ya
 previsto), pedir a IT que sirva al menos:
@@ -205,6 +216,10 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains
 `'unsafe-inline'` en `style-src` es necesario por los atributos `style` que
 genera el build (posición de los pines y velocidad del carrusel). Se podría
 eliminar moviendo esos valores a clases o a un CSS generado, si IT lo exige.
+
+Al pasar a cabecera hay que **añadir `frame-ancestors 'none'`**, que es lo que
+cierra de verdad el anti-clickjacking, y entonces `admin/js/antiframe.js` se
+puede retirar.
 
 ---
 
@@ -230,13 +245,37 @@ implica el robo del token**.
 
 ---
 
+### 3.7 — Sin caducidad por inactividad del token · Baja · Corregido
+
+El token se quedaba en `localStorage` hasta que alguien pulsaba «Cerrar sesión»
+o hasta que caducaba en GitHub. Un panel abierto en un ordenador compartido o
+desatendido seguía teniendo permiso de escritura sobre el repositorio.
+
+**Corrección.** A los 15 minutos sin actividad —sin clic ni tecla— el panel
+borra el token de `localStorage` y de memoria, y se tapa con una capa que lo
+pide otra vez (`admin/js/app.js`, `lockSession`). La marca de tiempo vive en
+`localStorage`, así que sobrevive a una recarga y la comparten las pestañas
+abiertas; al arrancar con la marca caducada, el token se borra sin llegar a
+usarse ni una vez.
+
+**Por qué no recarga la página.** Recargar sería más sencillo, pero tiraría los
+cambios que el editor aún no había publicado, y un control que hace perder
+trabajo acaba desactivado. La credencial desaparece; el contenido editado se
+queda en memoria y se continúa donde estaba al reautenticarse.
+
+**Lo que esto no cubre.** Protege el navegador, no el token: si se filtra por
+otra vía, lo único que lo detiene es su caducidad en GitHub o una revocación.
+Por eso §3.6 sigue vigente.
+
+---
+
 ## 4. Comprobaciones realizadas sin hallazgos
 
 | Comprobación | Resultado |
 |---|---|
 | Secretos, tokens o claves en el repositorio | Ninguno. El único positivo es el texto de ejemplo `github_pat_…` del formulario |
-| `eval`, `new Function`, `document.write` | No se usan |
-| `innerHTML` con datos del CMS | Sólo el hallazgo 3.1, ya corregido. El resto son cadenas fijas del propio panel |
+| `eval`, `new Function`, `document.write` | No se usan; hay regla de semgrep que lo impide en adelante |
+| `innerHTML` con datos del CMS | Ninguno. Tras el hallazgo 3.1 no queda **ni un solo** `innerHTML` en el proyecto: `el()` sólo escribe en `textContent` y una regla de semgrep bloquea que vuelva a aparecer |
 | Enlaces externos sin `rel="noopener"` | Ninguno en las seis páginas |
 | Secretos en el workflow de despliegue | Ninguno; sólo el `GITHUB_TOKEN` efímero de Actions |
 | Permisos del workflow | `contents: write`, `pages: write`, `id-token: write`. El de escritura es necesario para devolver el HTML regenerado |
@@ -273,11 +312,16 @@ Para que se valore con la cobertura que realmente tiene:
 
 1. **Al migrar a los servidores de la empresa, añadir las cabeceras de §3.5.**
    Es la mejora con mejor relación coste/beneficio que queda pendiente, y sólo
-   depende de la configuración del servidor.
+   depende de la configuración del servidor. La CSP ya se entrega por `<meta>`;
+   lo que falta ahí son `nosniff`, HSTS, `Permissions-Policy` y
+   `frame-ancestors`.
 2. **Revisar quién tiene acceso de escritura al repositorio** y exigir 2FA. Es
    el control que de verdad protege el contenido; todo lo demás asume que los
    editores son quienes dicen ser.
-3. **Poner caducidad a los tokens** y revocarlos al rotar personas.
+3. **Poner caducidad a los tokens** y revocarlos al rotar personas. El panel ya
+   cierra la sesión a los 15 minutos de inactividad (§3.7), pero eso protege el
+   navegador, no el token: si se filtra por otra vía, sólo lo detiene su fecha
+   de caducidad o una revocación.
 4. **Mantener la regla de saneado** al añadir campos nuevos: nunca `innerHTML`
    con contenido, `url()` en enlaces, `num()` en estilos. Está documentada en
    `ARCHITECTURE.md` §11.

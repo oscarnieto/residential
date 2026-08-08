@@ -8,7 +8,21 @@ if [ -z "$URL" ]; then
   exit 0
 fi
 
-H=$(curl -sSIL --max-time 20 "$URL" 2>/dev/null | tr -d '\r')
+# El fallo de red NO puede pasar por cumplimiento: sin respuesta, las cabeceras
+# "que no deberian aparecer" (INFO-01) tampoco aparecen y el check daria OK sobre
+# una respuesta vacia. Se corta aqui con FAIL y el motivo.
+H=$(curl -sSIL --max-time 20 "$URL" 2>&1 | tr -d '\r')
+curl_rc=$?   # con 'pipefail' el fallo de curl gana al exito de tr
+if [ "$curl_rc" -ne 0 ]; then
+  echo "[headers] FAIL: no se ha podido contactar con '$URL' (curl $curl_rc). Sin respuesta no hay veredicto."
+  echo "$H" | sed 's/^/[headers]   /' | head -n 5
+  exit 1
+fi
+if ! echo "$H" | grep -qiE "^HTTP/"; then
+  echo "[headers] FAIL: la respuesta de '$URL' no contiene ninguna linea de estado HTTP."
+  exit 1
+fi
+
 rc=0
 has(){ echo "$H" | grep -qiE "^$1:"; }
 val(){ echo "$H" | grep -iE "^$1:" | head -n1; }

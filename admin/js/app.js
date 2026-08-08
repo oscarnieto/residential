@@ -121,6 +121,139 @@ const dirtyCollections = () =>
 const isDirty = () => dirtyCollections().length > 0;
 
 /* --------------------------------------------------------------------------
+   Cierre de sesión por inactividad (SESS-04)
+   --------------------------------------------------------------------------
+   El token es una credencial con permiso de escritura sobre el repositorio y
+   vive en `localStorage`, así que no puede quedarse ahí indefinidamente en un
+   ordenador que alguien deja abierto. A los 15 minutos sin actividad se borra
+   del navegador y de memoria.
+
+   Lo que NO se hace es recargar la página: eso tiraría los cambios sin
+   publicar y la gente acabaría buscando la forma de desactivar el aviso. En su
+   lugar se tapa el panel con una capa que pide el token otra vez; el contenido
+   editado sigue en memoria y al volver a entrar se continúa donde se estaba.
+
+   La marca de tiempo va en `localStorage` y no en una variable para que
+   sobreviva a una recarga y la compartan las pestañas abiertas del panel.
+   -------------------------------------------------------------------------- */
+
+const ACTIVITY_KEY = 'savills-cms-activity';
+const IDLE_LIMIT = 15 * 60 * 1000;
+const IDLE_TICK = 30 * 1000;
+
+/** Milisegundos sin actividad. Sin marca previa se asume que acaba de haberla. */
+const idleTime = () => {
+  const last = Number(localStorage.getItem(ACTIVITY_KEY));
+  return Number.isFinite(last) && last > 0 ? Date.now() - last : 0;
+};
+
+let lastWrite = 0;
+let idleTimer = null;
+
+/** Se escribe como mucho una vez cada 5 s: el evento salta en cada tecla. */
+const markActivity = () => {
+  const now = Date.now();
+  if (now - lastWrite < 5000) return;
+  lastWrite = now;
+  localStorage.setItem(ACTIVITY_KEY, String(now));
+};
+
+const checkIdle = () => {
+  if (!state.api) return;
+  if (idleTime() > IDLE_LIMIT) lockSession();
+};
+
+const startActivityWatch = () => {
+  lastWrite = 0;
+  markActivity();
+  if (idleTimer) return;
+  for (const event of ['pointerdown', 'keydown']) {
+    document.addEventListener(event, markActivity, { passive: true, capture: true });
+  }
+  // Al volver a la pestaña se comprueba antes de dar por buena la actividad:
+  // el temporizador se ralentiza en las pestañas de fondo.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible') return;
+    checkIdle();
+    markActivity();
+  });
+  idleTimer = setInterval(checkIdle, IDLE_TICK);
+};
+
+/** Borra la credencial de todas partes, conservando a dónde apuntaba el panel. */
+const forgetToken = () => {
+  const { owner, repo, branch } = state.config;
+  state.config = { owner, repo, branch };
+  state.api = null;
+  saveConfig(state.config);
+  localStorage.removeItem(ACTIVITY_KEY);
+};
+
+const lockSession = () => {
+  if (document.querySelector('.lock')) return;
+  forgetToken();
+
+  const token = el('input', {
+    class: 'input',
+    type: 'password',
+    placeholder: 'github_pat_...',
+    autocomplete: 'off',
+  });
+  const error = el('p', { class: 'login__error', hidden: true });
+  const button = el('button', { class: 'btn btn--primary btn--block', type: 'submit', text: 'Continuar' });
+
+  const overlay = el('div', { class: 'lock' }, [
+    el('div', { class: 'lock__card' }, [
+      el('h2', { class: 'login__title', text: 'Sesión cerrada por inactividad' }),
+      el('p', {
+        class: 'login__sub',
+        text: isDirty()
+          ? 'Los cambios que no habías publicado siguen aquí. Vuelve a introducir el token para continuar.'
+          : 'Vuelve a introducir el token para continuar.',
+      }),
+      error,
+      el(
+        'form',
+        {
+          onsubmit: async (event) => {
+            event.preventDefault();
+            button.disabled = true;
+            button.textContent = 'Comprobando…';
+            const next = { ...state.config, token: token.value.trim() };
+            try {
+              const api = new GitHub(next);
+              await api.verify();
+              state.config = next;
+              state.api = api;
+              saveConfig(next);
+              overlay.remove();
+              root.inert = false;
+              startActivityWatch();
+              toast('Sesión reanudada.');
+            } catch (caught) {
+              error.hidden = false;
+              error.textContent =
+                caught instanceof GitHubError && caught.status === 401
+                  ? 'El token no es válido o ha caducado.'
+                  : caught.message;
+              button.disabled = false;
+              button.textContent = 'Continuar';
+            }
+          },
+        },
+        [el('div', { class: 'field' }, [el('label', { class: 'field__label', text: 'Token de acceso' }), token]), button]
+      ),
+    ]),
+  ]);
+
+  // `inert` deja el panel visible pero sin foco ni clics: no se puede seguir
+  // editando por detrás de la capa.
+  root.inert = true;
+  document.body.append(overlay);
+  token.focus();
+};
+
+/* --------------------------------------------------------------------------
    Pantalla de acceso
    -------------------------------------------------------------------------- */
 
@@ -218,9 +351,29 @@ const renderLogin = (error = '') => {
             }),
             '.',
           ]),
-          el('li', { html: 'En <strong>Repository access</strong> elige <em>Only select repositories</em> y marca este repositorio.' }),
-          el('li', { html: 'En <strong>Permissions → Repository permissions</strong> pon <code>Contents</code> en <em>Read and write</em>.' }),
-          el('li', { html: 'Añade también <code>Actions</code> en <em>Read-only</em> si quieres ver el estado de las publicaciones.' }),
+          el('li', {}, [
+            'En ',
+            el('strong', { text: 'Repository access' }),
+            ' elige ',
+            el('em', { text: 'Only select repositories' }),
+            ' y marca este repositorio.',
+          ]),
+          el('li', {}, [
+            'En ',
+            el('strong', { text: 'Permissions → Repository permissions' }),
+            ' pon ',
+            el('code', { text: 'Contents' }),
+            ' en ',
+            el('em', { text: 'Read and write' }),
+            '.',
+          ]),
+          el('li', {}, [
+            'Añade también ',
+            el('code', { text: 'Actions' }),
+            ' en ',
+            el('em', { text: 'Read-only' }),
+            ' si quieres ver el estado de las publicaciones.',
+          ]),
           el('li', { text: 'Copia el token y pégalo aquí abajo.' }),
         ]),
         form,
@@ -256,6 +409,7 @@ const boot = async () => {
 
     await loadMedia();
     renderApp();
+    startActivityWatch();
   } catch (caught) {
     renderLogin(await explainLoadFailure(caught));
   }
@@ -688,6 +842,7 @@ const renderSidebar = () => {
         onclick: () => {
           if (isDirty() && !window.confirm('Hay cambios sin publicar que se perderán. ¿Salir igualmente?')) return;
           localStorage.removeItem(CONFIG_KEY);
+          localStorage.removeItem(ACTIVITY_KEY);
           location.reload();
         },
       }),
@@ -998,7 +1153,12 @@ window.addEventListener('beforeunload', (event) => {
 });
 
 const config = loadConfig();
-if (config.token) {
+if (config.token && idleTime() > IDLE_LIMIT) {
+  // La pestaña se cerró con la sesión abierta y ha pasado el límite: el token
+  // se borra sin llegar a usarlo ni una vez.
+  forgetToken();
+  renderLogin('La sesión se cerró por inactividad. Vuelve a introducir el token.');
+} else if (config.token) {
   state.api = new GitHub(config);
   state.api
     .verify()

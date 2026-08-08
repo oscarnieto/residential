@@ -40,10 +40,13 @@ residential/
 │   └── contacto.json
 │
 ├── build/                       Generador estático (Node, sin dependencias)
-│   ├── build.mjs                 Punto de entrada: lee content/ y escribe el HTML
+│   ├── build.mjs                 Punto de entrada: lee content/, escribe el HTML
+│   │                              y las copias minificadas de los assets
 │   ├── lib/
 │   │   ├── html.mjs              Escapado y marcado ligero (*cursiva*, **negrita**)
 │   │   ├── icons.mjs             SVG en línea (parte del diseño, no del contenido)
+│   │   ├── minify.mjs            Minificado conservador de CSS y JS (sólo espacio
+│   │   │                          y comentarios; no renombra nada)
 │   │   └── theme.mjs             Genera css/theme.css (colores + imágenes de fondo)
 │   ├── partials/
 │   │   ├── layout.mjs            <head>, topbar, menú móvil y footer compartidos
@@ -53,7 +56,7 @@ residential/
 ├── admin/                       Gestor de contenidos (ver §12)
 │   ├── index.html
 │   ├── css/admin.css
-│   └── js/{app,schema,fields,github,preview,util}.js
+│   └── js/{app,schema,fields,github,preview,util,antiframe}.js
 │
 ├── index.html                 ┐
 ├── red-internacional.html     │  GENERADOS por build/build.mjs.
@@ -66,11 +69,13 @@ residential/
 │   ├── fonts.css                @font-face de las fuentes self-hosted
 │   ├── styles.css               Todo el CSS del sitio (~2.745 líneas): tokens
 │   │                             de diseño, layout, componentes, responsive
-│   └── theme.css                GENERADO: colores de marca e imágenes de fondo
+│   ├── theme.css                GENERADO: colores de marca e imágenes de fondo
+│   └── *.min.css                GENERADOS: las copias que referencia el HTML
 │
 ├── js/
-│   └── main.js                  Todo el JS del sitio (~340 líneas), un único
-│                                 IIFE sin dependencias externas
+│   ├── main.js                  Todo el JS del sitio (~340 líneas), un único
+│   │                             IIFE sin dependencias externas
+│   └── main.min.js              GENERADO
 │
 ├── assets/
 │   ├── fonts/                   3 archivos .woff2 (fuentes variables)
@@ -160,7 +165,8 @@ No hay estado global ni gestión de rutas: cada interacción es local a su secci
 Workflow: `.github/workflows/deploy.yml`
 
 - **Disparador**: cualquier `push` a las ramas `main` o `claude/clever-brahmagupta-abt3is`, o manualmente vía `workflow_dispatch`.
-- **Pasos**: checkout → `setup-node` (Node 22) → `node build/build.mjs` → commit del HTML regenerado si ha cambiado → `actions/configure-pages` → `actions/upload-pages-artifact` (sube todo el repo) → `actions/deploy-pages`.
+- **Pasos**: checkout → `setup-node` (Node 22) → `node build/build.mjs` → commit del HTML y de los assets regenerados si han cambiado → `actions/configure-pages` → `actions/upload-pages-artifact` (sube todo el repo) → `actions/deploy-pages`.
+- **El build minifica los assets** (`build/lib/minify.mjs`) y el HTML apunta a las copias `*.min.css` / `*.min.js` con huella de contenido. Los fuentes siguen siendo lo que se edita y lo que se lee en el repositorio; el minificador sólo quita comentarios y espacio en blanco, nunca renombra ni reordena nada.
 - **El build se ejecuta siempre**, de modo que lo publicado corresponde a `content/` aunque el HTML versionado se hubiera quedado atrás — que es justo lo que pasa cuando se edita desde `/admin`, que solo commitea los JSON.
 - El paso que devuelve el HTML regenerado al repositorio usa el `GITHUB_TOKEN` del propio workflow. GitHub **no vuelve a disparar workflows** para pushes hechos con ese token, así que no hay bucle infinito. Requiere `contents: write` en los permisos del job.
 - **Sin tests ni lint** — el build es la única verificación (falla el job si un JSON está mal formado).
@@ -240,6 +246,12 @@ Revisión completa, con hallazgos y modelo de amenazas, en [`SECURITY.md`](SECUR
 - **Certificación formal** contra la Política de Seguridad de Aplicaciones de la empresa, control por control: [`security/compliance-report.md`](security/compliance-report.md). El gate de CI vive en `security/checks/` y se dispara desde `.github/workflows/security-gate.yml`.
 - **El panel `/admin` es público pero inerte.** Cualquiera puede abrir la URL; sin un token de GitHub con permiso de escritura sobre el repositorio no puede leer ni modificar nada. La autorización real la hace GitHub, no el panel. La página lleva `noindex, nofollow`.
 - **El token del editor vive solo en su navegador** (`localStorage`) y viaja únicamente a `api.github.com`. No hay servidor intermedio que pueda interceptarlo. Si se filtra, se revoca desde GitHub y deja de servir al instante.
+- **La sesión del panel se cierra a los 15 minutos de inactividad** (`lockSession`, en `admin/js/app.js`): el token se borra de `localStorage` y de memoria, y el panel queda `inert` tras una capa que lo pide de nuevo. No recarga la página a propósito — los cambios sin publicar siguen en memoria, porque un control que hace perder trabajo acaba desactivado.
+- **Cada página lleva una CSP en `<meta http-equiv>`**, generada en `build/partials/layout.mjs` para el sitio y escrita a mano en `admin/index.html` para el panel. Va en `<meta>` porque GitHub Pages no permite cabeceras. Dos consecuencias que hay que tener presentes al tocar el código:
+  - `style-src` necesita `'unsafe-inline'` mientras los pines del mapa y la velocidad del carrusel viajen en atributos `style`.
+  - `base-uri` es `'self'` y no `'none'` porque la vista previa del panel inyecta un `<base>` en el iframe `srcdoc`; con `'none'` se quedaría sin estilos.
+  - `frame-ancestors` **se ignora** en `<meta>`, así que el anti-enmarcado del panel lo hace `admin/js/antiframe.js`, que es un sustituto más débil.
+- **El SAST del gate tiene reglas propias** en `security/.semgrep.yml`: prohíben el HTML crudo en el DOM, la ejecución de cadenas, y la interpolación en `href`/`src` sin `url()` o en `style` sin `num()`. Si una regla marca código legítimo, la respuesta es cambiar el código, no añadir una excepción.
 
 ---
 

@@ -24,9 +24,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # semgrep NO es opcional desde que el repositorio tiene sus propias reglas
+      # en security/.semgrep.yml: sin el, check_sast.sh cae al modo heuristico,
+      # que es ciego a la clase de riesgo de este proyecto (ver el §5 del
+      # informe de cumplimiento). Que se degrade en silencio seria peor que
+      # fallar, asi que si no se puede instalar, el gate se cae aqui.
       - name: Preparar herramientas (semgrep / gitleaks)
         run: |
-          python -m pip install --quiet semgrep || true
+          python -m pip install --quiet semgrep
+          semgrep --version
           # gitleaks es opcional; si esta disponible, check_secrets.sh lo usa solo.
 
       - name: Gate de seguridad

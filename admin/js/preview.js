@@ -8,6 +8,7 @@
 
 import { document as renderDocument } from '../../build/partials/layout.mjs';
 import { renderTheme } from '../../build/lib/theme.mjs';
+import { url } from '../../build/lib/html.mjs';
 
 import * as inicio from '../../build/pages/inicio.mjs';
 import * as redInternacional from '../../build/pages/red-internacional.mjs';
@@ -60,7 +61,10 @@ export const renderPreview = (pageId, content, baseHref = siteRoot()) => {
   const pages = PAGE_IDS.filter((id) => content[id]).map((id) => ({ id, data: content[id] }));
   const theme = renderTheme(site, pages, baseHref);
 
+  // `baseHref` es un parámetro, así que pasa por el mismo saneador de URL que
+  // el resto de atributos de enlace: un `<base>` apuntando a un esquema raro
+  // reescribiría todas las rutas relativas del documento de golpe.
   return html
-    .replace('<head>', `<head>\n  <base href="${baseHref}">`)
+    .replace('<head>', `<head>\n  <base href="${url(baseHref)}">`)
     .replace('</head>', `  <style id="preview-theme">${theme}</style>\n</head>`);
 };

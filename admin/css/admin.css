@@ -1174,6 +1174,37 @@ a {
 }
 
 /* ==========================================================================
+   Sesión cerrada por inactividad (SESS-04)
+   --------------------------------------------------------------------------
+   Tapa el panel sin descartarlo: los cambios sin publicar siguen debajo, y al
+   volver a introducir el token se continúa donde se estaba. Va por encima del
+   modal de imágenes, que puede quedar abierto al cumplirse el tiempo.
+   ========================================================================== */
+
+.lock {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+  background: rgba(28, 30, 46, 0.72);
+  backdrop-filter: blur(2px);
+}
+
+.lock__card {
+  width: min(460px, 100%);
+  background: #fff;
+  border-radius: 14px;
+  padding: 32px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.lock__card .login__sub {
+  margin-bottom: 20px;
+}
+
+/* ==========================================================================
    Avisos
    ========================================================================== */
 

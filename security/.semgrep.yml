@@ -1,0 +1,106 @@
+# Reglas SAST del proyecto — Politica de Seguridad de Aplicaciones
+# ---------------------------------------------------------------------------
+# Las consume security/checks/check_sast.sh. Con este fichero presente y semgrep
+# instalado, el gate deja el modo heuristico y pasa a ser autoritativo.
+#
+# El fallback de check_sast.sh busca idioms de backend (os.system, DEBUG=True,
+# hashlib.md5) y no encuentra NADA de lo que de verdad falla aqui, que es una
+# web estatica generada desde JSON editable mas un panel en el navegador. Estas
+# reglas cubren esa clase de riesgo: las cuatro vulnerabilidades reales que se
+# corrigieron en este repositorio habrian sido detectadas por ellas.
+#
+# Regla de convivencia: si una regla marca codigo legitimo, se cambia el codigo
+# para que deje de parecerse al patron peligroso. No se anaden excepciones.
+
+rules:
+  # ---------------------------------------------------------------------------
+  # INJ-01 / INJ-02 · XSS almacenado y de DOM
+  # ---------------------------------------------------------------------------
+  - id: sin-html-crudo-en-el-dom
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: >-
+      INJ-01/INJ-02: escribir HTML crudo en el DOM. El contenido de este proyecto
+      lo edita cualquiera con acceso al CMS, asi que una etiqueta suya se
+      ejecutaria en la pagina publicada y en el propio panel. Construye con nodos
+      (document.createElement + textContent) o pasa el valor por build/lib/html.mjs.
+    patterns:
+      - pattern-either:
+          - pattern: $EL.innerHTML = $V
+          - pattern: $EL.outerHTML = $V
+          - pattern: $EL.insertAdjacentHTML(...)
+          - pattern: document.write(...)
+          - pattern: document.writeln(...)
+          - pattern: $EL.setHTMLUnsafe(...)
+
+  - id: sin-ejecucion-de-cadenas
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: >-
+      INJ-02: ejecutar una cadena como codigo. No hay ningun caso en este
+      proyecto que lo necesite y convierte cualquier dato del CMS en codigo.
+    patterns:
+      - pattern-either:
+          - pattern: eval(...)
+          - pattern: new Function(...)
+          - pattern: setTimeout("...", ...)
+          - pattern: setInterval("...", ...)
+
+  # ---------------------------------------------------------------------------
+  # INJ-02 · Codificacion contextual en las plantillas del generador
+  #
+  # Estas tres reglas son las que habrian parado los fallos reales: escapar con
+  # esc() NO basta en un href (javascript: no lleva comillas ni angulos) ni en un
+  # atributo style (basta con cerrar la declaracion y anadir otra).
+  # ---------------------------------------------------------------------------
+  - id: url-en-atributo-sin-sanear
+    languages: [generic]
+    severity: ERROR
+    message: >-
+      INJ-02: interpolacion en un atributo de URL sin pasar por url() de
+      build/lib/html.mjs. esc() no vale aqui: no lleva comillas ni angulos, asi
+      que no lo detiene. Usa url(), que aplica lista blanca de esquemas.
+    pattern-regex: '(?i)\b(href|src|srcset|poster|action|formaction|data|cite)="\$\{(?!\s*url\()'
+
+  - id: style-en-atributo-sin-sanear
+    languages: [generic]
+    severity: ERROR
+    message: >-
+      INJ-02: interpolacion dentro de un atributo style sin pasar por num() de
+      build/lib/html.mjs. Un valor con ';' cierra la declaracion y puede inyectar
+      CSS arbitrario. Usa num() para todo lo que sea numerico.
+    pattern-regex: 'style="[^"]*\$\{(?!\s*num\()'
+
+  # No hay regla para el TEXTO interpolado en el HTML: un patron generico no
+  # distingue un fragmento ya compuesto (`${dots}`) de un campo del CMS sin
+  # escapar (`${step.title}`), y la unica forma de intentarlo seria una lista de
+  # nombres permitidos que caducaria con el primer renombrado. Ese control se
+  # sostiene por diseno — los renderizadores solo emiten contenido via esc() o
+  # inline() de build/lib/html.mjs — y por revision, no por SAST. Queda dicho en
+  # security/compliance-report.md para que nadie lo de por automatizado.
+
+  # ---------------------------------------------------------------------------
+  # INFO-04 · Sin depuracion en produccion
+  # ---------------------------------------------------------------------------
+  - id: sin-depuracion-en-produccion
+    languages: [javascript, typescript]
+    severity: ERROR
+    message: >-
+      INFO-04: rastro de depuracion. Ninguna regla lleva filtro de rutas a
+      proposito: el gate escanea todo el repositorio y asi cubre tambien los
+      ficheros que se anadan manana.
+    patterns:
+      - pattern-either:
+          - pattern: debugger
+          - pattern: console.debug(...)
+          - pattern: console.trace(...)
+
+  # ---------------------------------------------------------------------------
+  # HDR-06 · CORS
+  # ---------------------------------------------------------------------------
+  - id: cors-abierto
+    languages: [generic]
+    severity: ERROR
+    message: >-
+      HDR-06: cabecera de CORS con comodin. Nunca, y menos con credenciales.
+    pattern-regex: 'Access-Control-Allow-Origin["'':\s]+\*'

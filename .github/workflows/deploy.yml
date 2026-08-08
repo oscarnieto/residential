@@ -42,10 +42,10 @@ jobs:
       # GITHUB_TOKEN no vuelven a disparar workflows, así que no hay bucle.
       - name: Commit generated HTML
         run: |
-          if [ -n "$(git status --porcelain -- '*.html' css/theme.css)" ]; then
+          if [ -n "$(git status --porcelain -- '*.html' css/theme.css 'css/*.min.css' 'js/*.min.js')" ]; then
             git config user.name  "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add -- '*.html' css/theme.css
+            git add -- '*.html' css/theme.css 'css/*.min.css' 'js/*.min.js'
             git commit -m "Regenerar HTML desde el contenido"
             git push
           else

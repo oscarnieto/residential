@@ -18,16 +18,49 @@ const navHref = (item, pageId) =>
   item.page === pageId && item.selfHref ? item.selfHref : item.href;
 
 /**
- * Añade una huella del contenido a los CSS y al JS: `styles.css?v=1a2b3c4d`.
- * Cuando el archivo cambia, la URL cambia, así que el navegador se baja la
- * versión nueva en lugar de servir la que tenía en caché. Sin esto, un cambio
- * de estilos puede tardar días en verse en un navegador que ya había estado
- * en la web.
+ * Traduce la ruta del fuente a la del archivo que se publica:
+ * `css/styles.css` → `css/styles.min.css?v=1a2b3c4d`. La huella hace que, al
+ * cambiar el archivo, cambie la URL y el navegador se baje la versión nueva en
+ * lugar de servir la que tenía en caché; sin ella un cambio de estilos puede
+ * tardar días en verse.
  *
- * `assets` lo calcula el build; la vista previa del panel no lo necesita y
- * pasa un objeto vacío, con lo que las rutas salen sin sufijo.
+ * El mapa lo calcula el build. La vista previa del panel pasa un objeto vacío
+ * y se queda con el fuente sin minificar, que es idéntico en comportamiento y
+ * mucho más cómodo de depurar.
  */
-const versioned = (assets) => (path) => (assets[path] ? `${path}?v=${assets[path]}` : path);
+const versioned = (assets) => (path) => assets[path] ?? path;
+
+/**
+ * Política de seguridad de contenidos (HDR-02).
+ *
+ * Va en `<meta>` y no en cabecera porque GitHub Pages no permite configurar
+ * cabeceras HTTP; el navegador la aplica igual. Dos directivas se quedan fuera
+ * por una limitación de la forma `<meta>`, no por decisión nuestra:
+ * `frame-ancestors` (que se ignora ahí, así que HDR-01 sigue abierto) y
+ * `report-uri`. Cuando el sitio se sirva desde infraestructura propia, esto
+ * debe pasar a cabecera y completarse — ver SECURITY.md §3.5.
+ *
+ * Notas de las que dependen los estilos:
+ * - `style-src` necesita `'unsafe-inline'` porque el mapa y el carrusel llevan
+ *   los valores variables en atributos `style` (`--x`, `--marquee-duration`),
+ *   ya saneados con `num()`. Sin servidor no hay forma de usar nonces.
+ * - `base-uri` es `'self'` y no `'none'` porque la vista previa del panel
+ *   inyecta un `<base>` del mismo origen para resolver los assets dentro del
+ *   iframe `srcdoc`. Con `'none'` la vista previa se quedaría sin estilos.
+ */
+const CSP = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self'",
+  "media-src 'self'",
+  "font-src 'self'",
+  "connect-src 'self'",
+  "object-src 'none'",
+  "form-action 'none'",
+  "frame-src 'none'",
+  "base-uri 'self'",
+].join('; ');
 
 export const head = ({ site, page, assets = {} }) => {
   const title = page.seo.title;
@@ -37,14 +70,16 @@ export const head = ({ site, page, assets = {} }) => {
   return `<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="${esc(CSP)}">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>${esc(title)}</title>
   <meta name="description" content="${esc(description)}">
   <link rel="icon" type="image/png" href="${url(site.brand.favicon)}">
   <link rel="preload" href="assets/fonts/playfair-display-var.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/montserrat-var.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="${esc(v('css/fonts.css'))}">
-  <link rel="stylesheet" href="${esc(v('css/styles.css'))}">
-  <link rel="stylesheet" href="${esc(v('css/theme.css'))}">
+  <link rel="stylesheet" href="${url(v('css/fonts.css'))}">
+  <link rel="stylesheet" href="${url(v('css/styles.css'))}">
+  <link rel="stylesheet" href="${url(v('css/theme.css'))}">
 </head>`;
 };
 
@@ -151,7 +186,7 @@ ${main}
 
 ${footer({ site, page })}
 
-  <script src="${esc(versioned(assets)('js/main.js'))}"></script>
+  <script src="${url(versioned(assets)('js/main.js'))}"></script>
 </body>
 </html>
 `;

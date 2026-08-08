@@ -5,6 +5,7 @@ Este repositorio sigue la **Política de Seguridad de Aplicaciones** de la empre
 ## Reglas no negociables
 
 - Aplica la skill `seguridad-aplicaciones` (en `.claude/skills/`) siempre que escribas, generes o modifiques código, **aunque no se mencione la seguridad**.
+  > **Sigue sin estar en el repositorio.** Comprobado en el commit `58ecfd1`: sólo llegaron `CLAUDE.md`, `README.md` y `security/attestation.md`. El subidor web de GitHub («Add files via upload») **ignora las carpetas que empiezan por punto**, así que `.claude/skills/seguridad-aplicaciones/SKILL.md` hay que subirlo con `git push`. Mientras tanto la referencia es `security/policy.yml`, que la propia plantilla designa como fuente única de verdad.
 - La fuente única de verdad de los controles es `security/policy.yml`.
 - **Nunca** metas secretos, credenciales o connection strings en el código: usa variables de entorno o un almacén de secretos.
 - **Nunca** desactives, relajes o rodees un control de seguridad "para que compile" o "para ir rápido". Si algo no cumple, dilo.

@@ -1,72 +1,73 @@
-# Plantilla de proyecto seguro
+# Obra Nueva Residencial — Savills
 
-Plantilla de repositorio para que **cada nuevo proyecto nazca con la política de seguridad ya puesta**: la guía para Claude Code, los hooks, el motor de comprobaciones y el gate de CI. Crea repos nuevos a partir de esta plantilla.
+Sitio de seis páginas desarrollado a partir del diseño de Figma
+[Residential New Developments](https://www.figma.com/design/jdwx4oQaPNUSJVW76JAmQG/Residential-New-Developments).
 
-## Qué incluye
+**Web:** https://oscarnieto.github.io/residential/
+**Gestor de contenidos:** https://oscarnieto.github.io/residential/admin/
+
+## Documentación
+
+| Documento | Para quién |
+|---|---|
+| [`CMS.md`](CMS.md) | Quien edita el contenido de la web. Cómo entrar al panel, escribir textos, subir imágenes y publicar |
+| [`ARCHITECTURE.md`](ARCHITECTURE.md) | Equipo técnico. Stack, estructura, despliegue, seguridad y decisiones de diseño |
+| [`SECURITY.md`](SECURITY.md) | Equipo técnico. Informe de seguridad: modelo de amenazas, hallazgos y recomendaciones |
+| [`security/compliance-report.md`](security/compliance-report.md) | Equipo técnico. Cumplimiento de la Política de Seguridad de Aplicaciones: los 30 controles, estado y evidencia |
+| [`security/attestation.md`](security/attestation.md) | Equipo técnico. Atestación de los controles `runtime`, para firmar antes de promover |
+| [`security/PLANTILLA.md`](security/PLANTILLA.md) | Equipo técnico. El README de la plantilla corporativa que este repositorio ha adoptado |
+
+## Stack
+
+HTML, CSS y JavaScript vanilla, sin frameworks ni dependencias. El contenido
+vive en `content/*.json` y un script de Node sin dependencias
+(`build/build.mjs`) genera los seis HTML y las copias minificadas de los assets
+que referencia el HTML. GitHub Actions construye y publica en
+GitHub Pages en cada push (`.github/workflows/deploy.yml`).
+
+## Estructura
 
 ```
-.
-├── CLAUDE.md                     # Memoria de proyecto: se carga sola en cada sesion de Claude Code
-├── .claude/
-│   ├── settings.json             # Hooks: corren los checks rapidos al editar codigo
-│   └── skills/
-│       └── seguridad-aplicaciones/
-│           └── SKILL.md          # La skill: guia de autoria segura
-├── security/
-│   ├── policy.yml                # FUENTE UNICA DE VERDAD (los 27 controles como datos)
-│   ├── .semgrep.yml              # Reglas SAST de arranque
-│   ├── attestation.md            # Atestacion firmada de los controles runtime
-│   └── checks/
-│       ├── run_all.sh            # Orquestador -> exit 0/1 (contrato del gate)
-│       ├── check_secrets.sh      # INFO-06
-│       ├── check_sast.sh         # INJ-03/05, AUTH-03, INFO-04...
-│       └── check_headers.sh      # HDR-*, SESS-01, INFO-01
-├── azure-pipelines.yml           # Gate de CI (Azure DevOps, primario)
-├── .github/workflows/
-│   └── security-gate.yml         # Gate de CI (GitHub Actions, alternativo)
-└── .gitignore
+├── content/            Contenido editable (fuente de la verdad)
+├── build/              Generador estático (Node, sin dependencias)
+├── admin/              Gestor de contenidos
+├── *.html              GENERADOS por el build — no editar a mano
+├── css/
+│   ├── fonts.css       @font-face (fuentes variables self-hosted)
+│   ├── styles.css      Estilos: tokens de diseño, layout, responsive
+│   ├── theme.css       GENERADO: colores de marca e imágenes de fondo
+│   └── *.min.css       GENERADOS: lo que de verdad se descarga el navegador
+├── js/
+│   ├── main.js         Menú móvil, reveals, contadores, mapa, galerías, vídeo
+│   └── main.min.js     GENERADO
+└── assets/
+    ├── fonts/          Playfair Display + Montserrat (woff2, latin)
+    └── img/            Imágenes, vídeo y SVG
 ```
 
-## Las tres capas (y cuál obliga)
+## Páginas
 
-1. **Autoría (blanda):** `CLAUDE.md` + la skill guían a Claude Code para escribir código que cumple por defecto.
-2. **En sesión (semiblanda):** los hooks de `.claude/settings.json` corren los checks rápidos al editar, para ver los problemas antes del commit.
-3. **Gate de CI (dura, obligatoria):** el workflow ejecuta `security/checks/run_all.sh` en cada PR. Si falla, **no se puede fusionar**.
+| Página | Contenido |
+|---|---|
+| **Inicio** | Hero con vídeo, intro, «¿Qué nos hace diferentes?», red internacional con contadores y mapa interactivo, Savills en España |
+| **Red internacional** | Expertise 360, equipos especializados, métricas globales y proyectos internacionales |
+| **Servicios** | Círculo interactivo de proceso y tarjetas de tipología de producto |
+| **Producto** | Bloques de producto con galerías horizontales ancladas al scroll y carrusel de logotipos |
+| **Equipo** | Equipo en España y equipo global, con enlaces a LinkedIn |
+| **Contacto** | Textos de contacto y las tres oficinas |
 
-> La obligatoriedad **no** nace del pipeline, nace de la **protección de rama**. Ejecutar los checks no basta: hay que marcar el gate como *check requerido* sobre la rama protegida y restringir quién puede modificar esa regla. Sin ese paso, el gate es un aviso, no una barrera.
-
-## Puesta en marcha (una vez por repo)
-
-1. Crea el repo desde esta plantilla.
-2. **Marca el gate como requerido:**
-   - Azure DevOps: *Branch policies* → *Build validation* → añade `azure-pipelines.yml` como requerido en `main`/`release/*`.
-   - GitHub: *Settings* → *Branches* → *Branch protection rule* → *Require status checks* → `security`.
-3. Para proyectos **con backend (APP)**: publica un preview en CI y expón su URL como `PREVIEW_URL`, para que el check de cabeceras se ejecute de verdad.
-4. (Despliegue) Exige la **atestación firmada** (`security/attestation.md`) como check del entorno de producción, para cubrir los controles `runtime`.
-
-## Uso local
+## Desarrollo en local
 
 ```bash
-# todo el gate
-bash security/checks/run_all.sh
-
-# un check suelto
-bash security/checks/check_headers.sh https://mi-preview
+node build/build.mjs          # regenera los 6 HTML y css/theme.css
+python3 -m http.server 8000   # http://localhost:8000
 ```
 
-## Herramientas recomendadas
+El panel de administración se sirve igual, en `/admin/`, y funciona contra el
+repositorio real de GitHub (necesita un token, ver [`CMS.md`](CMS.md)).
 
-Los scripts funcionan sin dependencias (usan `grep`/`curl`), pero el veredicto es mucho más fiable con:
+## Créditos
 
-- **gitleaks** → escaneo de secretos (INFO-06). Si está instalado, `check_secrets.sh` lo usa.
-- **semgrep** → SAST autoritativo (INJ/AUTH/INFO-04). Si está instalado, manda sobre los greps heurísticos.
-
-Sin estas herramientas, el fallback heurístico marca los casos de alta confianza como fallo y el resto como "revisar".
-
-## Mantener sincronizado
-
-`security/policy.yml` es la fuente de verdad. Si añades o cambias un control, actualiza también la skill (`SKILL.md`) y el script correspondiente en `security/checks/`. Las tres piezas deben contar la misma historia.
-
-## Nota de producto
-
-Los detalles exactos de hooks, `CLAUDE.md`, *settings* gestionadas por la organización y empaquetado/distribución de skills evolucionan. Antes de fijar la implementación, confírmalos en la documentación de Claude Code: https://docs.anthropic.com/en/docs/claude-code/claude_code_docs_map.md
+- Fuentes: [Playfair Display](https://fonts.google.com/specimen/Playfair+Display) y
+  [Montserrat](https://fonts.google.com/specimen/Montserrat) (Google Fonts, OFL).
+- Silueta del mapa mundial: [simple-world-map](https://github.com/flekschas/simple-world-map).

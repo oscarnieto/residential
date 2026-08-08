@@ -26,14 +26,20 @@ export const clone = (value) => JSON.parse(JSON.stringify(value));
 /** Comparación estructural, usada para saber qué archivos han cambiado. */
 export const isEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
-/** Crea un elemento con clases, atributos e hijos en una sola llamada. */
+/**
+ * Crea un elemento con clases, atributos e hijos en una sola llamada.
+ *
+ * No admite HTML en crudo a propósito: `text` escribe siempre en `textContent`
+ * y las etiquetas se componen pasando nodos en `children`. Así el panel no
+ * tiene ni un solo punto por el que un texto del CMS pueda convertirse en
+ * marcado, que es justo por donde entraron los XSS que se corrigieron.
+ */
 export const el = (tag, props = {}, children = []) => {
   const node = document.createElement(tag);
   for (const [key, value] of Object.entries(props)) {
     if (value == null || value === false) continue;
     if (key === 'class') node.className = value;
     else if (key === 'text') node.textContent = value;
-    else if (key === 'html') node.innerHTML = value;
     else if (key.startsWith('on')) node.addEventListener(key.slice(2).toLowerCase(), value);
     else if (key === 'dataset') Object.assign(node.dataset, value);
     else if (value === true) node.setAttribute(key, '');
