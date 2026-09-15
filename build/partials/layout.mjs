@@ -24,9 +24,9 @@ const navHref = (item, pageId) =>
  * lugar de servir la que tenía en caché; sin ella un cambio de estilos puede
  * tardar días en verse.
  *
- * El mapa lo calcula el build. La vista previa del panel pasa un objeto vacío
- * y se queda con el fuente sin minificar, que es idéntico en comportamiento y
- * mucho más cómodo de depurar.
+ * El mapa lo calcula el build. Quien llame sin él (una prueba, un render
+ * suelto) se queda con el fuente sin minificar, idéntico en comportamiento y
+ * más cómodo de depurar.
  */
 const versioned = (assets) => (path) => assets[path] ?? path;
 
@@ -40,13 +40,14 @@ const versioned = (assets) => (path) => assets[path] ?? path;
  * `report-uri`. Cuando el sitio se sirva desde infraestructura propia, esto
  * debe pasar a cabecera y completarse — ver SECURITY.md §3.5.
  *
- * Notas de las que dependen los estilos:
- * - `style-src` necesita `'unsafe-inline'` porque el mapa y el carrusel llevan
- *   los valores variables en atributos `style` (`--x`, `--marquee-duration`),
- *   ya saneados con `num()`. Sin servidor no hay forma de usar nonces.
- * - `base-uri` es `'self'` y no `'none'` porque la vista previa del panel
- *   inyecta un `<base>` del mismo origen para resolver los assets dentro del
- *   iframe `srcdoc`. Con `'none'` la vista previa se quedaría sin estilos.
+ * La única concesión es `style-src 'unsafe-inline'`, porque el mapa y el
+ * carrusel llevan sus valores variables en atributos `style` (`--x`,
+ * `--marquee-duration`), ya saneados con `num()`. Sin servidor no hay forma de
+ * usar nonces.
+ *
+ * `connect-src` y `base-uri` están en `'none'`: el sitio no hace ni una llamada
+ * de red y ninguna página lleva `<base>`. Estaban en `'self'` por el panel de
+ * administración, que ya no está en el repositorio.
  */
 const CSP = [
   "default-src 'self'",
@@ -55,11 +56,11 @@ const CSP = [
   "img-src 'self'",
   "media-src 'self'",
   "font-src 'self'",
-  "connect-src 'self'",
+  "connect-src 'none'",
   "object-src 'none'",
   "form-action 'none'",
   "frame-src 'none'",
-  "base-uri 'self'",
+  "base-uri 'none'",
 ].join('; ');
 
 export const head = ({ site, page, assets = {} }) => {

@@ -16,7 +16,6 @@ alojado y desplegado el sitio, y cómo mantenerlo.
 | Frontend | HTML5 + CSS3 + JavaScript **vanilla** (sin frameworks: no React/Vue, no jQuery) |
 | Contenido | **JSON** en `content/` — es la fuente de la verdad de todos los textos e imágenes |
 | Build | Script propio en **Node** (`build/build.mjs`), **sin dependencias** (no `package.json`, no `node_modules`) |
-| CMS | Panel propio en `/admin`, SPA vanilla que escribe en el repositorio vía API de GitHub |
 | Hosting | **GitHub Pages** (estático) |
 | CI/CD | **GitHub Actions** — construye y despliega automáticamente en cada `push` |
 | Backend | No existe. No hay servidor, base de datos ni API propia |
@@ -52,11 +51,6 @@ residential/
 │   │   ├── layout.mjs            <head>, topbar, menú móvil y footer compartidos
 │   │   └── hero.mjs              Hero común y variante de Red Internacional
 │   └── pages/*.mjs               Un renderizador por página
-│
-├── admin/                       Gestor de contenidos (ver §12)
-│   ├── index.html
-│   ├── css/admin.css
-│   └── js/{app,schema,fields,github,preview,util,antiframe}.js
 │
 ├── index.html                 ┐
 ├── red-internacional.html     │  GENERADOS por build/build.mjs.
@@ -167,7 +161,7 @@ Workflow: `.github/workflows/deploy.yml`
 - **Disparador**: cualquier `push` a las ramas `main` o `claude/clever-brahmagupta-abt3is`, o manualmente vía `workflow_dispatch`.
 - **Pasos**: checkout → `setup-node` (Node 22) → `node build/build.mjs` → commit del HTML y de los assets regenerados si han cambiado → `actions/configure-pages` → `actions/upload-pages-artifact` (sube todo el repo) → `actions/deploy-pages`.
 - **El build minifica los assets** (`build/lib/minify.mjs`) y el HTML apunta a las copias `*.min.css` / `*.min.js` con huella de contenido. Los fuentes siguen siendo lo que se edita y lo que se lee en el repositorio; el minificador sólo quita comentarios y espacio en blanco, nunca renombra ni reordena nada.
-- **El build se ejecuta siempre**, de modo que lo publicado corresponde a `content/` aunque el HTML versionado se hubiera quedado atrás — que es justo lo que pasa cuando se edita desde `/admin`, que solo commitea los JSON.
+- **El build se ejecuta siempre**, de modo que lo publicado corresponde a `content/` aunque el HTML versionado se hubiera quedado atrás — que es justo lo que pasa cuando se edita un JSON desde la interfaz web de GitHub, que no ejecuta el build.
 - El paso que devuelve el HTML regenerado al repositorio usa el `GITHUB_TOKEN` del propio workflow. GitHub **no vuelve a disparar workflows** para pushes hechos con ese token, así que no hay bucle infinito. Requiere `contents: write` en los permisos del job.
 - **Sin tests ni lint** — el build es la única verificación (falla el job si un JSON está mal formado).
 - `concurrency: group: pages, cancel-in-progress: true` — si se hace push varias veces seguidas, el run anterior se cancela y solo se despliega el último.
@@ -190,8 +184,8 @@ Workflow: `.github/workflows/deploy.yml`
 ## 9. Deuda técnica y limitaciones conocidas
 
 - **Sin tests automatizados.** La verificación se hace manualmente (visual, con capturas) antes de cada despliegue. El build sí falla si un JSON de contenido está mal formado, lo que cubre el error más probable.
-- **El texto enriquecido es deliberadamente pobre.** Los campos de contenido admiten `*cursiva*`, `**negrita**` y saltos de línea, y nada más. No se puede meter HTML arbitrario desde el CMS — es una decisión de seguridad (ver §11), no una carencia.
-- **Un solo idioma.** La estructura de `content/` soportaría traducciones (un directorio por idioma), pero ni el build ni el CMS lo contemplan hoy.
+- **El texto enriquecido es deliberadamente pobre.** Los campos de contenido admiten `*cursiva*`, `**negrita**` y saltos de línea, y nada más. No se puede meter HTML arbitrario desde el contenido — es una decisión de seguridad (ver §11), no una carencia.
+- **Un solo idioma.** La estructura de `content/` soportaría traducciones (un directorio por idioma), pero el build no lo contempla hoy.
 - **Imágenes de placeholder pendientes de sustituir**: revisa si queda algún archivo de imagen sin la foto real definitiva subida por el equipo de marketing (los nombres de archivo son descriptivos, p. ej. `team-es-4-beatriz-hernandez.jpg`).
 - *(Resuelto)* La duplicación del header/footer/menú en los 6 HTML, que era la principal deuda del proyecto, desapareció al introducir el generador: ahora está definida una sola vez en `build/partials/layout.mjs`.
 
@@ -199,9 +193,9 @@ Workflow: `.github/workflows/deploy.yml`
 
 ## 10. Cómo hacer cambios habituales
 
-La vía normal para **cualquier cambio de contenido** es el panel `/admin`
-(ver §12): no requiere tocar código ni conocer git. La tabla siguiente es la
-equivalencia para quien prefiera trabajar en el repositorio.
+Cualquier cambio de contenido se hace editando el JSON correspondiente y
+haciendo push: CI reconstruye el HTML y lo publica. Los `.html` de la raíz son
+artefactos, no se editan.
 
 | Cambio | Dónde |
 |---|---|
@@ -212,7 +206,7 @@ equivalencia para quien prefiera trabajar en el repositorio.
 | Añadir/editar un enlace de navegación | `content/site.json` → `nav` (se propaga a topbar, menú móvil y footer) |
 | Tipografía, layout, componentes, animaciones | `css/styles.css` (a mano, como siempre) |
 | Comportamiento interactivo | `js/main.js` (a mano, como siempre) |
-| Nueva página | Añadir `content/nueva.json`, un renderizador en `build/pages/`, su entrada en `PAGES` (`build/build.mjs`), su enlace en `site.json` → `nav` y su colección en `admin/js/schema.js` |
+| Nueva página | Añadir `content/nueva.json`, un renderizador en `build/pages/`, su entrada en `PAGES` (`build/build.mjs`), y su enlace en `site.json` → `nav` |
 
 Para trabajar en local:
 
@@ -232,60 +226,18 @@ Revisión completa, con hallazgos y modelo de amenazas, en [`SECURITY.md`](SECUR
 - Superficie de ataque mínima: sin backend, sin base de datos, sin dependencias npm (sin riesgo de supply-chain vía paquetes), sin formularios que reciban datos de usuarios.
 - Todos los enlaces externos (`target="_blank"`) llevan `rel="noopener"`.
 - El despliegue usa el `GITHUB_TOKEN` efímero estándar de Actions con permisos `contents: write` (necesario para devolver el HTML regenerado), `pages: write` e `id-token: write`. No hay secretos adicionales configurados.
-- **Todo el contenido se escapa al generar el HTML.** `build/lib/html.mjs` es la única frontera entre los datos del CMS y la página, y expone tres saneadores según dónde caiga el valor:
+- **Todo el contenido se escapa al generar el HTML.** `build/lib/html.mjs` es la única frontera entre `content/*.json` y la página, y expone tres saneadores según dónde caiga el valor:
   - `esc()` / `inline()` para texto: escapan `& < > "` y sólo después aplican el marcado ligero permitido.
   - `url()` para `href` y `src`: escapar no basta ahí, porque `javascript:...` no lleva comillas ni ángulos y sobrevive al escapado. Se admiten sólo `http(s)`, `mailto`, `tel` y rutas relativas o anclas; lo demás se sustituye por `#`.
   - `num()` para valores dentro de un atributo `style`: tampoco basta escapar, porque `1s;background:url(…)` pasaría el filtro y se colaría como CSS.
 
   El bloque JSON del círculo de Servicios escapa además los `<` para que ningún texto pueda cerrar la etiqueta `<script>` antes de tiempo.
 
-  **Regla al añadir campos:** un valor del CMS nunca debe llegar a `innerHTML`, ni a un `href`/`src` sin pasar por `url()`, ni a un `style` sin pasar por `num()`. Los tres agujeros que encontró la revisión de seguridad eran exactamente eso.
-
-- **Los archivos subidos se validan por contenido, no por extensión.** `validarArchivo()` (`admin/js/util.js`) comprueba los primeros bytes contra la extensión declarada y rechaza los SVG que traigan `<script>`, manejadores `on…=` o `<foreignObject>`. Importa porque el campo de imagen ofrece un enlace «Ver» que abre el archivo en primer plano y en el origen del panel: un SVG con script se ejecutaría ahí, con acceso al token guardado.
+  **Regla al añadir campos:** un valor de `content/` nunca debe llegar a `innerHTML`, ni a un `href`/`src` sin pasar por `url()`, ni a un `style` sin pasar por `num()`. Los tres agujeros que encontró la revisión de seguridad eran exactamente eso.
 
 - **Certificación formal** contra la Política de Seguridad de Aplicaciones de la empresa, control por control: [`security/compliance-report.md`](security/compliance-report.md). El gate de CI vive en `security/checks/` y se dispara desde `.github/workflows/security-gate.yml`.
-- **El panel `/admin` es público pero inerte.** Cualquiera puede abrir la URL; sin un token de GitHub con permiso de escritura sobre el repositorio no puede leer ni modificar nada. La autorización real la hace GitHub, no el panel. La página lleva `noindex, nofollow`.
-- **El token del editor vive solo en su navegador** (`localStorage`) y viaja únicamente a `api.github.com`. No hay servidor intermedio que pueda interceptarlo. Si se filtra, se revoca desde GitHub y deja de servir al instante.
-- **La sesión del panel se cierra a los 15 minutos de inactividad** (`lockSession`, en `admin/js/app.js`): el token se borra de `localStorage` y de memoria, y el panel queda `inert` tras una capa que lo pide de nuevo. No recarga la página a propósito — los cambios sin publicar siguen en memoria, porque un control que hace perder trabajo acaba desactivado.
-- **Cada página lleva una CSP en `<meta http-equiv>`**, generada en `build/partials/layout.mjs` para el sitio y escrita a mano en `admin/index.html` para el panel. Va en `<meta>` porque GitHub Pages no permite cabeceras. Dos consecuencias que hay que tener presentes al tocar el código:
+- **Quien puede publicar es quien tiene permiso de push sobre el repositorio.** No hay ninguna otra vía de entrada: ni formularios, ni subidas, ni panel. El control que de verdad protege el contenido es la lista de colaboradores del repositorio y su 2FA.
+- **Cada página lleva una CSP en `<meta http-equiv>`**, generada en `build/partials/layout.mjs`. Va en `<meta>` porque GitHub Pages no permite cabeceras. Dos cosas que conviene saber al tocar el código:
   - `style-src` necesita `'unsafe-inline'` mientras los pines del mapa y la velocidad del carrusel viajen en atributos `style`.
-  - `base-uri` es `'self'` y no `'none'` porque la vista previa del panel inyecta un `<base>` en el iframe `srcdoc`; con `'none'` se quedaría sin estilos.
-  - `frame-ancestors` **se ignora** en `<meta>`, así que el anti-enmarcado del panel lo hace `admin/js/antiframe.js`, que es un sustituto más débil.
+  - `frame-ancestors` **se ignora** en `<meta>`, así que el anti-clickjacking (HDR-01) sigue abierto hasta que el sitio se sirva con cabeceras propias.
 - **El SAST del gate tiene reglas propias** en `security/.semgrep.yml`: prohíben el HTML crudo en el DOM, la ejecución de cadenas, y la interpolación en `href`/`src` sin `url()` o en `style` sin `num()`. Si una regla marca código legítimo, la respuesta es cambiar el código, no añadir una excepción.
-
----
-
-## 12. Gestor de contenidos (`/admin`)
-
-**URL:** https://oscarnieto.github.io/residential/admin/
-**Guía para editores:** [`CMS.md`](CMS.md)
-
-Un CMS a medida de una sola página, sin servidor. El flujo completo:
-
-```
-Editor en /admin  ──escribe──▶  content/*.json  ──API de GitHub──▶  commit en la rama
-                                                                          │
-                                                                          ▼
-                                                              GitHub Actions: build
-                                                                          │
-                                                                          ▼
-                                                              GitHub Pages: web nueva
-```
-
-### Piezas
-
-| Archivo | Responsabilidad |
-|---|---|
-| `admin/js/schema.js` | **Describe qué se puede editar.** Declara cada colección, sección y campo con su tipo. Toda la interfaz se construye desde aquí: añadir un campo al esquema basta para que aparezca en el formulario, se guarde y se publique |
-| `admin/js/fields.js` | Convierte cada tipo del esquema en un control (texto, imagen, color, lista repetible, líneas del titular…) |
-| `admin/js/github.js` | Cliente de la API de GitHub. Lee los JSON, sube imágenes y publica **todos los cambios en un único commit** usando la Git Data API (blobs → tree → commit → ref), de modo que cada publicación dispara exactamente un despliegue |
-| `admin/js/preview.js` | Vista previa en vivo. **Importa los mismos módulos de `build/` que usa el build de producción**, así que lo que se ve es exactamente lo que se publicará; no hay una segunda implementación de las plantillas que pueda desincronizarse |
-| `admin/js/app.js` | Estado, navegación, detección de cambios sin publicar, biblioteca de medios, publicación y seguimiento del despliegue |
-
-### Detalles de implementación que conviene conocer
-
-- **Autenticación:** token personal *fine-grained* de GitHub con `Contents: Read and write` sobre este repositorio (y opcionalmente `Actions: Read-only` para ver el estado del despliegue). No se usa OAuth porque el *device flow* de GitHub no permite CORS desde el navegador y exigiría un servidor intermedio, que es justo lo que este montaje evita.
-- **Detección de cambios:** el panel guarda una copia del contenido tal como está publicado y la compara estructuralmente con la copia editada. Solo se commitean los archivos que difieren.
-- **Concurrencia:** el commit se hace contra el SHA de la rama leído en ese momento. Si otra persona publicó entre medias, GitHub rechaza el `PATCH` de la referencia y el panel pide recargar en lugar de pisar el trabajo ajeno.
-- **Subida de imágenes:** se commitean al instante (antes de publicar el resto), porque el campo necesita una ruta real que apunte a un archivo que exista. Se normaliza el nombre (minúsculas, sin acentos ni espacios) y se rechazan archivos por encima de 12 MB.
-- **Vista previa:** se renderiza en un `<iframe srcdoc>` con `<base>` **absoluto**. Tiene que ser absoluto: dentro de un iframe con `sandbox`, un `<base>` relativo no se resuelve y los assets se buscarían dentro de `/admin/`. Por el mismo motivo el tema de la vista previa emite rutas absolutas — un `url()` dentro de una variable CSS se resuelve contra la hoja que la **consume** (`css/styles.css`, en `/css/`), no contra la que la declara.

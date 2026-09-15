@@ -1,7 +1,7 @@
 # Informe de seguridad — Obra Nueva Residencial (Savills)
 
-**Alcance:** el sitio estático, el generador (`build/`), el gestor de contenidos
-(`/admin`) y el pipeline de despliegue.
+**Alcance:** el sitio estático, el generador (`build/`) y el pipeline de
+despliegue.
 **Repositorio:** `oscarnieto/residential`, rama `claude/clever-brahmagupta-abt3is`.
 **Método:** revisión manual del código más verificación dinámica con un
 navegador. Cada hallazgo se comprobó explotándolo antes de darlo por bueno, y se
@@ -11,6 +11,14 @@ volvió a comprobar después de corregirlo.
 > certificación formal contra la Política de Seguridad de Aplicaciones de la
 > empresa, control por control, está en
 > [`security/compliance-report.md`](security/compliance-report.md).
+
+> **Cambio de alcance.** Este informe se escribió cuando el repositorio
+> incluía un gestor de contenidos propio en `/admin`. **El panel se ha retirado**
+> (ver §3.8): el contenido se edita ahora tocando `content/*.json` y haciendo
+> push. Los hallazgos 1-3 y su corrección siguen vigentes —el código que los
+> causaba y el que los arregló están en `build/` y en `js/`—, pero el tramo del
+> relato que hablaba de robar el token del panel ya no tiene sujeto. Los
+> hallazgos 4, 5, 7 y 8 se han cerrado con la retirada.
 
 > **Nota sobre el encargo.** Se pidió generar este informe con el skill
 > `seguridad-aplicaciones`. La plantilla corporativa sí está en el repositorio,
@@ -35,11 +43,11 @@ en [`security/compliance-report.md`](security/compliance-report.md) §4.
 | 1 | XSS almacenado en los pasos del círculo de Servicios (`innerHTML`) | **Alta** | Corregido |
 | 2 | XSS almacenado vía `javascript:` en campos de enlace | **Alta** | Corregido |
 | 3 | Inyección de CSS en atributos `style` | Baja | Corregido |
-| 4 | Subida de ficheros sin validar contenido; SVG con script (INJ-07) | **Alta** | Corregido |
-| 5 | El panel es público (por diseño) | Informativo | Aceptado |
+| 4 | Subida de ficheros sin validar contenido; SVG con script (INJ-07) | **Alta** | Corregido, y después retirado con el panel |
+| 5 | El panel es público (por diseño) | Informativo | Ya no aplica: panel retirado |
 | 6 | Sin cabeceras de seguridad (CSP, HSTS…) | Baja | Parcialmente corregido |
-| 7 | Token del editor en `localStorage` | Baja | Aceptado con matices |
-| 8 | Sin caducidad por inactividad del token (SESS-04) | Baja | Corregido |
+| 7 | Token del editor en `localStorage` | Baja | Ya no aplica: panel retirado |
+| 8 | Sin caducidad por inactividad del token (SESS-04) | Baja | Corregido, y después retirado con el panel |
 
 **Superficie de ataque general:** muy reducida. Sin backend, sin base de datos,
 sin dependencias de terceros (`npm`), sin formularios que reciban datos y sin
@@ -53,15 +61,20 @@ Conviene fijar quién es el atacante, porque determina la severidad real.
 
 | Actor | Capacidad | Relevancia |
 |---|---|---|
-| Visitante anónimo | Sólo lee el sitio publicado | No tiene ninguna vía de entrada: no hay formularios ni parámetros que el servidor procese |
-| **Editor de contenidos** | Escribe en `content/*.json` y sube imágenes mediante el panel | **Es el actor relevante.** Los tres hallazgos parten de aquí |
-| Atacante externo con un token filtrado | Equivale a un editor | Mitigado revocando el token en GitHub |
+| Visitante anónimo | Sólo lee el sitio publicado | No tiene ninguna vía de entrada: no hay formularios, ni subidas, ni parámetros que el servidor procese |
+| **Quien tiene permiso de push** | Escribe en `content/*.json` y en el código, y publica haciendo push | **Es el actor relevante.** De aquí parten los hallazgos 1-3 |
+| Atacante con una cuenta de GitHub comprometida | Equivale al anterior | Se ataja con 2FA y revisando la lista de colaboradores |
 | Cadena de suministro | — | Sin dependencias que comprometer |
 
-El editor es un actor **semi-confiable**: tiene permiso para publicar, pero no
-debería poder ejecutar código arbitrario en el navegador de los visitantes ni
-escalar privilegios sobre otros editores. Los hallazgos 1 y 2 rompían esa
-frontera.
+Quien edita contenido es un actor **semi-confiable**: tiene permiso para
+publicar, pero no debería poder ejecutar código arbitrario en el navegador de
+los visitantes. Los hallazgos 1 y 2 rompían esa frontera.
+
+> Cuando existía el panel `/admin`, esa frontera importaba todavía más: la
+> vista previa renderizaba el HTML en el mismo origen donde vivía el token de
+> otros editores, así que un XSS en el contenido escalaba de un editor a otro.
+> Retirado el panel, queda el riesgo para el visitante, que es el que justifica
+> mantener los saneadores.
 
 ---
 
@@ -91,12 +104,14 @@ title de la página: "XSS-EJECUTADO"
 ⚠️  EL SCRIPT INYECTADO SE HA EJECUTADO
 ```
 
-**Impacto.** Mayor de lo que parece a primera vista. Además de afectar a los
-visitantes, la vista previa del panel renderiza el mismo HTML en un iframe con
-`allow-same-origin`, es decir, **en el mismo origen que `/admin`**. Un payload
-plantado por un editor se ejecuta con acceso al `localStorage` del panel, donde
-vive el token de GitHub de quien lo abra. Es, por tanto, una vía de escalada de
-un editor a otro.
+**Impacto.** Ejecución de código arbitrario en el navegador de cualquier
+visitante de la página de Servicios, plantada por quien edite el contenido.
+
+> Cuando existía el panel, el impacto era mayor: su vista previa renderizaba el
+> mismo HTML en un iframe con `allow-same-origin`, o sea **en el origen de
+> `/admin`**, donde vivía el token de GitHub de quien lo abriera. Era una vía de
+> escalada de un editor a otro. Ese tramo desapareció con el panel (§3.8); el
+> riesgo para el visitante, no.
 
 **Corrección.** Se construye con nodos del DOM en lugar de con HTML:
 
@@ -113,7 +128,7 @@ legítimo sigue mostrándose con su negrita y cambiando de paso correctamente.
 
 ### 3.2 — XSS almacenado mediante `javascript:` en enlaces · Alta · Corregido
 
-**Dónde:** todos los campos de enlace del CMS (enlace de proyecto, LinkedIn,
+**Dónde:** todos los campos de enlace del contenido (enlace de proyecto, LinkedIn,
 logotipo, enlaces del menú, ancla del hero).
 
 El generador escapaba los valores antes de meterlos en un `href`, lo que impide
@@ -157,27 +172,20 @@ Mismo patrón que el anterior: escapar no protege un contexto CSS. Un valor como
 
 **Impacto.** Limitado: permite alterar el estilo y provocar una petición a un
 servidor externo (lo que filtraría la IP del visitante), pero no ejecutar
-código. Requiere además ser editor.
+código. Requiere además permiso de escritura sobre el repositorio.
 
 **Corrección.** Saneador `num()`, que acepta únicamente un número.
 **Comprobado:** `1s;background:url(...)` se convierte en `1s`.
 
 ---
 
-### 3.4 — El panel de administración es público · Informativo · Aceptado
+### 3.4 — El panel de administración es público · Informativo · Cerrado
 
-`/admin` es accesible para cualquiera. Es una consecuencia inevitable de alojar
-en GitHub Pages, que no admite autenticación.
+`/admin` era accesible para cualquiera, consecuencia inevitable de alojar en
+GitHub Pages, que no admite autenticación. No era una vulnerabilidad —el panel
+era inerte sin credenciales— pero exponía la estructura del proyecto.
 
-**No es una vulnerabilidad**, porque el panel es inerte sin credenciales: la
-autorización real la hace GitHub al recibir el token, no el panel. Sin un token
-con permiso de escritura no se puede leer ni modificar nada. La página lleva
-`noindex, nofollow`.
-
-Lo que sí conviene tener presente: expone públicamente la estructura del
-proyecto y el nombre del repositorio. Si eso molesta, la vía es servir `/admin`
-desde la intranet o en local, cosa que funciona sin cambios porque el panel sólo
-habla con `api.github.com`.
+**Cerrado por retirada del panel** (§3.8).
 
 ---
 
@@ -191,23 +199,26 @@ eso se ha entregado ya, sin esperar al cambio de alojamiento.
 de estas políticas también viajan en `<meta>` y el navegador las aplica igual:
 
 - **`Content-Security-Policy`** por `<meta http-equiv>` en las seis páginas
-  (`build/partials/layout.mjs`) y en el panel (`admin/index.html`).
+  (`build/partials/layout.mjs`).
 - **`Referrer-Policy`** por `<meta name="referrer">`.
+
+Al retirar el panel se apretaron además dos directivas que estaban en `'self'`
+sólo por su causa: `connect-src` y `base-uri` están ahora en `'none'`. El sitio
+no hace ni una llamada de red y ninguna página lleva `<base>`.
 
 **Lo que sigue abierto, y por qué.** `X-Content-Type-Options` y
 `Strict-Transport-Security` sólo existen como cabecera; `Permissions-Policy`
 tampoco tiene forma `<meta>`; y `frame-ancestors` **se ignora** expresamente
-cuando la CSP llega por `<meta>`, así que el anti-clickjacking se queda en el
-apaño de `admin/js/antiframe.js`, que sólo cubre el panel. Nada de esto es
-corregible mientras el alojamiento sea GitHub Pages.
+cuando la CSP llega por `<meta>`, así que el anti-clickjacking sigue sin
+cubrirse. Nada de esto es corregible mientras el alojamiento sea GitHub Pages.
 
 **Recomendación.** Al mover el sitio a los servidores de la empresa (algo ya
 previsto), pedir a IT que sirva al menos:
 
 ```
-Content-Security-Policy: default-src 'self'; img-src 'self' data:;
-  style-src 'self' 'unsafe-inline'; frame-src https://www.youtube.com;
-  object-src 'none'; base-uri 'self'
+Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline';
+  object-src 'none'; base-uri 'none'; frame-ancestors 'none';
+  form-action 'none'; connect-src 'none'
 X-Content-Type-Options: nosniff
 Referrer-Policy: strict-origin-when-cross-origin
 Strict-Transport-Security: max-age=31536000; includeSubDomains
@@ -217,55 +228,57 @@ Strict-Transport-Security: max-age=31536000; includeSubDomains
 genera el build (posición de los pines y velocidad del carrusel). Se podría
 eliminar moviendo esos valores a clases o a un CSS generado, si IT lo exige.
 
-Al pasar a cabecera hay que **añadir `frame-ancestors 'none'`**, que es lo que
-cierra de verdad el anti-clickjacking, y entonces `admin/js/antiframe.js` se
-puede retirar.
+Lo que cierra de verdad el anti-clickjacking es `frame-ancestors 'none'`, que
+sólo funciona en cabecera; por eso va en la propuesta y no en el `<meta>`.
 
 ---
 
-### 3.6 — Token del editor en `localStorage` · Baja · Aceptado con matices
+### 3.6 — Token del editor en `localStorage` · Baja · Cerrado
 
-El token de GitHub se guarda en `localStorage` del navegador del editor.
+El panel guardaba el token de GitHub en `localStorage` del navegador del editor.
+Se aceptó en su día porque sin backend no había alternativa —una cookie
+`HttpOnly` exige un servidor, que es justo lo que el montaje evitaba— con el
+matiz estructural de que **cualquier XSS en el mismo origen implicaba el robo
+del token**.
 
-**Por qué se aceptó:** sin backend no hay alternativa mejor. Una cookie
-`HttpOnly` requeriría un servidor, que es justo lo que este montaje evita. El
-token nunca viaja a otro sitio que no sea `api.github.com`, y es de tipo
-*fine-grained*, acotado a un repositorio y a `Contents`.
-
-**El matiz:** `localStorage` es legible por cualquier JavaScript del mismo
-origen. Eso es exactamente lo que convertía el hallazgo 3.1 en una escalada de
-privilegios. Corregido ese hallazgo, el riesgo vuelve a ser bajo, pero la
-dependencia es estructural: **cualquier XSS futuro en el mismo origen del panel
-implica el robo del token**.
-
-**Recomendaciones prácticas:**
-- Poner caducidad al token (un año como máximo).
-- Revocarlo en GitHub cuando un editor deje de necesitarlo, y al cambiar de equipo.
-- No reutilizar el mismo token entre varias personas: si hay que revocar, se revoca a una.
+**Cerrado por retirada del panel** (§3.8): ya no hay ningún token en ningún
+navegador.
 
 ---
 
-### 3.7 — Sin caducidad por inactividad del token · Baja · Corregido
+### 3.7 — Sin caducidad por inactividad del token · Baja · Cerrado
 
-El token se quedaba en `localStorage` hasta que alguien pulsaba «Cerrar sesión»
-o hasta que caducaba en GitHub. Un panel abierto en un ordenador compartido o
-desatendido seguía teniendo permiso de escritura sobre el repositorio.
+El token sobrevivía en `localStorage` hasta el cierre manual o su caducidad en
+GitHub. Se corrigió con un cierre de sesión a los 15 minutos de inactividad que
+borraba la credencial sin tirar los cambios sin publicar.
 
-**Corrección.** A los 15 minutos sin actividad —sin clic ni tecla— el panel
-borra el token de `localStorage` y de memoria, y se tapa con una capa que lo
-pide otra vez (`admin/js/app.js`, `lockSession`). La marca de tiempo vive en
-`localStorage`, así que sobrevive a una recarga y la comparten las pestañas
-abiertas; al arrancar con la marca caducada, el token se borra sin llegar a
-usarse ni una vez.
+**Cerrado por retirada del panel** (§3.8), que elimina la causa entera.
 
-**Por qué no recarga la página.** Recargar sería más sencillo, pero tiraría los
-cambios que el editor aún no había publicado, y un control que hace perder
-trabajo acaba desactivado. La credencial desaparece; el contenido editado se
-queda en memoria y se continúa donde estaba al reautenticarse.
+---
 
-**Lo que esto no cubre.** Protege el navegador, no el token: si se filtra por
-otra vía, lo único que lo detiene es su caducidad en GitHub o una revocación.
-Por eso §3.6 sigue vigente.
+### 3.8 — Retirada del gestor de contenidos
+
+El panel `/admin` se ha eliminado del repositorio. Con él se van sus tres
+hallazgos abiertos o aceptados (§3.4, §3.6, §3.7) y el control INJ-07 de subida
+de ficheros, porque ya no hay subida.
+
+**Lo que queda.** El contenido sigue viviendo en `content/*.json` y sigue
+interpolándose en el HTML por `build/lib/html.mjs`. Por eso **no se ha tocado ni
+un saneador**: cambia quién puede plantar un payload —ahora hace falta permiso
+de push— pero no el hecho de que el payload llegaría al navegador del visitante.
+Las reglas de `security/.semgrep.yml` se quedan igualmente, para que los tres
+agujeros de §3.1-§3.3 no puedan volver.
+
+**Lo que empeora.** Editar contenido pasa a requerir git y saber tocar un JSON.
+Es un coste de usabilidad, no de seguridad, y conviene decirlo: el panel se
+retiró por decisión de producto, no porque fuera inseguro.
+
+**Cómo recuperarlo.** Está entero en el historial. El último commit que lo
+contiene es `5aff72b`, así que basta con:
+
+```bash
+git checkout 5aff72b -- admin/ CMS.md
+```
 
 ---
 
@@ -273,9 +286,9 @@ Por eso §3.6 sigue vigente.
 
 | Comprobación | Resultado |
 |---|---|
-| Secretos, tokens o claves en el repositorio | Ninguno. El único positivo es el texto de ejemplo `github_pat_…` del formulario |
+| Secretos, tokens o claves en el repositorio | Ninguno |
 | `eval`, `new Function`, `document.write` | No se usan; hay regla de semgrep que lo impide en adelante |
-| `innerHTML` con datos del CMS | Ninguno. Tras el hallazgo 3.1 no queda **ni un solo** `innerHTML` en el proyecto: `el()` sólo escribe en `textContent` y una regla de semgrep bloquea que vuelva a aparecer |
+| `innerHTML` con datos de `content/` | Ninguno. Tras el hallazgo 3.1 no queda **ni un solo** `innerHTML` en el proyecto, y una regla de semgrep bloquea que vuelva a aparecer |
 | Enlaces externos sin `rel="noopener"` | Ninguno en las seis páginas |
 | Secretos en el workflow de despliegue | Ninguno; sólo el `GITHUB_TOKEN` efímero de Actions |
 | Permisos del workflow | `contents: write`, `pages: write`, `id-token: write`. El de escritura es necesario para devolver el HTML regenerado |
@@ -284,7 +297,7 @@ Por eso §3.6 sigue vigente.
 | Ruptura de atributos por comillas | No es posible: `esc()` escapa `"` y todos los atributos usan comilla doble |
 | Fuga del bloque `<script type="application/json">` | Protegida: se escapan los `<` como `<` |
 | Rutas de imagen dentro de `url()` en CSS | Se codifican con `encodeURI`, de modo que no pueden cerrar el paréntesis |
-| Concurrencia al publicar | El panel commitea contra el SHA leído; si otro editor publicó antes, GitHub rechaza y el panel pide recargar en vez de pisar |
+| Concurrencia al publicar | La resuelve git: dos cambios simultáneos se reconcilian con un merge o un rebase, como cualquier otro cambio de código |
 
 ---
 
@@ -292,9 +305,11 @@ Por eso §3.6 sigue vigente.
 
 Para que se valore con la cobertura que realmente tiene:
 
-- **Revisión manual, sin herramientas automáticas.** No se ejecutó ningún SAST,
-  ni escáner de dependencias (no aplica: no hay), ni análisis dinámico
-  automatizado. Un escáner podría encontrar patrones que se hayan escapado.
+- **La revisión original fue manual, sin herramientas automáticas.** Después se
+  añadió un SAST propio (`security/.semgrep.yml`) que corre en el gate y cubre
+  las tres clases de inyección de §3.1-§3.3, pero el resto del repaso sigue
+  siendo revisión humana. No hay escáner de dependencias porque no hay
+  dependencias.
 - **No se probó contra el sitio publicado.** Este entorno tiene bloqueado el
   acceso a `oscarnieto.github.io`, así que todo se verificó en local sobre el
   mismo código que se despliega.
@@ -318,10 +333,9 @@ Para que se valore con la cobertura que realmente tiene:
 2. **Revisar quién tiene acceso de escritura al repositorio** y exigir 2FA. Es
    el control que de verdad protege el contenido; todo lo demás asume que los
    editores son quienes dicen ser.
-3. **Poner caducidad a los tokens** y revocarlos al rotar personas. El panel ya
-   cierra la sesión a los 15 minutos de inactividad (§3.7), pero eso protege el
-   navegador, no el token: si se filtra por otra vía, sólo lo detiene su fecha
-   de caducidad o una revocación.
+3. **Proteger la rama de publicación**, para que un cambio en el sitio exija
+   revisión y no baste con un push directo. Es lo que sustituye, en el modelo
+   nuevo, al control que antes daba la sesión del panel.
 4. **Mantener la regla de saneado** al añadir campos nuevos: nunca `innerHTML`
    con contenido, `url()` en enlaces, `num()` en estilos. Está documentada en
    `ARCHITECTURE.md` §11.

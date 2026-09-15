@@ -3,7 +3,7 @@
    --------------------------------------------------------------------------
    Colores de marca e imágenes de fondo. Vive en un módulo propio y sin
    dependencias de Node para que lo usen tanto el build como la vista previa
-   del panel de administración.
+   de los JSON de `content/`.
    ========================================================================== */
 
 /**

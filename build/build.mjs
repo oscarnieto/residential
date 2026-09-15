@@ -49,8 +49,8 @@ const THEME_HEADER = `/* =======================================================
    Tema generado — NO EDITAR A MANO
    --------------------------------------------------------------------------
    Este archivo lo escribe \`build/build.mjs\` a partir de \`content/site.json\`
-   y de la imagen de hero de cada página. Para cambiar cualquier valor usa el
-   panel de administración (/admin) o edita los JSON de \`content/\`.
+   y de la imagen de hero de cada página. Para cambiar cualquier valor edita los
+   JSON de \`content/\` y vuelve a ejecutar el build.
    ========================================================================== */
 
 `;

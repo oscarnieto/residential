@@ -4,13 +4,11 @@ Sitio de seis páginas desarrollado a partir del diseño de Figma
 [Residential New Developments](https://www.figma.com/design/jdwx4oQaPNUSJVW76JAmQG/Residential-New-Developments).
 
 **Web:** https://oscarnieto.github.io/residential/
-**Gestor de contenidos:** https://oscarnieto.github.io/residential/admin/
 
 ## Documentación
 
 | Documento | Para quién |
 |---|---|
-| [`CMS.md`](CMS.md) | Quien edita el contenido de la web. Cómo entrar al panel, escribir textos, subir imágenes y publicar |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Equipo técnico. Stack, estructura, despliegue, seguridad y decisiones de diseño |
 | [`SECURITY.md`](SECURITY.md) | Equipo técnico. Informe de seguridad: modelo de amenazas, hallazgos y recomendaciones |
 | [`security/compliance-report.md`](security/compliance-report.md) | Equipo técnico. Cumplimiento de la Política de Seguridad de Aplicaciones: los 30 controles, estado y evidencia |
@@ -30,7 +28,6 @@ GitHub Pages en cada push (`.github/workflows/deploy.yml`).
 ```
 ├── content/            Contenido editable (fuente de la verdad)
 ├── build/              Generador estático (Node, sin dependencias)
-├── admin/              Gestor de contenidos
 ├── *.html              GENERADOS por el build — no editar a mano
 ├── css/
 │   ├── fonts.css       @font-face (fuentes variables self-hosted)
@@ -44,6 +41,15 @@ GitHub Pages en cada push (`.github/workflows/deploy.yml`).
     ├── fonts/          Playfair Display + Montserrat (woff2, latin)
     └── img/            Imágenes, vídeo y SVG
 ```
+
+## Cómo se edita el contenido
+
+Todo el texto, las imágenes y los colores viven en `content/*.json`. Para
+cambiar algo: editar el JSON, hacer commit y push. GitHub Actions ejecuta el
+build y publica. No hay que tocar los `.html` — el build los sobrescribe.
+
+Para añadir una imagen, súbela a `assets/img/` y referencia su ruta desde el
+JSON.
 
 ## Páginas
 
@@ -62,9 +68,6 @@ GitHub Pages en cada push (`.github/workflows/deploy.yml`).
 node build/build.mjs          # regenera los 6 HTML y css/theme.css
 python3 -m http.server 8000   # http://localhost:8000
 ```
-
-El panel de administración se sirve igual, en `/admin/`, y funciona contra el
-repositorio real de GitHub (necesita un token, ver [`CMS.md`](CMS.md)).
 
 ## Créditos
 

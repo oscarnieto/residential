@@ -33,7 +33,8 @@ jobs:
 
       # El HTML se genera desde content/*.json. Se reconstruye siempre, de modo
       # que lo publicado corresponde al contenido aunque el HTML versionado se
-      # hubiera quedado atrás (por ejemplo tras editar desde /admin).
+      # hubiera quedado atrás (por ejemplo tras editar un JSON desde la
+      # interfaz web de GitHub, que no ejecuta el build).
       - name: Build site
         run: node build/build.mjs
 
