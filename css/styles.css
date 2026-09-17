@@ -2198,11 +2198,51 @@ footer[id] {
   }
 }
 
+/* Móvil: carrusel de swipe, igual que los proyectos de Red Internacional,
+   las tipologías de Servicios y la galería de producto de esta misma página */
 @media (max-width: 640px) {
   .track-stats__grid {
-    grid-template-columns: 1fr;
-    max-width: 420px;
-    margin-inline: auto;
+    display: flex;
+    grid-template-columns: none;
+    gap: 1rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    /* sangra hasta los bordes de la pantalla */
+    margin-inline: calc(var(--gutter) * -1);
+    padding: 0.5rem var(--gutter) 1.5rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .track-stats__grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .track-stats__card {
+    flex: 0 0 78%;
+    scroll-snap-align: center;
+  }
+
+  /* La tarjeta centrada crece, las laterales se atenúan (scroll-timeline).
+     Comparte curva con la galería de producto: misma página, mismo tipo de
+     tarjeta con foto, así que reutiliza su keyframe en vez de duplicarlo. */
+  @supports (animation-timeline: view(inline)) {
+    .track-stats__card {
+      opacity: 0.45;
+      transform: scale(0.9);
+      animation: track-product-focus linear both;
+      animation-timeline: view(inline);
+      animation-range: cover;
+    }
+  }
+}
+
+@media (max-width: 640px) and (prefers-reduced-motion: reduce) {
+  .track-stats__card {
+    opacity: 1;
+    transform: none;
+    animation: none;
   }
 }
 
