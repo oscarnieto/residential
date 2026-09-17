@@ -307,7 +307,10 @@ footer[id] {
   inset: 0;
   z-index: 90;
   display: grid;
-  place-items: center;
+  /* Centrado en vertical, pero contra el margen izquierdo: el mismo `--gutter`
+     que usa el logotipo del topbar, para que ambos compartan alineación. */
+  place-items: center start;
+  padding-inline: var(--gutter);
   background-color: rgba(37, 39, 58, 0.97);
   opacity: 0;
   visibility: hidden;
@@ -322,7 +325,7 @@ footer[id] {
 .mobile-menu__list {
   display: grid;
   gap: 1.75rem;
-  text-align: center;
+  text-align: left;
 }
 
 .mobile-menu__link {
