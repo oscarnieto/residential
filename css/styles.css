@@ -2392,17 +2392,14 @@ footer[id] {
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* la fila arranca a la izquierda; el hueco la centra en el 1er producto */
+  /* La fila va centrada en la pantalla mientras la sección está anclada. Hubo
+     aquí un `padding-bottom` que la subía por encima del centro para acercarla
+     al texto de la sección durante la entrada; el precio era un hueco muerto
+     debajo que crecía con el alto de la ventana (219px en un portátil, 459px en
+     un monitor grande). Se prioriza el centrado, que es lo que se ve durante
+     todo el recorrido del anclaje. */
   justify-content: center;
   overflow: hidden;
-  /* Sube la fila por encima del centro exacto. Sin esto, el texto de la
-     sección y la primera imagen quedan separados por toda la holgura del
-     centrado en una pantalla completa, y esa holgura crece con el alto de la
-     ventana: eran 111px en un portátil y más de 200 en un monitor alto.
-     Restando el alto aproximado de una tarjeta, el hueco sale parecido en
-     cualquier pantalla. En ventanas bajas queda en 0 y se comporta como antes.
-     El alto sigue siendo 100svh, así que el cálculo del anclaje que hace el JS
-     no se ve afectado. */
-  padding-bottom: clamp(0px, calc(100svh - 0.56 * var(--track-card) - 275px), 40rem);
 }
 
 .track-gallery__track {
