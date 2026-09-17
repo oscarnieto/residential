@@ -1,4 +1,4 @@
-import { esc, inline, paragraphs, num, url } from '../lib/html.mjs';
+import { esc, inline, num, url } from '../lib/html.mjs';
 import { hero } from '../partials/hero.mjs';
 
 /** Navegación de anclas a cada bloque. */
@@ -20,6 +20,34 @@ const introSection = (page) => `    <!-- ===== Sección 1 · Intro + navegación
 ${blockNav(page.blocks)}
       </div>
     </section>`;
+
+/**
+ * Tres cifras destacadas entre la intro y el primer bloque de producto: una
+ * foto de fondo, un número grande (animado al entrar en pantalla, igual que
+ * `.ri-metric` en Red internacional) y una etiqueta.
+ */
+const statsSection = (stats) => {
+  if (!stats?.length) return '';
+
+  return `    <!-- ===== Cifras destacadas ===== -->
+    <section class="track-stats section">
+      <div class="container">
+        <div class="track-stats__grid">
+${stats
+  .map(
+    (stat) => `          <article class="track-stats__card reveal">
+            <img class="track-stats__img" src="${url(stat.image)}" alt="" loading="lazy">
+            <div class="track-stats__body">
+              <p class="track-stats__number" data-counter="${esc(stat.number)}">${esc(stat.number)}</p>
+              <p class="track-stats__label">${inline(stat.label)}</p>
+            </div>
+          </article>`
+  )
+  .join('\n')}
+        </div>
+      </div>
+    </section>`;
+};
 
 const gallery = (block, cta) => `      <!-- Galería horizontal anclada (pin) -->
       <div class="track-gallery" id="gallery-${esc(block.id)}">
@@ -122,6 +150,7 @@ export const render = (page) =>
   [
     hero(page.hero, { modifier: 'hero--track' }),
     introSection(page),
+    statsSection(page.stats),
     ...page.blocks.map((block, index) => blockSection(block, page.cta, index)),
     logosSection(page.logos),
   ]

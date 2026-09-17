@@ -21,14 +21,31 @@
   "intro": {
     "title": "Contamos con una trayectoria consolidada en proyectos que destacan por su *ubicación*, *diseño* y *calidad*, concebidos para responder a las necesidades del comprador actual"
   },
+  "stats": [
+    {
+      "number": "10",
+      "label": "Promociones activas en Andalucía",
+      "image": "assets/img/track-stat-andalucia.jpg"
+    },
+    {
+      "number": "8",
+      "label": "Promociones activas en Madrid",
+      "image": "assets/img/track-stat-madrid.jpg"
+    },
+    {
+      "number": "7",
+      "label": "Promociones activas en Barcelona",
+      "image": "assets/img/track-stat-barcelona.jpg"
+    }
+  ],
   "cta": "Ver proyecto",
   "blocks": [
     {
       "id": "producto-nacional",
       "navLabel": "Producto nacional",
       "theme": "cream",
-      "title": "La experiencia es clave a la hora de anticipar retos y tomar decisiones en el desarrollo de promociones",
-      "lead": "Contamos con una **trayectoria consolidada en el sector residencial**, con participación en algunos de los proyectos más relevantes a nivel nacional e internacional.",
+      "title": "Producto *Nacional*",
+      "lead": "",
       "products": [
         {
           "city": "Barcelona",
@@ -117,7 +134,7 @@
       "id": "track-record",
       "navLabel": "Track record",
       "theme": "cream",
-      "title": "Track Record",
+      "title": "*Track Record*",
       "lead": "**Una muestra de promociones residenciales que han formado parte de nuestra trayectoria.**\n\nProyectos de obra nueva seleccionados por su calidad, ubicación y relevancia dentro de algunos de los mercados residenciales más atractivos a nivel mundial.",
       "products": [
         {
