@@ -56,7 +56,10 @@ const gallery = (block, cta) => `      <!-- Galería horizontal anclada (pin) --
 
 ${block.products
   .map((product) => {
-    const alt = `${product.name}, ${product.city}`;
+    // El nombre del proyecto puede faltar mientras no se conozca. Se compone
+    // con lo que haya para no acabar en un «, Barcelona», que es lo que leería
+    // un lector de pantalla.
+    const alt = [product.name, product.city].filter(Boolean).join(', ');
     const image = `<img src="${url(product.image)}" alt="${esc(alt)}" loading="lazy">`;
 
     // Sin enlace, o con el hover desactivado a mano, la imagen se muestra
@@ -71,10 +74,15 @@ ${block.products
                 ${image}
               </div>`;
 
+    // Sin nombre no se emite el párrafo: uno vacío dejaría su margen y su
+    // altura de línea como hueco bajo la foto.
+    const nombre = product.name
+      ? `\n              <p class="track-product__name">${esc(product.name)}</p>`
+      : '';
+
     return `            <article class="track-product">
               <p class="track-product__city">${esc(product.city)}</p>
-${media}
-              <p class="track-product__name">${esc(product.name)}</p>
+${media}${nombre}
             </article>`;
   })
   .join('\n\n')}

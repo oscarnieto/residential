@@ -138,23 +138,44 @@
       "lead": "**Una muestra de promociones residenciales que han formado parte de nuestra trayectoria.**\n\nProyectos de obra nueva seleccionados por su calidad, ubicación y relevancia dentro de algunos de los mercados residenciales más atractivos a nivel mundial.",
       "products": [
         {
-          "city": "Prueba 1",
-          "name": "Producto 1",
-          "image": "assets/img/producto-prueba1.jpg",
+          "city": "Barcelona",
+          "name": "",
+          "image": "assets/img/trackrecord-barcelona-1.jpg",
           "url": "",
           "hover": false
         },
         {
-          "city": "Prueba 2",
-          "name": "Producto 2",
-          "image": "assets/img/producto-prueba2.jpg",
+          "city": "Barcelona",
+          "name": "",
+          "image": "assets/img/trackrecord-barcelona-2.jpg",
           "url": "",
           "hover": false
         },
         {
-          "city": "Prueba 3",
-          "name": "Producto 3",
-          "image": "assets/img/producto-prueba3.jpg",
+          "city": "Madrid",
+          "name": "",
+          "image": "assets/img/trackrecord-madrid-1.jpg",
+          "url": "",
+          "hover": false
+        },
+        {
+          "city": "Madrid",
+          "name": "",
+          "image": "assets/img/trackrecord-madrid-2.jpg",
+          "url": "",
+          "hover": false
+        },
+        {
+          "city": "Málaga",
+          "name": "",
+          "image": "assets/img/trackrecord-malaga-1.jpg",
+          "url": "",
+          "hover": false
+        },
+        {
+          "city": "Málaga",
+          "name": "",
+          "image": "assets/img/trackrecord-malaga-2.jpg",
           "url": "",
           "hover": false
         }
