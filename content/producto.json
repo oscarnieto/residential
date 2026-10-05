@@ -139,42 +139,42 @@
       "products": [
         {
           "city": "Barcelona",
-          "name": "",
+          "name": "Mandarin Oriental",
           "image": "assets/img/trackrecord-barcelona-1.jpg",
           "url": "",
           "hover": false
         },
         {
           "city": "Barcelona",
-          "name": "",
+          "name": "Rambla Catalunya",
           "image": "assets/img/trackrecord-barcelona-2.jpg",
           "url": "",
           "hover": false
         },
         {
           "city": "Madrid",
-          "name": "",
+          "name": "Embajadores",
           "image": "assets/img/trackrecord-madrid-1.jpg",
           "url": "",
           "hover": false
         },
         {
           "city": "Madrid",
-          "name": "",
+          "name": "Arturo Soria",
           "image": "assets/img/trackrecord-madrid-2.jpg",
           "url": "",
           "hover": false
         },
         {
           "city": "Málaga",
-          "name": "",
+          "name": "Medhills",
           "image": "assets/img/trackrecord-malaga-1.jpg",
           "url": "",
           "hover": false
         },
         {
           "city": "Málaga",
-          "name": "",
+          "name": "Halia",
           "image": "assets/img/trackrecord-malaga-2.jpg",
           "url": "",
           "hover": false
