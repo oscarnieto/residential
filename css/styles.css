@@ -2118,6 +2118,7 @@ footer[id] {
 }
 
 .producto-nav__link {
+  position: relative;
   flex: 0 1 272px;
   padding: 0.7rem 1.25rem;
   border: 1px solid var(--navy);
@@ -2128,13 +2129,39 @@ footer[id] {
   text-transform: uppercase;
   text-align: center;
   text-decoration: none;
-  transition: background-color 0.35s var(--ease), color 0.35s var(--ease);
 }
 
-.producto-nav__link:hover,
-.producto-nav__link:focus-visible {
-  background-color: transparent;
+/* Hover: una máscara amarilla rellena el botón de izquierda a derecha.
+   La máscara lleva su propia copia del texto (`data-label`) en azul marino, así
+   que cada letra cambia de color justo cuando el amarillo la alcanza. Si sólo se
+   barriera el fondo y se cambiara el color del enlace, las letras aún sin cubrir
+   quedarían azul sobre azul, invisibles, durante el barrido.
+   El padding repite el del enlace para que la copia caiga exactamente encima. */
+.producto-nav__link::after {
+  content: attr(data-label);
+  /* Texto alternativo vacío: es una copia decorativa, que un lector de pantalla
+     no debe leer dos veces. Los navegadores sin soporte ignoran esta línea. */
+  content: attr(data-label) / '';
+  position: absolute;
+  inset: 0;
+  padding: 0.7rem 1.25rem;
+  background-color: var(--yellow);
   color: var(--navy);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 0.6s var(--ease);
+  pointer-events: none;
+}
+
+.producto-nav__link:focus-visible::after {
+  clip-path: inset(0);
+}
+
+/* Sólo con ratón: en pantallas táctiles :hover se queda pegado tras el toque y
+   dejaría el botón pulsado en amarillo. */
+@media (hover: hover) {
+  .producto-nav__link:hover::after {
+    clip-path: inset(0);
+  }
 }
 
 /* --- Cifras destacadas, entre la navegación y el primer bloque --- */

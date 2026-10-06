@@ -6,7 +6,9 @@ const blockNav = (blocks) => `    <nav class="producto-nav reveal" aria-label="S
 ${blocks
   .map(
     (block) =>
-      `      <a class="producto-nav__link" href="#${esc(block.id)}">${esc(block.navLabel)}</a>`
+      // `data-label` repite el texto para que el CSS pinte la copia en azul
+      // marino dentro de la máscara amarilla del hover (ver .producto-nav__link).
+      `      <a class="producto-nav__link" href="#${esc(block.id)}" data-label="${esc(block.navLabel)}">${esc(block.navLabel)}</a>`
   )
   .join('\n')}
     </nav>`;
