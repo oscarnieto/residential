@@ -374,10 +374,27 @@
     /** Ancho de un grupo: la distancia tras la que el bucle se repite. */
     let groupWidth = group.offsetWidth;
 
-    /** Velocidad de crucero en px/s, con signo, derivada de la duración configurada. */
+    /**
+     * Ancho que ocuparían los logotipos del grupo sin estirarse: los que haya por
+     * lo que mide cada uno más el hueco. Un grupo con pocos logotipos se reparte
+     * hasta cubrir la ventana (`min-width` en el CSS) y mide más que eso.
+     */
+    const naturalWidth = () => {
+      const items = group.children.length;
+      const gap = parseFloat(getComputedStyle(group).columnGap) || 0;
+      return items * ((group.firstElementChild?.offsetWidth ?? 0) + gap);
+    };
+
+    /**
+     * Velocidad de crucero en px/s, con signo, derivada de la duración configurada.
+     * La duración es «segundos por logotipo × logotipos», así que la velocidad es
+     * el ancho natural entre esa duración: los logotipos pasan al mismo ritmo en
+     * todas las filas, tengan 4 logotipos o 7. Con el ancho estirado, una fila
+     * corta correría más que una larga.
+     */
     const cruiseSpeed = () => {
       const declared = parseFloat(getComputedStyle(track).getPropertyValue('--marquee-duration')) || 45;
-      return (sign * groupWidth) / declared;
+      return (sign * Math.min(groupWidth, naturalWidth() || groupWidth)) / declared;
     };
 
     let speed = cruiseSpeed();

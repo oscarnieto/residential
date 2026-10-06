@@ -137,6 +137,11 @@ ${block.products.length ? `\n${gallery(block, cta)}` : ''}
  * logotipos de la fila, así que el ritmo es el mismo lleve la fila 6 logotipos
  * o 14. Con una duración fija por vuelta, repartir los logotipos en dos filas
  * habría ralentizado el movimiento a la mitad.
+ *
+ * Eso rige tal cual cuando la fila es más ancha que la ventana. Si tiene pocos
+ * logotipos, sus grupos se estiran y el JS calcula la velocidad con el ancho sin
+ * estirar, para que el ritmo no cambie (ver `naturalWidth` en `main.js`). El
+ * respaldo CSS sin JS sí correría más en esas filas.
  */
 const logosSection = (logos) => {
   const rows = (logos?.rows ?? []).filter((row) => row?.items?.length);
