@@ -184,77 +184,80 @@
   ],
   "logos": {
     "label": "Promotoras con las que trabajamos",
-    "speed": 45,
-    "items": [
+    "secondsPerLogo": 3.2,
+    "rows": [
       {
-        "name": "Acciona",
-        "image": "assets/img/acciona.png",
-        "url": ""
+        "items": [
+          {
+            "name": "Acciona",
+            "image": "assets/img/acciona.svg",
+            "url": ""
+          },
+          {
+            "name": "Factum",
+            "image": "assets/img/factum.png",
+            "url": ""
+          },
+          {
+            "name": "Impact Homes",
+            "image": "assets/img/impact-homes.svg",
+            "url": ""
+          },
+          {
+            "name": "KKH",
+            "image": "assets/img/kkh.svg",
+            "url": ""
+          },
+          {
+            "name": "Meridia",
+            "image": "assets/img/meridia.png",
+            "url": ""
+          },
+          {
+            "name": "Metrovacesa",
+            "image": "assets/img/metrovacesa.webp",
+            "url": ""
+          },
+          {
+            "name": "Nouvit",
+            "image": "assets/img/nouvit.png",
+            "url": ""
+          }
+        ]
       },
       {
-        "name": "Metrovacesa",
-        "image": "assets/img/metrovacesa.png",
-        "url": ""
-      },
-      {
-        "name": "Nortia",
-        "image": "assets/img/nortia.png",
-        "url": ""
-      },
-      {
-        "name": "Grupo Galia",
-        "image": "assets/img/grupogalia.png",
-        "url": ""
-      },
-      {
-        "name": "Med Hills",
-        "image": "assets/img/mogan.png",
-        "url": ""
-      },
-      {
-        "name": "Avantespacia",
-        "image": "assets/img/avantespacia.png",
-        "url": ""
-      },
-      {
-        "name": "Neinor",
-        "image": "assets/img/neinor.png",
-        "url": ""
-      },
-      {
-        "name": "Nidom",
-        "image": "assets/img/nidom.png",
-        "url": ""
-      },
-      {
-        "name": "Nouvit",
-        "image": "assets/img/nouvit.png",
-        "url": ""
-      },
-      {
-        "name": "Wildsur",
-        "image": "assets/img/wilsur.png",
-        "url": ""
-      },
-      {
-        "name": "Impact Homes",
-        "image": "assets/img/impacthomes.png",
-        "url": ""
-      },
-      {
-        "name": "KPC",
-        "image": "assets/img/kpc.png",
-        "url": ""
-      },
-      {
-        "name": "Osim",
-        "image": "assets/img/osim.png",
-        "url": ""
-      },
-      {
-        "name": "Daoysa",
-        "image": "assets/img/daoysa.png",
-        "url": ""
+        "items": [
+          {
+            "name": "OHLA",
+            "image": "assets/img/ohla.webp",
+            "url": ""
+          },
+          {
+            "name": "Orinoquia",
+            "image": "assets/img/orinoquia.png",
+            "url": ""
+          },
+          {
+            "name": "Stoneweg",
+            "image": "assets/img/stoneweg.png",
+            "url": ""
+          },
+          {
+            "name": "Terralpa",
+            "image": "assets/img/terralpa.svg",
+            "url": ""
+          },
+          {
+            "name": "UCSA",
+            "image": "assets/img/ucsa.svg",
+            "url": ""
+          },
+          {
+            "name": "Wildsur",
+            "image": "assets/img/wildsur.webp",
+            "url": ""
+          }
+        ]
       }
     ]
   }

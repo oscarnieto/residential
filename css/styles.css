@@ -2292,6 +2292,13 @@ footer[id] {
   background-color: var(--cream-light);
   padding: clamp(2.5rem, 6vw, 4.5rem) 0;
   overflow: hidden;
+  /* Una fila por carrusel: cada `.logo-marquee__viewport` es independiente */
+  display: grid;
+  /* `minmax(0, …)` y no `1fr` a secas: con `1fr` la columna no baja del ancho
+     del contenido (dos grupos de logotipos) y cada fila se estira más allá de
+     la ventana, descentrando el difuminado de bordes y el arrastre. */
+  grid-template-columns: minmax(0, 1fr);
+  row-gap: clamp(1rem, 2.5vw, 2rem);
 }
 
 .logo-marquee__viewport {
@@ -2304,11 +2311,9 @@ footer[id] {
   touch-action: pan-y;
 }
 
-.logo-marquee.is-dragging {
+/* El arrastre es por fila: sólo la que se arrastra pasa a `grabbing` */
+.logo-marquee__viewport.is-dragging {
   user-select: none;
-}
-
-.logo-marquee.is-dragging .logo-marquee__viewport {
   cursor: grabbing;
 }
 
@@ -2330,6 +2335,13 @@ footer[id] {
   to {
     transform: translate3d(-50%, 0, 0);
   }
+}
+
+/* Las filas alternan de sentido. Esto es sólo el respaldo para cuando el JS no
+   llega a ejecutarse (el JS sustituye esta animación y lleva el sentido él):
+   `reverse` recorre el mismo bucle al revés, de -50% a 0, hacia la derecha. */
+.logo-marquee__viewport[data-direction='right'] .logo-marquee__track {
+  animation-direction: reverse;
 }
 
 .logo-marquee__group {
@@ -2372,7 +2384,7 @@ footer[id] {
 /* El carrusel no se detiene al pasar el ratón: sigue girando siempre.
    Sólo se pausa si el foco del teclado entra en él, para que quien navegue
    sin ratón pueda alcanzar un logotipo enlazado sin perseguirlo. */
-.logo-marquee:focus-within .logo-marquee__track {
+.logo-marquee__viewport:focus-within .logo-marquee__track {
   animation-play-state: paused;
 }
 

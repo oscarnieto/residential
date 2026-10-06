@@ -342,9 +342,13 @@
 
   /* ------------------------------------------------------------------
    * Carrusel de logotipos (página Producto)
+   *  - Cada fila es un carrusel independiente y las filas alternan de
+   *    sentido (`data-direction`): `right` avanza hacia la derecha, `left`
+   *    hacia la izquierda.
    *  - Avanza solo, en bucle continuo.
    *  - Se puede arrastrar con el ratón o el dedo, y al soltar retoma la
-   *    marcha desde donde se ha quedado, conservando el impulso.
+   *    marcha desde donde se ha quedado, conservando el impulso. Arrastrar
+   *    una fila no mueve la otra.
    *
    * El desplazamiento lo lleva JS y no la animación CSS porque ambos
    * escriben el mismo `transform`: una animación en curso gana a cualquier
@@ -352,22 +356,28 @@
    * animación se queda en el CSS como respaldo para cuando este código no
    * llega a ejecutarse.
    * ------------------------------------------------------------------ */
-  const marquee = document.querySelector('.logo-marquee');
-  if (marquee && !prefersReducedMotion) {
-    const track = marquee.querySelector('.logo-marquee__track');
-    const group = marquee.querySelector('.logo-marquee__group');
-    const viewport = marquee.querySelector('.logo-marquee__viewport');
+  const initMarqueeRow = (viewport) => {
+    const track = viewport.querySelector('.logo-marquee__track');
+    const group = viewport.querySelector('.logo-marquee__group');
 
     // JS toma el control del transform
     track.style.animation = 'none';
 
+    /**
+     * El `offset` crece cuando el contenido avanza hacia la izquierda. Una fila
+     * que avanza hacia la derecha lo hace decrecer: es lo único que cambia
+     * entre sentidos, porque el signo va en la velocidad de crucero y todo lo
+     * demás (convergencia, impulso al soltar, arrastre) ya es simétrico.
+     */
+    const sign = viewport.dataset.direction === 'right' ? -1 : 1;
+
     /** Ancho de un grupo: la distancia tras la que el bucle se repite. */
     let groupWidth = group.offsetWidth;
 
-    /** Velocidad de crucero en px/s, derivada de la duración configurada. */
+    /** Velocidad de crucero en px/s, con signo, derivada de la duración configurada. */
     const cruiseSpeed = () => {
       const declared = parseFloat(getComputedStyle(track).getPropertyValue('--marquee-duration')) || 45;
-      return groupWidth / declared;
+      return (sign * groupWidth) / declared;
     };
 
     let speed = cruiseSpeed();
@@ -390,7 +400,7 @@
       const dt = Math.min((now - previous) / 1000, 0.1); // ignora saltos al volver a la pestaña
       previous = now;
 
-      if (!dragging && !marquee.contains(document.activeElement)) {
+      if (!dragging && !viewport.contains(document.activeElement)) {
         // La velocidad converge suavemente a la de crucero, de modo que el
         // impulso del arrastre se disuelve sin dar un tirón.
         velocity += (speed - velocity) * (1 - Math.pow(0.002, dt));
@@ -414,7 +424,7 @@
       lastTime = performance.now();
       moved = 0;
       velocity = 0;
-      marquee.classList.add('is-dragging');
+      viewport.classList.add('is-dragging');
       viewport.setPointerCapture(pointerId);
     });
 
@@ -439,7 +449,7 @@
     const endDrag = (event) => {
       if (!dragging || (event && event.pointerId !== pointerId)) return;
       dragging = false;
-      marquee.classList.remove('is-dragging');
+      viewport.classList.remove('is-dragging');
       // Un impulso desmedido daría un salto; se acota a algo creíble
       velocity = Math.max(-4000, Math.min(4000, velocity));
       previous = performance.now();
@@ -472,6 +482,10 @@
       groupWidth = group.offsetWidth;
       speed = cruiseSpeed();
     });
+  };
+
+  if (!prefersReducedMotion) {
+    document.querySelectorAll('.logo-marquee__viewport').forEach(initMarqueeRow);
   }
 
   /* ------------------------------------------------------------------

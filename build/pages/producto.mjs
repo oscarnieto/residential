@@ -120,16 +120,29 @@ ${block.products.length ? `\n${gallery(block, cta)}` : ''}
 };
 
 /**
- * Carrusel infinito de logotipos.
+ * Carrusel infinito de logotipos, en filas.
  *
- * La lista se imprime dos veces en dos grupos idénticos: desplazar el track un
- * 50% equivale exactamente al ancho de un grupo, así que al terminar la vuelta
- * la imagen es la misma y el bucle no da salto. Cada grupo se estira para
- * cubrir como mínimo el ancho de la ventana (ver `min-width` en el CSS), que es
- * lo que evita que quede hueco cuando hay pocos logotipos.
+ * Cada fila es un carrusel independiente y las filas alternan de sentido: la
+ * primera avanza hacia la derecha, la segunda hacia la izquierda, la tercera
+ * hacia la derecha… El sentido lo decide la posición, no el contenido.
+ *
+ * La lista de cada fila se imprime dos veces en dos grupos idénticos: desplazar
+ * el track un 50% equivale exactamente al ancho de un grupo, así que al terminar
+ * la vuelta la imagen es la misma y el bucle no da salto. Cada grupo se estira
+ * para cubrir como mínimo el ancho de la ventana (ver `min-width` en el CSS),
+ * que es lo que evita que quede hueco cuando hay pocos logotipos.
+ *
+ * Velocidad: `secondsPerLogo` es el tiempo que tarda en pasar cada logotipo por
+ * un punto de la fila. La duración de una vuelta es ese tiempo por el número de
+ * logotipos de la fila, así que el ritmo es el mismo lleve la fila 6 logotipos
+ * o 14. Con una duración fija por vuelta, repartir los logotipos en dos filas
+ * habría ralentizado el movimiento a la mitad.
  */
 const logosSection = (logos) => {
-  if (!logos?.items?.length) return '';
+  const rows = (logos?.rows ?? []).filter((row) => row?.items?.length);
+  if (!rows.length) return '';
+
+  const secondsPerLogo = Number.parseFloat(logos.secondsPerLogo) || 3.2;
 
   const item = (logo, hidden) => {
     // Carga inmediata a propósito: con `lazy`, los logotipos desplazados a la
@@ -141,18 +154,20 @@ const logosSection = (logos) => {
     }</li>`;
   };
 
-  const group = (hidden) => `          <ul class="logo-marquee__group"${hidden ? ' aria-hidden="true"' : ''}>
-${logos.items.map((logo) => item(logo, hidden)).join('\n')}
+  const group = (row, hidden) => `          <ul class="logo-marquee__group"${hidden ? ' aria-hidden="true"' : ''}>
+${row.items.map((logo) => item(logo, hidden)).join('\n')}
           </ul>`;
+
+  const viewport = (row, index) => `      <div class="logo-marquee__viewport" data-direction="${index % 2 === 0 ? 'right' : 'left'}">
+        <div class="logo-marquee__track" style="--marquee-duration: ${num(+(row.items.length * secondsPerLogo).toFixed(2), 45)}s">
+${group(row, false)}
+${group(row, true)}
+        </div>
+      </div>`;
 
   return `    <!-- ===== Carrusel de logotipos ===== -->
     <section class="logo-marquee" aria-label="${esc(logos.label)}">
-      <div class="logo-marquee__viewport">
-        <div class="logo-marquee__track" style="--marquee-duration: ${num(logos.speed, 45)}s">
-${group(false)}
-${group(true)}
-        </div>
-      </div>
+${rows.map(viewport).join('\n')}
     </section>`;
 };
 
