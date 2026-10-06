@@ -21,10 +21,10 @@ const introSection = (page) => `    <!-- ===== Sección 1 · Intro ===== -->
     </section>`;
 
 /**
- * Barra de navegación entre bloques. Va pegada (sticky) bajo la topbar mientras
- * se recorren las cifras y los bloques, así que tiene que ser hija directa del
- * contenedor que los envuelve a todos (`.producto-body`): un elemento sticky solo
- * se queda pegado mientras dure su padre. El JS marca como activo el botón de la
+ * Barra de navegación entre bloques. Va debajo de las fotos de las cifras y se
+ * queda pegada (sticky) bajo la topbar mientras se recorren los bloques, así que
+ * tiene que ser hija directa del contenedor que los envuelve (`.producto-body`):
+ * un elemento sticky solo se queda pegado mientras dure su padre. El JS marca como activo el botón de la
  * sección en la que se está (`is-current`).
  */
 const stickyNav = (blocks) => `    <div class="producto-sticky">
@@ -190,12 +190,12 @@ export const render = (page) =>
   [
     hero(page.hero, { modifier: 'hero--track' }),
     introSection(page),
-    // Envuelve la barra pegada, las cifras y los bloques: la barra se suelta al
+    // Envuelve las cifras, la barra pegada y los bloques: la barra se suelta al
     // acabar el último bloque y no acompaña al carrusel de logotipos.
     `    <div class="producto-body">
 ${[
-  stickyNav(page.blocks),
   statsSection(page.stats),
+  stickyNav(page.blocks),
   ...page.blocks.map((block, index) => blockSection(block, page.cta, index)),
 ]
   .filter(Boolean)

@@ -303,7 +303,6 @@
 
     const updateNav = () => {
       navTicking = false;
-      stickyBar.classList.toggle('is-stuck', stickyBar.getBoundingClientRect().top <= topbarScrolledHeight() + 0.5);
       const line = stackHeight + 2;
       setCurrent(
         sections.findIndex((section) => {

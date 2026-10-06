@@ -2103,7 +2103,7 @@ footer[id] {
 .producto-intro {
   background-color: var(--cream-light);
   padding-top: clamp(4rem, 9vw, 7rem);
-  padding-bottom: 0;
+  padding-bottom: clamp(1.5rem, 3.5vw, 2.5rem);
 }
 
 .producto-intro__title {
@@ -2119,25 +2119,17 @@ footer[id] {
   font-style: italic;
 }
 
-/* Barra de botones pegada bajo la topbar mientras se recorren las cifras y los
-   tres bloques (`.producto-body`, que termina antes del carrusel de logotipos).
-   Sticky solo se mantiene mientras viva su padre, de ahí el contenedor.
-   Los márgenes son los que antes tenían el nav y la intro, para que en su sitio
-   original se vea igual. Va por debajo de la topbar (z-index 100). */
+/* Barra de botones: va debajo de las fotos de las cifras y se queda pegada bajo
+   la topbar mientras se recorren los tres bloques (`.producto-body`, que termina
+   antes del carrusel de logotipos). Sticky solo se mantiene mientras viva su
+   padre, de ahí el contenedor. Como está debajo de las cifras, nunca se
+   solapa con ellas. Va por debajo de la topbar (z-index 100).
+   Sin fondo ni filete: lo que hay detrás se ve entre los botones. */
 .producto-sticky {
   position: sticky;
   top: var(--topbar-scrolled-h);
   z-index: 90;
-  margin-top: calc(clamp(2.5rem, 5vw, 4rem) - 0.75rem);
-  margin-bottom: clamp(2rem, 4vw, 3rem);
   padding-block: 0.75rem;
-  background-color: var(--cream-light);
-}
-
-/* El filete aparece solo cuando la barra está realmente pegada (lo marca el JS):
-   así lo que pasa por debajo no se confunde con ella. */
-.producto-sticky.is-stuck {
-  box-shadow: 0 1px 0 rgba(37, 39, 58, 0.1);
 }
 
 .producto-nav {
