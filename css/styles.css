@@ -2136,7 +2136,13 @@ footer[id] {
    que cada letra cambia de color justo cuando el amarillo la alcanza. Si sólo se
    barriera el fondo y se cambiara el color del enlace, las letras aún sin cubrir
    quedarían azul sobre azul, invisibles, durante el barrido.
-   El padding repite el del enlace para que la copia caiga exactamente encima. */
+   El padding repite el del enlace para que la copia caiga exactamente encima.
+   Sobre el amarillo la tipografía pasa de fina (300) a Medium (500). Es la
+   copia de la máscara la que lleva el peso, así que cada letra engorda justo
+   cuando el amarillo la alcanza, y el enlace de debajo nunca cambia ni se
+   reajusta. Medium ensancha el texto un 1-1,4 % (≈2 px en la etiqueta más
+   larga): centrada, la copia queda a ~1 px del texto de debajo, sin compensar
+   el espaciado. Con 700 serían hasta 6 px. */
 .producto-nav__link::after {
   content: attr(data-label);
   /* Texto alternativo vacío: es una copia decorativa, que un lector de pantalla
@@ -2147,6 +2153,7 @@ footer[id] {
   padding: 0.7rem 1.25rem;
   background-color: var(--yellow);
   color: var(--navy);
+  font-weight: 500;
   clip-path: inset(0 100% 0 0);
   transition: clip-path 0.6s var(--ease);
   pointer-events: none;
