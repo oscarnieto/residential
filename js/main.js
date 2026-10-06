@@ -256,6 +256,81 @@
   }
 
   /* ------------------------------------------------------------------
+   * Barra de botones de Producto (pegada bajo la topbar)
+   *  - El CSS la pega (sticky); aquí se mide lo que ocupa arriba junto con la
+   *    topbar (`--producto-stack-h`, que usan las galerías ancladas y el
+   *    margen de las anclas) y se marca el botón de la sección actual.
+   *  - «Sección actual» es la que cruza una línea justo bajo la barra. En la
+   *    intro, las cifras y los logotipos no hay ninguna.
+   * ------------------------------------------------------------------ */
+  const stickyBar = document.querySelector('.producto-sticky');
+  let stackHeight = 0;
+
+  const topbarScrolledHeight = () =>
+    parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--topbar-scrolled-h')) || 64;
+
+  /** Alto que ocupan arriba la topbar y la barra pegada, en px. 0 si no hay barra. */
+  const measureStack = () => {
+    stackHeight = stickyBar ? topbarScrolledHeight() + stickyBar.offsetHeight : 0;
+    if (stickyBar) document.documentElement.style.setProperty('--producto-stack-h', stackHeight + 'px');
+    return stackHeight;
+  };
+
+  const productoNav = stickyBar?.querySelector('.producto-nav');
+  if (productoNav) {
+    const links = [...productoNav.querySelectorAll('.producto-nav__link')];
+    const sections = links.map((link) => document.getElementById(link.getAttribute('href').slice(1)));
+    let current = -1;
+    let navTicking = false;
+
+    const setCurrent = (index) => {
+      if (index === current) return;
+      current = index;
+      links.forEach((link, i) => {
+        link.classList.toggle('is-current', i === index);
+        if (i === index) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      });
+      // Con la barra en una sola fila con scroll (móvil), el activo se centra
+      if (index >= 0 && productoNav.scrollWidth > productoNav.clientWidth) {
+        const link = links[index];
+        productoNav.scrollTo({
+          left: link.offsetLeft - (productoNav.clientWidth - link.offsetWidth) / 2,
+          behavior: prefersReducedMotion ? 'auto' : 'smooth'
+        });
+      }
+    };
+
+    const updateNav = () => {
+      navTicking = false;
+      stickyBar.classList.toggle('is-stuck', stickyBar.getBoundingClientRect().top <= topbarScrolledHeight() + 0.5);
+      const line = stackHeight + 2;
+      setCurrent(
+        sections.findIndex((section) => {
+          if (!section) return false;
+          const r = section.getBoundingClientRect();
+          return r.top <= line && r.bottom > line;
+        })
+      );
+    };
+    const requestNavTick = () => {
+      if (navTicking) return;
+      navTicking = true;
+      requestAnimationFrame(updateNav);
+    };
+    const remeasureNav = () => {
+      measureStack();
+      requestNavTick();
+    };
+
+    window.addEventListener('scroll', requestNavTick, { passive: true });
+    window.addEventListener('resize', remeasureNav);
+    window.addEventListener('load', remeasureNav);
+    document.fonts?.ready.then(remeasureNav);
+    remeasureNav();
+  }
+
+  /* ------------------------------------------------------------------
    * Galería horizontal anclada (página Track Record)
    *  - Desktop: la sección se ancla (sticky) y el scroll vertical se
    *    traduce en avance horizontal; la tarjeta central crece y las de
@@ -271,6 +346,7 @@
 
     const setup = (gallery) => {
       const track = gallery.querySelector('.track-gallery__track');
+      const sticky = gallery.querySelector('.track-gallery__sticky');
       const products = [...gallery.querySelectorAll('.track-product')];
       let maxTravel = 0;
 
@@ -284,8 +360,9 @@
 
       const layout = () => {
         if (isPinned()) {
+          measureStack(); // la zona anclada empieza bajo la topbar y la barra de botones
           maxTravel = travelDistance();
-          gallery.style.height = window.innerHeight + maxTravel + 'px';
+          gallery.style.height = sticky.offsetHeight + maxTravel + 'px';
         } else {
           gallery.style.height = '';
           track.style.transform = '';
@@ -309,7 +386,8 @@
 
       const onScroll = () => {
         if (!isPinned()) return; // en móvil el foco lo da la animación CSS
-        const top = gallery.getBoundingClientRect().top;
+        // El anclaje empieza cuando la galería llega bajo la barra, no al borde de la ventana
+        const top = gallery.getBoundingClientRect().top - stackHeight;
         const travelled = Math.min(Math.max(-top, 0), maxTravel);
         track.style.transform = `translate3d(${-travelled}px, 0, 0)`;
         focus();

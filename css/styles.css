@@ -32,6 +32,11 @@
   --narrow: 840px;
   --gutter: clamp(1.25rem, 4vw, 5.3125rem);
   --topbar-h: 90px;
+  /* Alto de la topbar ya con scroll (ver `.topbar.is-scrolled .topbar__nav`) */
+  --topbar-scrolled-h: 64px;
+  /* Lo que ocupan arriba la topbar y la barra de botones pegada de Producto.
+     El JS lo sustituye por la medida real; este valor es solo el de partida. */
+  --producto-stack-h: calc(var(--topbar-scrolled-h) + 4.25rem);
 
   /* Motion */
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -90,6 +95,11 @@ button {
 section[id],
 footer[id] {
   scroll-margin-top: calc(var(--topbar-h) - 20px);
+}
+
+/* Los bloques de Producto aterrizan justo debajo de la barra de botones pegada */
+.track[id] {
+  scroll-margin-top: var(--producto-stack-h);
 }
 
 :focus-visible {
@@ -2093,7 +2103,7 @@ footer[id] {
 .producto-intro {
   background-color: var(--cream-light);
   padding-top: clamp(4rem, 9vw, 7rem);
-  padding-bottom: clamp(2rem, 4vw, 3rem);
+  padding-bottom: 0;
 }
 
 .producto-intro__title {
@@ -2109,18 +2119,43 @@ footer[id] {
   font-style: italic;
 }
 
+/* Barra de botones pegada bajo la topbar mientras se recorren las cifras y los
+   tres bloques (`.producto-body`, que termina antes del carrusel de logotipos).
+   Sticky solo se mantiene mientras viva su padre, de ahí el contenedor.
+   Los márgenes son los que antes tenían el nav y la intro, para que en su sitio
+   original se vea igual. Va por debajo de la topbar (z-index 100). */
+.producto-sticky {
+  position: sticky;
+  top: var(--topbar-scrolled-h);
+  z-index: 90;
+  margin-top: calc(clamp(2.5rem, 5vw, 4rem) - 0.75rem);
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+  padding-block: 0.75rem;
+  background-color: var(--cream-light);
+}
+
+/* El filete aparece solo cuando la barra está realmente pegada (lo marca el JS):
+   así lo que pasa por debajo no se confunde con ella. */
+.producto-sticky.is-stuck {
+  box-shadow: 0 1px 0 rgba(37, 39, 58, 0.1);
+}
+
 .producto-nav {
+  position: relative; /* para que offsetLeft de los botones se mida desde aquí */
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: clamp(0.75rem, 1.6vw, 1.5rem);
-  margin-top: clamp(2.5rem, 5vw, 4rem);
 }
 
 .producto-nav__link {
+  /* Relleno compartido con la máscara amarilla (::after), que debe caer
+     exactamente encima del texto */
+  --nav-pad: 0.7rem 1.25rem;
   position: relative;
   flex: 0 1 272px;
-  padding: 0.7rem 1.25rem;
+  padding: var(--nav-pad);
+  white-space: nowrap;
   border: 1px solid var(--navy);
   background-color: var(--navy);
   color: var(--cream-light);
@@ -2150,7 +2185,7 @@ footer[id] {
   content: attr(data-label) / '';
   position: absolute;
   inset: 0;
-  padding: 0.7rem 1.25rem;
+  padding: var(--nav-pad);
   background-color: var(--yellow);
   color: var(--navy);
   font-weight: 500;
@@ -2168,6 +2203,38 @@ footer[id] {
 @media (hover: hover) {
   .producto-nav__link:hover::after {
     clip-path: inset(0);
+  }
+}
+
+/* Sección actual (lo marca el JS según el scroll): la misma máscara amarilla del
+   hover, pero fija y en negrita (700). El peso va en la copia de la máscara, así
+   que el texto de debajo no cambia y el botón no se reajusta. Va después del
+   hover para que, con el ratón encima, el botón activo conserve la negrita. */
+.producto-nav__link.is-current::after {
+  clip-path: inset(0);
+  font-weight: 700;
+}
+
+/* Móvil: una sola fila con scroll horizontal. En tres filas, la barra pegada
+   ocuparía casi la mitad de la pantalla. */
+@media (max-width: 767px) {
+  .producto-nav {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .producto-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .producto-nav__link {
+    --nav-pad: 0.55rem 1rem;
+    flex: 0 0 auto;
+    font-size: 0.75rem;
   }
 }
 
@@ -2439,8 +2506,9 @@ footer[id] {
 
 .track-gallery__sticky {
   position: sticky;
-  top: 0;
-  height: 100svh;
+  /* Debajo de la topbar y de la barra de botones pegada, que tapan lo de arriba */
+  top: var(--producto-stack-h);
+  height: calc(100svh - var(--producto-stack-h));
   display: flex;
   flex-direction: column;
   align-items: flex-start; /* la fila arranca a la izquierda; el hueco la centra en el 1er producto */

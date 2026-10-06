@@ -13,15 +13,25 @@ ${blocks
   .join('\n')}
     </nav>`;
 
-const introSection = (page) => `    <!-- ===== Sección 1 · Intro + navegación ===== -->
+const introSection = (page) => `    <!-- ===== Sección 1 · Intro ===== -->
     <section class="producto-intro section" id="experiencia">
       <div class="container container--narrow">
         <h2 class="producto-intro__title reveal">${inline(page.intro.title)}</h2>
       </div>
-      <div class="container">
-${blockNav(page.blocks)}
-      </div>
     </section>`;
+
+/**
+ * Barra de navegación entre bloques. Va pegada (sticky) bajo la topbar mientras
+ * se recorren las cifras y los bloques, así que tiene que ser hija directa del
+ * contenedor que los envuelve a todos (`.producto-body`): un elemento sticky solo
+ * se queda pegado mientras dure su padre. El JS marca como activo el botón de la
+ * sección en la que se está (`is-current`).
+ */
+const stickyNav = (blocks) => `    <div class="producto-sticky">
+      <div class="container">
+${blockNav(blocks)}
+      </div>
+    </div>`;
 
 /**
  * Tres cifras destacadas entre la intro y el primer bloque de producto: una
@@ -180,8 +190,17 @@ export const render = (page) =>
   [
     hero(page.hero, { modifier: 'hero--track' }),
     introSection(page),
-    statsSection(page.stats),
-    ...page.blocks.map((block, index) => blockSection(block, page.cta, index)),
+    // Envuelve la barra pegada, las cifras y los bloques: la barra se suelta al
+    // acabar el último bloque y no acompaña al carrusel de logotipos.
+    `    <div class="producto-body">
+${[
+  stickyNav(page.blocks),
+  statsSection(page.stats),
+  ...page.blocks.map((block, index) => blockSection(block, page.cta, index)),
+]
+  .filter(Boolean)
+  .join('\n\n')}
+    </div>`,
     logosSection(page.logos),
   ]
     .filter(Boolean)
