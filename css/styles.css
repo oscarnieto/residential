@@ -2622,6 +2622,21 @@ footer[id] {
   background-color: var(--navy);
 }
 
+/* El último bloque no pone espacio propio por debajo: el que lo separa del
+   carrusel de logotipos lo pone el carrusel, igual que el que lo separa del
+   footer, para que los dos sean el mismo.
+   La galería anclada deja además un hueco vacío bajo la última tarjeta (queda
+   centrada en la pantalla); el JS lo mide en `--gallery-dead` y se recoge aquí,
+   para que ese espacio se cuente desde la tarjeta y no desde el borde de la
+   galería. */
+.producto-body > .track:last-child {
+  padding-bottom: 0;
+}
+
+.producto-body > .track:last-child .track-gallery {
+  margin-bottom: calc(-1 * var(--gallery-dead, 0px));
+}
+
 .track--navy .track__title {
   color: var(--cream-light);
 }

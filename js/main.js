@@ -357,6 +357,24 @@
         return Math.max(0, c(products[products.length - 1]) - c(products[0]));
       };
 
+      // Sólo la galería del último bloque: el hueco vacío bajo su última tarjeta
+      // se resta del espacio hasta el carrusel de logotipos (ver `--gallery-dead`)
+      const isLastBlock = !!gallery.closest('.producto-body > .track:last-child');
+
+      /**
+       * Espacio vacío entre la última tarjeta y el borde inferior de la galería.
+       * Anclada, la tarjeta queda centrada en la zona anclada, y la central crece
+       * un 8 % desde su centro; sin anclaje, es el relleno de la zona y del track.
+       */
+      const deadSpace = () => {
+        if (isPinned()) {
+          const card = track.offsetHeight;
+          return (sticky.offsetHeight - card) / 2 - card * 0.04;
+        }
+        const pad = (el) => parseFloat(getComputedStyle(el).paddingBottom) || 0;
+        return pad(sticky) + pad(track);
+      };
+
       const layout = () => {
         if (isPinned()) {
           measureStack(); // la zona anclada empieza bajo la topbar y la barra de botones
@@ -366,6 +384,7 @@
           gallery.style.height = '';
           track.style.transform = '';
         }
+        if (isLastBlock) gallery.style.setProperty('--gallery-dead', deadSpace().toFixed(1) + 'px');
       };
 
       // Escala/opacidad según la distancia de cada tarjeta al centro

@@ -184,7 +184,7 @@
   ],
   "logos": {
     "label": "Promotoras con las que trabajamos",
-    "secondsPerLogo": 3.2,
+    "secondsPerLogo": 3.8,
     "rows": [
       {
         "items": [
@@ -255,59 +255,6 @@
           {
             "name": "Wildsur",
             "image": "assets/img/wildsur.webp",
-            "url": ""
-          }
-        ]
-      },
-      {
-        "items": [
-          {
-            "name": "Nortia",
-            "image": "assets/img/nortia.png",
-            "url": ""
-          },
-          {
-            "name": "Grupo Galia",
-            "image": "assets/img/grupogalia.png",
-            "url": ""
-          },
-          {
-            "name": "Medhills",
-            "image": "assets/img/mogan.png",
-            "url": ""
-          },
-          {
-            "name": "Avantespacia",
-            "image": "assets/img/avantespacia.png",
-            "url": ""
-          },
-          {
-            "name": "Neinor",
-            "image": "assets/img/neinor.png",
-            "url": ""
-          }
-        ]
-      },
-      {
-        "items": [
-          {
-            "name": "Nidom",
-            "image": "assets/img/nidom.png",
-            "url": ""
-          },
-          {
-            "name": "KPC",
-            "image": "assets/img/kpc.png",
-            "url": ""
-          },
-          {
-            "name": "Osim",
-            "image": "assets/img/osim.png",
-            "url": ""
-          },
-          {
-            "name": "Daoysa",
-            "image": "assets/img/daoysa.png",
             "url": ""
           }
         ]
