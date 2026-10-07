@@ -2133,7 +2133,6 @@ footer[id] {
 }
 
 .producto-nav {
-  position: relative; /* para que offsetLeft de los botones se mida desde aquí */
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -2207,26 +2206,12 @@ footer[id] {
   font-weight: 700;
 }
 
-/* Móvil: una sola fila con scroll horizontal. En tres filas, la barra pegada
-   ocuparía casi la mitad de la pantalla. */
+/* Móvil: sin barra de botones. Las secciones se recorren con el scroll normal.
+   `display: none` también la saca del árbol de accesibilidad y hace que el JS la
+   mida como 0 px, así que la galería y las anclas solo cuentan la topbar. */
 @media (max-width: 767px) {
-  .producto-nav {
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    gap: 0.5rem;
-    overflow-x: auto;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .producto-nav::-webkit-scrollbar {
+  .producto-sticky {
     display: none;
-  }
-
-  .producto-nav__link {
-    --nav-pad: 0.55rem 1rem;
-    flex: 0 0 auto;
-    font-size: 0.75rem;
   }
 }
 

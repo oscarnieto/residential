@@ -291,14 +291,6 @@
         if (i === index) link.setAttribute('aria-current', 'true');
         else link.removeAttribute('aria-current');
       });
-      // Con la barra en una sola fila con scroll (móvil), el activo se centra
-      if (index >= 0 && productoNav.scrollWidth > productoNav.clientWidth) {
-        const link = links[index];
-        productoNav.scrollTo({
-          left: link.offsetLeft - (productoNav.clientWidth - link.offsetWidth) / 2,
-          behavior: prefersReducedMotion ? 'auto' : 'smooth'
-        });
-      }
     };
 
     const updateNav = () => {
