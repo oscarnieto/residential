@@ -1632,6 +1632,55 @@ footer[id] {
   }
 }
 
+/* Carrusel horizontal de las tarjetas de cifras en móvil. Mismo patrón y mismo
+   punto de corte que los proyectos de arriba. Va después de la regla de 560 px,
+   que las apila en una columna de 360 px máx.: aquí la sustituye. */
+@media (max-width: 700px) {
+  .ri-metrics {
+    display: flex;
+    grid-template-columns: none;
+    gap: 1rem;
+    max-width: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    /* sangra hasta los bordes de la pantalla */
+    margin-inline: calc(var(--gutter) * -1);
+    padding: 0.5rem var(--gutter) 1.5rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ri-metrics::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ri-metric {
+    flex: 0 0 74%;
+    scroll-snap-align: center;
+  }
+
+  /* La tarjeta centrada crece, las laterales se atenúan (scroll-timeline).
+     Reutiliza la curva de los proyectos: misma página, mismo tipo de carrusel. */
+  @supports (animation-timeline: view(inline)) {
+    .ri-metric {
+      opacity: 0.4;
+      transform: scale(0.86);
+      animation: ri-project-focus linear both;
+      animation-timeline: view(inline);
+      animation-range: cover;
+    }
+  }
+}
+
+@media (max-width: 700px) and (prefers-reduced-motion: reduce) {
+  .ri-metric {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+}
+
 /* ==========================================================================
    Página · Servicios
    ========================================================================== */
