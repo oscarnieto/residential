@@ -48,7 +48,7 @@ const statsSection = (stats) => {
 ${stats
   .map(
     (stat) => `          <article class="track-stats__card reveal">
-            <img class="track-stats__img" src="${url(stat.image)}" alt="" loading="lazy">
+            <img class="track-stats__img" src="${url(stat.image)}"${stat.image2x ? ` srcset="${url(stat.image)} 1x, ${url(stat.image2x)} 2x"` : ''} alt="" loading="lazy" width="410" height="436">
             <div class="track-stats__body">
               <p class="track-stats__number" data-counter="${esc(stat.number)}">${esc(stat.number)}</p>
               <p class="track-stats__label">${inline(stat.label)}</p>

@@ -25,17 +25,20 @@
     {
       "number": "10",
       "label": "Promociones activas en Andalucía",
-      "image": "assets/img/track-stat-andalucia.jpg"
+      "image": "assets/img/track-stat-andalucia.webp",
+      "image2x": "assets/img/track-stat-andalucia-2x.webp"
     },
     {
       "number": "8",
       "label": "Promociones activas en Madrid",
-      "image": "assets/img/track-stat-madrid.jpg"
+      "image": "assets/img/track-stat-madrid.webp",
+      "image2x": "assets/img/track-stat-madrid-2x.webp"
     },
     {
       "number": "7",
       "label": "Promociones activas en Barcelona",
-      "image": "assets/img/track-stat-barcelona.jpg"
+      "image": "assets/img/track-stat-barcelona.webp",
+      "image2x": "assets/img/track-stat-barcelona-2x.webp"
     }
   ],
   "cta": "Ver proyecto",
