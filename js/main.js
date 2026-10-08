@@ -415,6 +415,9 @@
    *    traduce en desplazamiento horizontal de una diapositiva a la siguiente.
    *    Cada diapositiva se queda quieta un rato y el cambio va suavizado; el
    *    texto se desplaza algo más que la foto para dar profundidad.
+   *  - El scroll no mueve la foto directamente: fija un objetivo y el progreso
+   *    «actual» se acerca a él con amortiguación (ver `tau`). Sin esto, cada
+   *    golpe de rueda (≈100 px) se vería como un salto de la foto.
    *  - Móvil / reduced-motion: carrusel de swipe nativo (lo maneja el CSS).
    * ------------------------------------------------------------------ */
   const fullBlock = document.querySelector('.track-full');
@@ -426,10 +429,18 @@
     const slides = [...fullBlock.querySelectorAll('.track-full__slide')];
     const slideTexts = slides.map((slide) => slide.querySelector('.track-full__text'));
     const lastIndex = slides.length - 1;
-    const hold = 0.3; // parte de cada tramo en la que la diapositiva se queda quieta
-    let fullTicking = false;
 
-    const smooth = (t) => t * t * (3 - 2 * t);
+    const step = 1.25; // pantallas de scroll por cada cambio de diapositiva
+    const hold = 0.15; // parte de cada tramo en la que la diapositiva se queda quieta
+    const tau = 0.12; // constante de amortiguación, en segundos (se asienta en ≈0,6 s)
+    const epsilon = 0.0005; // diferencia de progreso por debajo de la cual se da por llegado
+
+    let target = 0; // progreso al que lleva el scroll (0…n−1, ya con las pausas y la curva)
+    let current = 0; // progreso que se ve
+    let frame = 0;
+    let lastTime = 0;
+
+    const smootherstep = (t) => t * t * t * (t * (t * 6 - 15) + 10);
 
     /** Progreso fraccional (0…n−1) del scroll, con pausa en cada diapositiva. */
     const slideProgress = (raw) => {
@@ -438,12 +449,42 @@
       if (index >= lastIndex) return lastIndex;
       if (f <= hold) return index;
       if (f >= 1 - hold) return index + 1;
-      return index + smooth((f - hold) / (1 - 2 * hold));
+      return index + smootherstep((f - hold) / (1 - 2 * hold));
+    };
+
+    const render = () => {
+      const width = fullPin.offsetWidth;
+      fullTrack.style.transform = `translate3d(${(-current * width).toFixed(2)}px, 0, 0)`;
+      slideTexts.forEach((text, i) => {
+        text.style.transform = `translate3d(${((i - current) * width * 0.18).toFixed(2)}px, 0, 0)`;
+      });
+    };
+
+    const tick = (now) => {
+      frame = 0;
+      const dt = Math.min((now - lastTime) / 1000, 0.1);
+      lastTime = now;
+      current += (target - current) * (1 - Math.exp(-dt / tau));
+      if (Math.abs(target - current) < epsilon) current = target;
+      render();
+      if (current !== target) frame = requestAnimationFrame(tick);
+    };
+
+    const startLoop = () => {
+      if (frame) return;
+      lastTime = performance.now();
+      frame = requestAnimationFrame(tick);
+    };
+
+    const readTarget = () => {
+      const viewport = fullPin.offsetHeight;
+      const raw = Math.min(Math.max(-fullBlock.getBoundingClientRect().top / (viewport * step), 0), lastIndex);
+      target = slideProgress(raw);
     };
 
     const fullLayout = () => {
       if (isFullPinned() && lastIndex > 0) {
-        fullBlock.style.height = fullPin.offsetHeight * (lastIndex + 1) + 'px';
+        fullBlock.style.height = fullPin.offsetHeight * (1 + lastIndex * step) + 'px';
       } else {
         fullBlock.style.height = '';
         fullTrack.style.transform = '';
@@ -451,30 +492,22 @@
       }
     };
 
-    const fullScroll = () => {
-      fullTicking = false;
+    const onFullScroll = () => {
       if (!isFullPinned() || lastIndex < 1) return;
-      const viewport = fullPin.offsetHeight;
-      const raw = Math.min(Math.max(-fullBlock.getBoundingClientRect().top / viewport, 0), lastIndex);
-      const progress = slideProgress(raw);
-      const width = fullPin.offsetWidth;
-      fullTrack.style.transform = `translate3d(${-progress * width}px, 0, 0)`;
-      slideTexts.forEach((text, i) => {
-        text.style.transform = `translate3d(${(i - progress) * width * 0.18}px, 0, 0)`;
-      });
+      readTarget();
+      startLoop();
     };
 
-    const requestFullTick = () => {
-      if (fullTicking) return;
-      fullTicking = true;
-      requestAnimationFrame(fullScroll);
-    };
+    // En resize/load no se anima: se coloca directamente en la posición correcta
     const fullRelayout = () => {
       fullLayout();
-      requestFullTick();
+      if (!isFullPinned() || lastIndex < 1) return;
+      readTarget();
+      current = target;
+      render();
     };
 
-    window.addEventListener('scroll', requestFullTick, { passive: true });
+    window.addEventListener('scroll', onFullScroll, { passive: true });
     window.addEventListener('resize', fullRelayout);
     window.addEventListener('load', fullRelayout);
     fullRelayout();
