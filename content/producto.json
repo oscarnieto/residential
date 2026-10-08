@@ -142,7 +142,7 @@
       "products": [
         {
           "city": "Barcelona",
-          "name": "Mandarin Oriental",
+          "name": "Mandarín Oriental",
           "image": "assets/img/trackrecord-barcelona-1.jpg",
           "url": "",
           "hover": false
@@ -182,7 +182,9 @@
           "url": "",
           "hover": false
         }
-      ]
+      ],
+      "layout": "fullscreen",
+      "eyebrow": "Track Record"
     }
   ],
   "logos": {

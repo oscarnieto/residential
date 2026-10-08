@@ -349,24 +349,6 @@
         return Math.max(0, c(products[products.length - 1]) - c(products[0]));
       };
 
-      // Sólo la galería del último bloque: el hueco vacío bajo su última tarjeta
-      // se resta del espacio hasta el carrusel de logotipos (ver `--gallery-dead`)
-      const isLastBlock = !!gallery.closest('.producto-body > .track:last-child');
-
-      /**
-       * Espacio vacío entre la última tarjeta y el borde inferior de la galería.
-       * Anclada, la tarjeta queda centrada en la zona anclada, y la central crece
-       * un 8 % desde su centro; sin anclaje, es el relleno de la zona y del track.
-       */
-      const deadSpace = () => {
-        if (isPinned()) {
-          const card = track.offsetHeight;
-          return (sticky.offsetHeight - card) / 2 - card * 0.04;
-        }
-        const pad = (el) => parseFloat(getComputedStyle(el).paddingBottom) || 0;
-        return pad(sticky) + pad(track);
-      };
-
       const layout = () => {
         if (isPinned()) {
           measureStack(); // la zona anclada empieza bajo la topbar y la barra de botones
@@ -376,7 +358,6 @@
           gallery.style.height = '';
           track.style.transform = '';
         }
-        if (isLastBlock) gallery.style.setProperty('--gallery-dead', deadSpace().toFixed(1) + 'px');
       };
 
       // Escala/opacidad según la distancia de cada tarjeta al centro
@@ -426,6 +407,77 @@
     window.addEventListener('resize', relayout);
     window.addEventListener('load', relayout);
     relayout();
+  }
+
+  /* ------------------------------------------------------------------
+   * Track Record a pantalla completa (página Producto)
+   *  - Escritorio: la zona se ancla (sticky, 100svh) y el scroll vertical se
+   *    traduce en desplazamiento horizontal de una diapositiva a la siguiente.
+   *    Cada diapositiva se queda quieta un rato y el cambio va suavizado; el
+   *    texto se desplaza algo más que la foto para dar profundidad.
+   *  - Móvil / reduced-motion: carrusel de swipe nativo (lo maneja el CSS).
+   * ------------------------------------------------------------------ */
+  const fullBlock = document.querySelector('.track-full');
+  if (fullBlock) {
+    const pinMQ = window.matchMedia('(min-width: 768px)');
+    const isFullPinned = () => pinMQ.matches && !prefersReducedMotion;
+    const fullTrack = fullBlock.querySelector('.track-full__track');
+    const fullPin = fullBlock.querySelector('.track-full__pin');
+    const slides = [...fullBlock.querySelectorAll('.track-full__slide')];
+    const slideTexts = slides.map((slide) => slide.querySelector('.track-full__text'));
+    const lastIndex = slides.length - 1;
+    const hold = 0.3; // parte de cada tramo en la que la diapositiva se queda quieta
+    let fullTicking = false;
+
+    const smooth = (t) => t * t * (3 - 2 * t);
+
+    /** Progreso fraccional (0…n−1) del scroll, con pausa en cada diapositiva. */
+    const slideProgress = (raw) => {
+      const index = Math.min(Math.floor(raw), lastIndex);
+      const f = raw - index;
+      if (index >= lastIndex) return lastIndex;
+      if (f <= hold) return index;
+      if (f >= 1 - hold) return index + 1;
+      return index + smooth((f - hold) / (1 - 2 * hold));
+    };
+
+    const fullLayout = () => {
+      if (isFullPinned() && lastIndex > 0) {
+        fullBlock.style.height = fullPin.offsetHeight * (lastIndex + 1) + 'px';
+      } else {
+        fullBlock.style.height = '';
+        fullTrack.style.transform = '';
+        slideTexts.forEach((text) => (text.style.transform = ''));
+      }
+    };
+
+    const fullScroll = () => {
+      fullTicking = false;
+      if (!isFullPinned() || lastIndex < 1) return;
+      const viewport = fullPin.offsetHeight;
+      const raw = Math.min(Math.max(-fullBlock.getBoundingClientRect().top / viewport, 0), lastIndex);
+      const progress = slideProgress(raw);
+      const width = fullPin.offsetWidth;
+      fullTrack.style.transform = `translate3d(${-progress * width}px, 0, 0)`;
+      slideTexts.forEach((text, i) => {
+        text.style.transform = `translate3d(${(i - progress) * width * 0.18}px, 0, 0)`;
+      });
+    };
+
+    const requestFullTick = () => {
+      if (fullTicking) return;
+      fullTicking = true;
+      requestAnimationFrame(fullScroll);
+    };
+    const fullRelayout = () => {
+      fullLayout();
+      requestFullTick();
+    };
+
+    window.addEventListener('scroll', requestFullTick, { passive: true });
+    window.addEventListener('resize', fullRelayout);
+    window.addEventListener('load', fullRelayout);
+    fullRelayout();
   }
 
   /* ------------------------------------------------------------------

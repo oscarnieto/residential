@@ -104,6 +104,41 @@ ${media}${nombre}
       </div>`;
 
 /**
+ * Bloque a pantalla completa (Track Record). Una diapositiva por proyecto, de
+ * ancho y alto de la ventana. En escritorio la zona se ancla (sticky) y el scroll
+ * vertical desplaza las diapositivas en horizontal; en móvil es un carrusel de
+ * swipe (ver `.track-full` en el CSS y «Track Record a pantalla completa» en el JS).
+ *
+ * La foto lleva `srcset` por anchura cuando el proyecto tiene `image2x`
+ * (1600 px y 2880 px): a pantalla completa una sola imagen o sobra o se ve borrosa.
+ * No lleva `loading="lazy"`: las diapositivas fuera de pantalla están desplazadas
+ * por transform y el navegador no las contaría como cercanas a tiempo.
+ */
+const fullscreenGallery = (block) => `      <!-- Diapositivas a pantalla completa (pin) -->
+      <div class="track-full" id="gallery-${esc(block.id)}">
+        <div class="track-full__pin">
+          <div class="track-full__track">
+${block.products
+  .map((product) => {
+    const alt = [product.name, product.city].filter(Boolean).join(', ');
+    const srcset = product.image2x
+      ? ` srcset="${url(product.image)} 1600w, ${url(product.image2x)} 2880w" sizes="100vw"`
+      : '';
+    const nombre = product.name ? `\n              <p class="track-full__name">${esc(product.name)}</p>` : '';
+    return `            <article class="track-full__slide">
+              <img class="track-full__img" src="${url(product.image)}"${srcset} alt="${esc(alt)}" decoding="async">
+              <div class="track-full__text">
+              <p class="track-full__label">${esc(block.eyebrow ?? block.navLabel)}</p>${nombre}
+              <p class="track-full__city">${esc(product.city)}</p>
+              </div>
+            </article>`;
+  })
+  .join('\n')}
+          </div>
+        </div>
+      </div>`;
+
+/**
  * Un bloque de producto. Mientras no tenga proyectos, se omite la galería
  * para que la página no muestre un hueco vacío.
  */
@@ -125,7 +160,7 @@ const blockSection = (block, cta, index) => {
         <h2 class="track__title reveal">${inline(block.title)}</h2>
 ${leadParagraphs}
       </div>
-${block.products.length ? `\n${gallery(block, cta)}` : ''}
+${block.products.length ? `\n${block.layout === 'fullscreen' ? fullscreenGallery(block) : gallery(block, cta)}` : ''}
     </section>`;
 };
 

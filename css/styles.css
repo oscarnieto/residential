@@ -2655,19 +2655,11 @@ footer[id] {
   background-color: var(--navy);
 }
 
-/* El último bloque no pone espacio propio por debajo: el que lo separa del
-   carrusel de logotipos lo pone el carrusel, igual que el que lo separa del
-   footer, para que los dos sean el mismo.
-   La galería anclada deja además un hueco vacío bajo la última tarjeta (queda
-   centrada en la pantalla); el JS lo mide en `--gallery-dead` y se recoge aquí,
-   para que ese espacio se cuente desde la tarjeta y no desde el borde de la
-   galería. */
+/* El último bloque (Track Record, a pantalla completa) no pone espacio propio por
+   debajo: la foto a sangre enlaza directamente con el carrusel de logotipos, que
+   ya pone el mismo espacio arriba que abajo. */
 .producto-body > .track:last-child {
   padding-bottom: 0;
-}
-
-.producto-body > .track:last-child .track-gallery {
-  margin-bottom: calc(-1 * var(--gallery-dead, 0px));
 }
 
 .track--navy .track__title {
@@ -2763,6 +2755,144 @@ footer[id] {
     scale: 1;
     opacity: 1;
     transition: none;
+  }
+}
+
+/* --- Track Record a pantalla completa ---
+   Una diapositiva por proyecto, de ancho y alto de la ventana. Escritorio: la
+   zona se ancla y el JS convierte el scroll vertical en desplazamiento
+   horizontal. Móvil y movimiento reducido: carrusel de swipe con snap. */
+.track-full {
+  position: relative;
+  margin-top: clamp(2.5rem, 6vw, 4.5rem);
+  /* la altura la fija el JS en escritorio para crear el recorrido del anclaje */
+}
+
+.track-full__pin {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  background-color: var(--navy);
+}
+
+.track-full__track {
+  display: flex;
+  height: 100%;
+  will-change: transform;
+}
+
+.track-full__slide {
+  position: relative;
+  flex: 0 0 100vw;
+  height: 100%;
+  overflow: hidden;
+}
+
+.track-full__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: default;
+}
+
+/* Degradado del diseño: transparente hasta el 69 % y a negro al 61 % hacia el 91 % */
+.track-full__slide::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0) 69%, rgba(0, 0, 0, 0.61) 91%);
+  pointer-events: none;
+}
+
+/* Textos abajo a la izquierda, alineados con el resto de contenedores del sitio
+   (a 1440 px son los 85 px del diseño) */
+.track-full__text {
+  position: absolute;
+  z-index: 1;
+  left: max(var(--gutter), calc((100vw - var(--container)) / 2));
+  right: var(--gutter);
+  bottom: clamp(1.5rem, 4.3svh, 2.5rem);
+  color: var(--white);
+  text-align: left;
+  will-change: transform;
+}
+
+.track-full__label {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.75rem, 3.125vw, 2.8125rem);
+  line-height: 1.06;
+}
+
+.track-full__name {
+  margin-top: 0.3em;
+  font-weight: 700;
+  font-size: clamp(2rem, 3.47vw, 3.125rem);
+  line-height: 1.06;
+}
+
+.track-full__city {
+  margin-top: 0.2rem;
+  color: var(--yellow);
+  font-weight: 600;
+  font-size: clamp(0.9rem, 1.25vw, 1.125rem);
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+/* Móvil y movimiento reducido: sin anclaje, carrusel de swipe a pantalla completa */
+@media (max-width: 767px) {
+  .track-full__pin {
+    position: static;
+  }
+
+  .track-full__track {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    transform: none !important; /* anula el translate del anclaje */
+  }
+
+  .track-full__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .track-full__slide {
+    scroll-snap-align: start;
+  }
+
+  .track-full__text {
+    transform: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track-full__pin {
+    position: static;
+  }
+
+  .track-full__track {
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    transform: none !important;
+  }
+
+  .track-full__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .track-full__slide {
+    scroll-snap-align: start;
+  }
+
+  .track-full__text {
+    transform: none !important;
   }
 }
 

@@ -100,7 +100,7 @@ generado.
 | Inicio | `index.html` | Hero con vídeo, intro, "¿Qué nos hace diferentes?", red internacional (contadores + mapa de puntos interactivo), Savills en España |
 | Red Internacional | `red-internacional.html` | Expertise 360, equipos especializados, métricas globales, proyectos internacionales, hero con zoom Ken Burns |
 | Servicios | `servicios.html` | Círculo interactivo de 8 pasos (SVG + JS), tarjetas de tipología de producto |
-| Producto | `producto.html` | Titular de entrada, barra de botones por anclas pegada bajo la topbar, solo en escritorio (resalta en amarillo y negrita la sección actual), bloques de producto configurables (cada uno con su galería horizontal "pinned") y carrusel de logotipos en bucle (filas que avanzan en sentidos opuestos) |
+| Producto | `producto.html` | Titular de entrada, barra de botones por anclas pegada bajo la topbar, solo en escritorio (resalta en amarillo y negrita la sección actual), bloques de producto configurables (galerías horizontales "pinned"; Track Record, a pantalla completa con una diapositiva por proyecto) y carrusel de logotipos en bucle (filas que avanzan en sentidos opuestos) |
 | Equipo | `equipo.html` | Equipo España (con enlaces LinkedIn on-hover) y equipo Global |
 | Contacto | `contacto.html` | Texto sticky + tarjetas de oficina que se desplazan por scroll |
 
