@@ -1105,11 +1105,23 @@ footer[id] {
     display: flex;
   }
 
-  /* Sin los dos menús, el logotipo es el único hijo en flujo: se alinea a la
-     izquierda, contra el mismo margen que el resto del contenido. La
-     hamburguesa va posicionada aparte, a la derecha. */
+  /* Sin los dos menús, el logotipo es el único hijo en flujo. Arriba de la
+     página va centrado (mide 90 px, de ahí el 45); al hacer scroll pasa a la
+     izquierda, contra el mismo margen que el resto del contenido, a la vez que
+     se encoge (misma duración y curva que el tamaño). La hamburguesa va
+     posicionada aparte, a la derecha. */
   .topbar__nav {
     justify-content: flex-start;
+  }
+
+  .topbar__logo {
+    position: relative;
+    left: calc(50% - 45px);
+    transition: left 0.4s var(--ease);
+  }
+
+  .topbar.is-scrolled .topbar__logo {
+    left: 0;
   }
 
   .topbar__burger {
