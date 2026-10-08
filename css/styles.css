@@ -2201,7 +2201,6 @@ footer[id] {
   color: var(--cream-light);
   font-size: 0.875rem;
   letter-spacing: 0.06em;
-  text-transform: uppercase;
   text-align: center;
   text-decoration: none;
 }
