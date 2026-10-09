@@ -411,13 +411,16 @@
 
   /* ------------------------------------------------------------------
    * Track Record a pantalla completa (página Producto)
-   *  - Escritorio: la zona se ancla (sticky, 100svh) y el scroll vertical se
-   *    traduce en desplazamiento horizontal de una diapositiva a la siguiente.
-   *    Cada diapositiva se queda quieta un rato y el cambio va suavizado; el
-   *    texto se desplaza algo más que la foto para dar profundidad.
-   *  - El scroll no mueve la foto directamente: fija un objetivo y el progreso
-   *    «actual» se acerca a él con amortiguación (ver `tau`). Sin esto, cada
-   *    golpe de rueda (≈100 px) se vería como un salto de la foto.
+   *  - Escritorio: la zona se ancla (sticky, 100svh), con una diapositiva por
+   *    pantalla de scroll. Un gesto de scroll (rueda, deslizamiento táctil o
+   *    tecla) = una diapositiva: el JS lanza la animación completa de un
+   *    producto al siguiente (`duration`, con curva suave) y retiene el scroll
+   *    mientras dura. En la primera y la última, el scroll normal sigue y sale
+   *    de la sección.
+   *  - La animación mueve el scroll de la página, la foto y el texto en el mismo
+   *    fotograma; el texto se desplaza algo más que la foto para dar profundidad.
+   *  - Scroll libre (barra de scroll, enlaces, buscar en la página): la foto
+   *    sigue al scroll, amortiguada (ver `tau`).
    *  - Móvil / reduced-motion: carrusel de swipe nativo (lo maneja el CSS).
    * ------------------------------------------------------------------ */
   const fullBlock = document.querySelector('.track-full');
@@ -429,28 +432,24 @@
     const slides = [...fullBlock.querySelectorAll('.track-full__slide')];
     const slideTexts = slides.map((slide) => slide.querySelector('.track-full__text'));
     const lastIndex = slides.length - 1;
+    const usable = () => isFullPinned() && lastIndex > 0;
 
-    const step = 1.25; // pantallas de scroll por cada cambio de diapositiva
-    const hold = 0.15; // parte de cada tramo en la que la diapositiva se queda quieta
-    const tau = 0.12; // constante de amortiguación, en segundos (se asienta en ≈0,6 s)
+    const duration = 1100; // ms de la animación de una diapositiva a la siguiente
+    const settleDuration = 600; // ms para asentar en una diapositiva al entrar con inercia
+    const quietMs = 100; // silencio que separa un gesto de rueda del siguiente
+    const minDelta = 6; // px de rueda por debajo de los cuales no se lanza un paso
+    const touchThreshold = 40; // px de deslizamiento táctil que lanzan un paso
+    const tau = 0.12; // amortiguación del scroll libre, en segundos
     const epsilon = 0.0005; // diferencia de progreso por debajo de la cual se da por llegado
 
-    let target = 0; // progreso al que lleva el scroll (0…n−1, ya con las pausas y la curva)
+    let target = 0; // progreso al que lleva el scroll (0…n−1)
     let current = 0; // progreso que se ve
-    let frame = 0;
+    let frame = 0; // fotograma del scroll libre amortiguado
     let lastTime = 0;
+    let tween = null; // animación en curso: { y0, y1, p0, p1, start, ms, frame }
+    let inZone = false;
 
-    const smootherstep = (t) => t * t * t * (t * (t * 6 - 15) + 10);
-
-    /** Progreso fraccional (0…n−1) del scroll, con pausa en cada diapositiva. */
-    const slideProgress = (raw) => {
-      const index = Math.min(Math.floor(raw), lastIndex);
-      const f = raw - index;
-      if (index >= lastIndex) return lastIndex;
-      if (f <= hold) return index;
-      if (f >= 1 - hold) return index + 1;
-      return index + smootherstep((f - hold) / (1 - 2 * hold));
-    };
+    const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
     const render = () => {
       const width = fullPin.offsetWidth;
@@ -460,31 +459,69 @@
       });
     };
 
-    const tick = (now) => {
+    /** Zona anclada activa: la foto ocupa la pantalla entera. */
+    const engaged = () => {
+      const r = fullBlock.getBoundingClientRect();
+      return r.top <= 1 && r.bottom >= fullPin.offsetHeight - 1;
+    };
+
+    /** Posición fraccional (0…n−1) según el scroll. */
+    const position = () => {
+      const raw = -fullBlock.getBoundingClientRect().top / fullPin.offsetHeight;
+      return Math.min(Math.max(raw, 0), lastIndex);
+    };
+
+    /** Diapositiva siguiente (dir > 0) o anterior (dir < 0) a la posición actual. */
+    const nextIndex = (dir) => {
+      const p = position();
+      return dir > 0 ? Math.floor(p + 1e-3) + 1 : Math.ceil(p - 1e-3) - 1;
+    };
+
+    const tickFree = (now) => {
       frame = 0;
       const dt = Math.min((now - lastTime) / 1000, 0.1);
       lastTime = now;
       current += (target - current) * (1 - Math.exp(-dt / tau));
       if (Math.abs(target - current) < epsilon) current = target;
       render();
-      if (current !== target) frame = requestAnimationFrame(tick);
+      if (current !== target) frame = requestAnimationFrame(tickFree);
     };
 
-    const startLoop = () => {
-      if (frame) return;
-      lastTime = performance.now();
-      frame = requestAnimationFrame(tick);
+    const tickTween = (now) => {
+      const t = Math.min((now - tween.start) / tween.ms, 1);
+      const e = easeInOutCubic(t);
+      // `instant`: la web tiene `scroll-behavior: smooth` y se pelearía con la animación
+      window.scrollTo({ top: tween.y0 + (tween.y1 - tween.y0) * e, behavior: 'instant' });
+      current = target = tween.p0 + (tween.p1 - tween.p0) * e;
+      render();
+      if (t < 1) {
+        tween.frame = requestAnimationFrame(tickTween);
+      } else {
+        tween = null;
+      }
     };
 
-    const readTarget = () => {
-      const viewport = fullPin.offsetHeight;
-      const raw = Math.min(Math.max(-fullBlock.getBoundingClientRect().top / (viewport * step), 0), lastIndex);
-      target = slideProgress(raw);
+    /** Anima el scroll, la foto y el texto hasta la diapositiva `index`. */
+    const animateTo = (index, ms) => {
+      if (frame) {
+        cancelAnimationFrame(frame);
+        frame = 0;
+      }
+      const sectionTop = fullBlock.getBoundingClientRect().top + window.scrollY;
+      tween = {
+        y0: window.scrollY,
+        y1: Math.round(sectionTop + index * fullPin.offsetHeight),
+        p0: current,
+        p1: index,
+        start: performance.now(),
+        ms
+      };
+      tween.frame = requestAnimationFrame(tickTween);
     };
 
     const fullLayout = () => {
-      if (isFullPinned() && lastIndex > 0) {
-        fullBlock.style.height = fullPin.offsetHeight * (1 + lastIndex * step) + 'px';
+      if (usable()) {
+        fullBlock.style.height = fullPin.offsetHeight * (lastIndex + 1) + 'px';
       } else {
         fullBlock.style.height = '';
         fullTrack.style.transform = '';
@@ -492,22 +529,119 @@
       }
     };
 
+    // Scroll libre: la foto sigue al scroll, amortiguada
     const onFullScroll = () => {
-      if (!isFullPinned() || lastIndex < 1) return;
-      readTarget();
-      startLoop();
+      if (!usable() || tween) return;
+      inZone = engaged();
+      target = position();
+      if (!frame) {
+        lastTime = performance.now();
+        frame = requestAnimationFrame(tickFree);
+      }
     };
 
     // En resize/load no se anima: se coloca directamente en la posición correcta
     const fullRelayout = () => {
       fullLayout();
-      if (!isFullPinned() || lastIndex < 1) return;
-      readTarget();
-      current = target;
+      if (!usable()) return;
+      if (tween) {
+        cancelAnimationFrame(tween.frame);
+        tween = null;
+      }
+      inZone = engaged();
+      target = current = position();
       render();
     };
 
+    /* --- Rueda: un gesto = un paso. Un gesto es una ráfaga de eventos separada
+       de la anterior por `quietMs` de silencio; el resto de la ráfaga (inercia del
+       trackpad incluida) se descarta para que no encadene varias diapositivas. --- */
+    let lastWheel = 0;
+    let consumed = false;
+
+    const onWheel = (e) => {
+      if (e.ctrlKey || !usable() || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      const now = performance.now();
+      const gap = now - lastWheel;
+      lastWheel = now;
+      const wasIn = inZone;
+      inZone = engaged();
+      if (!inZone) return;
+      if (gap > quietMs) consumed = false;
+      if (tween || consumed) {
+        e.preventDefault();
+        return;
+      }
+      const dir = Math.sign(e.deltaY);
+      if (!dir) return;
+
+      // Se entra a la zona con la inercia de un scroll anterior: asienta en la
+      // diapositiva más cercana en vez de saltarse la primera o la última
+      if (!wasIn && gap < quietMs * 2) {
+        e.preventDefault();
+        consumed = true;
+        const index = Math.round(position());
+        if (Math.abs(position() - index) > 0.005) animateTo(index, settleDuration);
+        return;
+      }
+
+      const index = nextIndex(dir);
+      if (index < 0 || index > lastIndex) return; // fuera de rango: el scroll normal sale de la sección
+      e.preventDefault();
+      if (Math.abs(e.deltaY) < minDelta) return;
+      consumed = true;
+      animateTo(index, duration);
+    };
+
+    /* --- Táctil (tabletas): un deslizamiento vertical = un paso --- */
+    let touchY = null;
+    let touchDone = false;
+
+    const onTouchStart = (e) => {
+      touchY = usable() && engaged() ? e.touches[0].clientY : null;
+      touchDone = false;
+    };
+
+    const onTouchMove = (e) => {
+      if (touchY === null) return;
+      const dy = touchY - e.touches[0].clientY; // > 0: el dedo sube, se avanza
+      if (!dy) return;
+      const dir = Math.sign(dy);
+      const index = nextIndex(dir);
+      if (index < 0 || index > lastIndex) return; // fuera de rango: scroll normal
+      if (e.cancelable) e.preventDefault();
+      if (!tween && !touchDone && Math.abs(dy) >= touchThreshold) {
+        touchDone = true;
+        animateTo(index, duration);
+      }
+    };
+
+    const onTouchEnd = () => {
+      touchY = null;
+    };
+
+    /* --- Teclado: flechas, AvPág/RePág y espacio --- */
+    const onKeyDown = (e) => {
+      if (!usable() || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
+      let dir = 0;
+      if (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) dir = 1;
+      else if (e.key === 'ArrowUp' || e.key === 'PageUp' || (e.key === ' ' && e.shiftKey)) dir = -1;
+      if (!dir || e.target.closest('input, textarea, select, [contenteditable]')) return;
+      if (e.key === ' ' && e.target.closest('a, button')) return; // el espacio pulsa el botón
+      if (!engaged()) return;
+      const index = nextIndex(dir);
+      if (index < 0 || index > lastIndex) return;
+      e.preventDefault();
+      if (!tween && !e.repeat) animateTo(index, duration);
+    };
+
     window.addEventListener('scroll', onFullScroll, { passive: true });
+    window.addEventListener('wheel', onWheel, { passive: false });
+    window.addEventListener('touchstart', onTouchStart, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+    window.addEventListener('touchend', onTouchEnd, { passive: true });
+    window.addEventListener('touchcancel', onTouchEnd, { passive: true });
+    window.addEventListener('keydown', onKeyDown);
     window.addEventListener('resize', fullRelayout);
     window.addEventListener('load', fullRelayout);
     fullRelayout();
