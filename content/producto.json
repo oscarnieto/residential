@@ -143,28 +143,40 @@
         {
           "city": "Barcelona",
           "name": "Mandarín Oriental",
-          "image": "assets/img/trackrecord-barcelona-1.jpg",
+          "image": "assets/img/trackrecord-barcelona-1.webp",
+          "image2x": "assets/img/trackrecord-barcelona-1-2x.webp",
+          "imageWidth": 1600,
+          "image2xWidth": 2000,
           "url": "",
           "hover": false
         },
         {
           "city": "Barcelona",
           "name": "Rambla Catalunya",
-          "image": "assets/img/trackrecord-barcelona-2.jpg",
+          "image": "assets/img/trackrecord-barcelona-2.webp",
+          "image2x": "assets/img/trackrecord-barcelona-2-2x.webp",
+          "imageWidth": 1600,
+          "image2xWidth": 2000,
           "url": "",
           "hover": false
         },
         {
           "city": "Madrid",
           "name": "Embajadores",
-          "image": "assets/img/trackrecord-madrid-1.jpg",
+          "image": "assets/img/trackrecord-madrid-1.webp",
+          "image2x": "assets/img/trackrecord-madrid-1-2x.webp",
+          "imageWidth": 1600,
+          "image2xWidth": 2000,
           "url": "",
           "hover": false
         },
         {
           "city": "Madrid",
           "name": "Arturo Soria",
-          "image": "assets/img/trackrecord-madrid-2.jpg",
+          "image": "assets/img/trackrecord-madrid-2.webp",
+          "image2x": "assets/img/trackrecord-madrid-2-2x.webp",
+          "imageWidth": 1600,
+          "image2xWidth": 2000,
           "url": "",
           "hover": false
         },

@@ -109,8 +109,9 @@ ${media}${nombre}
  * vertical desplaza las diapositivas en horizontal; en móvil es un carrusel de
  * swipe (ver `.track-full` en el CSS y «Track Record a pantalla completa» en el JS).
  *
- * La foto lleva `srcset` por anchura cuando el proyecto tiene `image2x`
- * (1600 px y 2880 px): a pantalla completa una sola imagen o sobra o se ve borrosa.
+ * La foto lleva `srcset` por anchura cuando el proyecto tiene `image2x`: a
+ * pantalla completa una sola imagen o sobra o se ve borrosa. Cada foto declara su
+ * anchura real (`imageWidth` / `image2xWidth`, por defecto 1600 y 2880).
  * No lleva `loading="lazy"`: las diapositivas fuera de pantalla están desplazadas
  * por transform y el navegador no las contaría como cercanas a tiempo.
  */
@@ -122,7 +123,7 @@ ${block.products
   .map((product) => {
     const alt = [product.name, product.city].filter(Boolean).join(', ');
     const srcset = product.image2x
-      ? ` srcset="${url(product.image)} 1600w, ${url(product.image2x)} 2880w" sizes="100vw"`
+      ? ` srcset="${url(product.image)} ${num(product.imageWidth, 1600)}w, ${url(product.image2x)} ${num(product.image2xWidth, 2880)}w" sizes="100vw"`
       : '';
     const nombre = product.name ? `\n              <p class="track-full__name">${esc(product.name)}</p>` : '';
     return `            <article class="track-full__slide">
