@@ -421,6 +421,10 @@
    *    fotograma; el texto se desplaza algo más que la foto para dar profundidad.
    *  - Scroll libre (barra de scroll, enlaces, buscar en la página): la foto
    *    sigue al scroll, amortiguada (ver `tau`).
+   *  - Carrusel automático: si no hay actividad de scroll durante `autoplayMs`, pasa
+   *    solo a la diapositiva siguiente y, tras la última, vuelve a la primera.
+   *    Solo corre con la sección a la vista y la pestaña visible, y no corre con
+   *    movimiento reducido.
    *  - Móvil / reduced-motion: carrusel de swipe nativo (lo maneja el CSS).
    * ------------------------------------------------------------------ */
   const fullBlock = document.querySelector('.track-full');
@@ -441,6 +445,8 @@
     const touchThreshold = 40; // px de deslizamiento táctil que lanzan un paso
     const tau = 0.12; // amortiguación del scroll libre, en segundos
     const epsilon = 0.0005; // diferencia de progreso por debajo de la cual se da por llegado
+    const autoplayMs = 4000; // inactividad de scroll tras la cual pasa sola a la siguiente
+    const wrapDuration = 1800; // ms de la vuelta de la última diapositiva a la primera
 
     let target = 0; // progreso al que lleva el scroll (0…n−1)
     let current = 0; // progreso que se ve
@@ -448,6 +454,9 @@
     let lastTime = 0;
     let tween = null; // animación en curso: { y0, y1, p0, p1, start, ms, frame }
     let inZone = false;
+    let idleTimer = 0; // temporizador del carrusel automático
+    let autoScrolling = false; // el carrusel móvil se está moviendo por el carrusel automático
+    let trackVisible = false; // móvil: el carrusel está a la vista
 
     const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
@@ -487,6 +496,37 @@
       if (current !== target) frame = requestAnimationFrame(tickFree);
     };
 
+    /* --- Carrusel automático. Cualquier actividad de scroll (rueda, tacto, tecla,
+       barra de scroll) reinicia la cuenta; al agotarse, avanza una diapositiva. --- */
+    const resetIdle = () => {
+      clearTimeout(idleTimer);
+      idleTimer = prefersReducedMotion || lastIndex < 1 ? 0 : setTimeout(autoStep, autoplayMs);
+    };
+
+    const autoStep = () => {
+      idleTimer = 0;
+      if (document.hidden) return resetIdle();
+      if (usable()) {
+        // Escritorio: zona anclada. Solo con la foto ocupando la pantalla entera
+        if (tween || !engaged()) return resetIdle();
+        const index = Math.round(current);
+        const next = index >= lastIndex ? 0 : index + 1;
+        animateTo(next, next === 0 ? wrapDuration : duration);
+      } else {
+        // Móvil: carrusel de swipe nativo
+        if (!trackVisible) return resetIdle();
+        const width = fullTrack.clientWidth || 1;
+        const index = Math.round(fullTrack.scrollLeft / width);
+        const next = index >= lastIndex ? 0 : index + 1;
+        autoScrolling = true;
+        fullTrack.scrollTo({ left: next * width, behavior: 'smooth' });
+        setTimeout(() => {
+          autoScrolling = false;
+          resetIdle();
+        }, next === 0 ? wrapDuration : 900);
+      }
+    };
+
     const tickTween = (now) => {
       const t = Math.min((now - tween.start) / tween.ms, 1);
       const e = easeInOutCubic(t);
@@ -498,6 +538,7 @@
         tween.frame = requestAnimationFrame(tickTween);
       } else {
         tween = null;
+        resetIdle(); // la siguiente pasada, `autoplayMs` después de asentarse
       }
     };
 
@@ -531,7 +572,9 @@
 
     // Scroll libre: la foto sigue al scroll, amortiguada
     const onFullScroll = () => {
-      if (!usable() || tween) return;
+      if (tween) return;
+      resetIdle();
+      if (!usable()) return;
       inZone = engaged();
       target = position();
       if (!frame) {
@@ -560,6 +603,7 @@
     let consumed = false;
 
     const onWheel = (e) => {
+      resetIdle();
       if (e.ctrlKey || !usable() || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
       const now = performance.now();
       const gap = now - lastWheel;
@@ -598,6 +642,7 @@
     let touchDone = false;
 
     const onTouchStart = (e) => {
+      resetIdle();
       touchY = usable() && engaged() ? e.touches[0].clientY : null;
       touchDone = false;
     };
@@ -622,6 +667,7 @@
 
     /* --- Teclado: flechas, AvPág/RePág y espacio --- */
     const onKeyDown = (e) => {
+      if (['ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', ' ', 'Home', 'End'].includes(e.key)) resetIdle();
       if (!usable() || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
       let dir = 0;
       if (e.key === 'ArrowDown' || e.key === 'PageDown' || (e.key === ' ' && !e.shiftKey)) dir = 1;
@@ -644,7 +690,26 @@
     window.addEventListener('keydown', onKeyDown);
     window.addEventListener('resize', fullRelayout);
     window.addEventListener('load', fullRelayout);
+
+    // Móvil: un deslizamiento del usuario reinicia la cuenta; el que hace el carrusel
+    // automático no. Y solo corre con el carrusel a la vista.
+    fullTrack.addEventListener('scroll', () => {
+      if (!autoScrolling) resetIdle();
+    }, { passive: true });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(
+        ([entry]) => {
+          trackVisible = entry.isIntersecting;
+        },
+        { threshold: 0.6 }
+      ).observe(fullBlock);
+    } else {
+      trackVisible = true;
+    }
+    document.addEventListener('visibilitychange', resetIdle);
+
     fullRelayout();
+    resetIdle();
   }
 
   /* ------------------------------------------------------------------
