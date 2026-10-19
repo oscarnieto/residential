@@ -190,7 +190,10 @@
         {
           "city": "Málaga",
           "name": "Halia",
-          "image": "assets/img/trackrecord-malaga-2.jpg",
+          "image": "assets/img/trackrecord-malaga-2.webp",
+          "image2x": "assets/img/trackrecord-malaga-2-2x.webp",
+          "imageWidth": 1600,
+          "image2xWidth": 1920,
           "url": "",
           "hover": false
         }
