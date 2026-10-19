@@ -2873,10 +2873,14 @@ footer[id] {
   text-transform: uppercase;
 }
 
-/* Móvil y movimiento reducido: sin anclaje, carrusel de swipe a pantalla completa */
+/* Móvil y movimiento reducido: sin anclaje, carrusel de swipe */
 @media (max-width: 767px) {
+  /* En móvil no ocupa toda la altura de la pantalla: algo más panorámico (80 %).
+     El mínimo evita que se quede demasiado bajo en móviles cortos o en horizontal.
+     En escritorio con movimiento reducido sigue a pantalla completa. */
   .track-full__pin {
     position: static;
+    height: max(22rem, 80svh);
   }
 
   .track-full__track {
