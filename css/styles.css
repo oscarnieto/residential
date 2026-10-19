@@ -2717,8 +2717,11 @@ footer[id] {
     display: none;
   }
 
+  /* Tarjeta al 94 % del ancho útil del carril (antes 78 %): casi toda la anchura
+     de la pantalla, y la siguiente aún asoma unos píxeles, así que se sigue viendo
+     que se desliza */
   .track-product {
-    flex: 0 0 78%;
+    flex: 0 0 94%;
     scroll-snap-align: center;
     scale: 1; /* anula el --s del JS; el foco lo da la animación de scroll */
     opacity: 1;
@@ -2742,6 +2745,9 @@ footer[id] {
 @media (max-width: 767px) {
   .track-product__media {
     box-shadow: 0 10px 28px rgba(37, 39, 58, 0.16);
+    /* Más alta que la panorámica de escritorio (840/435): en móvil la foto gana
+       protagonismo. `object-fit: cover` recorta un 30 % de los laterales. */
+    aspect-ratio: 5 / 4;
   }
 }
 
