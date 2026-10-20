@@ -2535,9 +2535,24 @@ footer[id] {
 /* --- Galería horizontal anclada --- */
 .track-gallery {
   position: relative;
+  /* Alto de lo que acompaña a la foto: ciudad (línea de 1×) con su margen, y el
+     margen y la línea del nombre. */
+  --track-card-extra: calc(var(--fs-h2) + clamp(0.5rem, 1.2vw, 0.9rem) + 0.8rem + 1.5rem);
   /* Ancho de una tarjeta. Se declara aquí para que lo hereden tanto el track
-     como la zona anclada, que lo usa para calcular su holgura vertical. */
-  --track-card: min(880px, 72vw);
+     como la zona anclada, que lo usa para calcular su holgura vertical.
+     No depende solo del ancho: la zona anclada mide `100svh − barra` y, con el
+     8 % de zoom de la tarjeta central, ciudad + foto + nombre tienen que caber
+     en ella. Si no caben, el contenido se sale por arriba y por abajo y
+     `overflow: hidden` corta la ciudad junto al título de la sección. El
+     1,931 es la proporción de la foto (840/435) y los 2rem, la holgura. */
+  --track-card: max(
+    22rem,
+    min(
+      880px,
+      72vw,
+      calc(((100svh - var(--producto-stack-h) - 2rem) / 1.08 - var(--track-card-extra)) * 1.931)
+    )
+  );
   /* la altura la fija el JS en desktop para crear el recorrido del pin */
 }
 
