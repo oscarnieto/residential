@@ -51,18 +51,6 @@
       "lead": "",
       "products": [
         {
-          "city": "Barcelona",
-          "name": "Signature Collection",
-          "image": "assets/img/track-1.jpg",
-          "url": "https://search.savills.com/es/es/detalle-inmueble/gbbarcbrc250225"
-        },
-        {
-          "city": "Madrid",
-          "name": "Santa Engracia 96",
-          "image": "assets/img/track-2.jpg",
-          "url": "https://search.savills.com/es/es/detalle-inmueble/gbmadrmad260042"
-        },
-        {
           "city": "Málaga",
           "name": "Artemisa",
           "image": "assets/img/track-3.jpg",
@@ -91,6 +79,18 @@
           "name": "The Views Residences",
           "image": "assets/img/track-7.jpg",
           "url": "https://search.savills.com/es/es/detalle-inmueble/gbmalgmlg250126"
+        },
+        {
+          "city": "Madrid",
+          "name": "Santa Engracia 96",
+          "image": "assets/img/track-2.jpg",
+          "url": "https://search.savills.com/es/es/detalle-inmueble/gbmadrmad260042"
+        },
+        {
+          "city": "Barcelona",
+          "name": "Signature Collection",
+          "image": "assets/img/track-1.jpg",
+          "url": "https://search.savills.com/es/es/detalle-inmueble/gbbarcbrc250225"
         }
       ]
     },
